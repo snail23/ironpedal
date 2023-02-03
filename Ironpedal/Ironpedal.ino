@@ -3,9 +3,9 @@
 
 // General configuration
 
-#define DISPLAY_REFRESH_TIME 100
 #define FONT_WIDTH 8
 #define SPLASH_WAIT_MS 1500
+#define SYSTEM_WAIT_MS 10
 #define VERSION "v0.1.1"
 
 // SSD1351 pin configuration
@@ -35,12 +35,12 @@
 
 // Globals
 
-Adafruit_SSD1351 display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, CS_PIN, DC_PIN, MOSI_PIN, SCLK_PIN, RST_PIN);
-DaisyHardware hw;
+Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, CS_PIN, DC_PIN, MOSI_PIN, SCLK_PIN, RST_PIN);
+DaisyHardware Seed;
 
-unsigned long display_time;
+uint32_t DisplayTime;
 
-const unsigned char Px437_IBM_VGA_8x148pt7bBitmaps[] PROGMEM = {
+const uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
   0x00, 0x6F, 0xFF, 0x66, 0x06, 0x60, 0xCF, 0x3C, 0xD2, 0x6C, 0xDB, 0xFB,
   0x66, 0xCD, 0xBF, 0xB6, 0x6C, 0x18, 0x31, 0xF6, 0x3C, 0x38, 0x1F, 0x03,
   0x87, 0x8D, 0xF0, 0xC1, 0x80, 0xC3, 0x8C, 0x30, 0xC3, 0x0C, 0xF1, 0x80,
@@ -94,7 +94,7 @@ const unsigned char Px437_IBM_VGA_8x148pt7bBitmaps[] PROGMEM = {
   0xFF, 0x3F, 0xC0, 0xE0, 0xC3, 0x0C, 0x1C, 0xC3, 0x0C, 0xE0, 0x77, 0xB8
 };
 
-const GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] PROGMEM = {
+const GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] = {
   { 0, 1, 1, 8, 0, 0 },      // 0x20 ' '
   { 1, 4, 9, 8, 2, -8 },     // 0x21 '!'
   { 6, 6, 4, 8, 1, -9 },     // 0x22 '"'
@@ -192,13 +192,13 @@ const GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] PROGMEM = {
   { 610, 7, 2, 8, 0, -8 }
 };  // 0x7E '~'
 
-const GFXfont Px437_IBM_VGA_8x148pt7b PROGMEM = {
-  (unsigned char *)Px437_IBM_VGA_8x148pt7bBitmaps,
+const GFXfont Px437_IBM_VGA_8x148pt7b = {
+  (uint8_t *)Px437_IBM_VGA_8x148pt7bBitmaps,
   (GFXglyph *)Px437_IBM_VGA_8x148pt7bGlyphs,
   0x20, 0x7E, 14
 };
 
-const unsigned char splash_bmp[] PROGMEM = {
+const uint8_t SplashBitmap[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -331,81 +331,73 @@ const unsigned char splash_bmp[] PROGMEM = {
 
 // Functions
 
-void center_println(const char *text) {
-  auto len = strlen(text);
+void printlnCentered(const char *text) {
+  auto length = strlen(text);
 
-  for (auto i = 0u; i < SSD1351WIDTH / FONT_WIDTH / 2 - len / 2; ++i)
-    display.print(" ");
+  for (auto i = 0u; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
+    Display.print(" ");
 
-  display.println(text);
+  Display.println(text);
 }
 
-void center_println_underlined(const char *text) {
-  auto len = strlen(text);
-
-  for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - len / 2; ++i)
-    display.print(" ");
-
-  auto x = display.getCursorX();
-  auto y = display.getCursorY();
-
-  display.println(text);
-  display.drawFastHLine(x, y + FONT_WIDTH / 2 - 1, FONT_WIDTH * len, RED);
+void printlnCenteredSeparator(const char *text) {
+  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance, SSD1351WIDTH, RED);
+  printlnCentered(text);
 }
 
 void loop() {
   while (true) {
-    auto now = millis();
-
-    if (now - display_time >= DISPLAY_REFRESH_TIME) {
-      display.fillScreen(BLACK);
-      display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);  // +1 line as per adafruit custom font conventions
-
-      center_println_underlined("Clean - " VERSION);
-
-      display_time = now;
-    }
-
-    delay(1);
+    delay(SYSTEM_WAIT_MS);
   }
 }
 
-void on_audio(float **in, float **out, size_t size) {
+void onAudio(float **in, float **out, size_t size) {
   // Bypass
-  memcpy(*in, *out, size * sizeof(float) * hw.num_channels);
+  memcpy(*in, *out, size * sizeof(float) * Seed.num_channels);
 }
 
 void setup() {
   // System led on
 
-  Led system_led;
+  Led systemLed;
 
-  system_led.Init(LED_BUILTIN, false);
-  system_led.Set(true);
+  systemLed.Init(LED_BUILTIN, false);
+  systemLed.Set(true);
 
   // Init seed
 
-  hw = DAISY.init(DAISY_SEED, AUDIO_SR_48K);
-  DAISY.begin(on_audio);
+  Seed = DAISY.init(DAISY_SEED, AUDIO_SR_48K);
+  DAISY.begin(onAudio);
 
-  // Init display
+  // Init Display
 
-  display.begin();
+  Display.begin();
 
-  display.setFont(&Px437_IBM_VGA_8x148pt7b);
-  display.setTextColor(RED);
+  Display.setFont(&Px437_IBM_VGA_8x148pt7b);
+  Display.setTextColor(RED);
 
-  // Splash image
+  // Display splash image
 
-  display.fillScreen(BLACK);
-  display.drawBitmap(0, 0, splash_bmp, SSD1351WIDTH, SSD1351HEIGHT, RED);
+  Display.fillScreen(BLACK);
+  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, RED);
 
   // Wait
   delay(SPLASH_WAIT_MS);
 
+  // Display main screen
+
+  Display.fillScreen(BLACK);
+  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
+
+  for (auto i = 0; i < 7; ++i)
+    Display.println("");
+
+  printlnCenteredSeparator("Distortion");
+  printlnCentered("* 1011 *");
+
   // System led off
-  system_led.Set(false);
+  systemLed.Set(false);
 
   // Misc
-  display_time = millis();
+  DisplayTime = millis();
 }
