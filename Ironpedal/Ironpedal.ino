@@ -3,29 +3,25 @@
 
 // General configuration
 
+#define COLOR 0xE912  // Base color: 0xEE2391 (Prickly Pear)
 #define FONT_WIDTH 8
+
 #define SPLASH_WAIT_MS 1500
 #define SYSTEM_WAIT_MS 10
+
 #define VERSION "v0.1.1"
+
+// ADC configuration
+#define ADC_RESOLUTION 16
 
 // SSD1351 pin configuration
 
-#define DC_PIN D1
-#define CS_PIN D3
-#define MOSI_PIN D6
-#define RST_PIN D30
-#define SCLK_PIN D2
+#define PIN_CS D3
+#define PIN_RST D30
 
-// Colors
-
-#define BLACK 0x0000
-#define BLUE 0x001F
-#define RED 0xF800
-#define GREEN 0x07E0
-#define CYAN 0x07FF
-#define MAGENTA 0xF81F
-#define YELLOW 0xFFE0
-#define WHITE 0xFFFF
+#define PIN_SPI_MISO D1
+#define PIN_SPI_MOSI D6
+#define PIN_SPI_SCK D2
 
 // Includes
 
@@ -35,7 +31,7 @@
 
 // Globals
 
-Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, CS_PIN, DC_PIN, MOSI_PIN, SCLK_PIN, RST_PIN);
+Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);
 DaisyHardware Seed;
 
 uint32_t DisplayTime;
@@ -341,7 +337,7 @@ void printlnCentered(const char *text) {
 }
 
 void printlnCenteredSeparator(const char *text) {
-  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance, SSD1351WIDTH, RED);
+  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance, SSD1351WIDTH, 0);
   printlnCentered(text);
 }
 
@@ -374,25 +370,25 @@ void setup() {
   Display.begin();
 
   Display.setFont(&Px437_IBM_VGA_8x148pt7b);
-  Display.setTextColor(RED);
+  Display.setTextColor(0);
 
   // Display splash image
 
-  Display.fillScreen(BLACK);
-  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, RED);
+  Display.fillScreen(COLOR);
+  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, 0);
 
   // Wait
   delay(SPLASH_WAIT_MS);
 
   // Display main screen
 
-  Display.fillScreen(BLACK);
+  Display.fillScreen(COLOR);
   Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
   for (auto i = 0; i < 7; ++i)
     Display.println("");
 
-  printlnCenteredSeparator("Distortion");
+  printlnCenteredSeparator("Clean");
   printlnCentered("* 1011 *");
 
   // System led off
