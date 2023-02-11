@@ -11,9 +11,6 @@
 
 #define VERSION "v0.1.1"
 
-// ADC configuration
-#define ADC_RESOLUTION 16
-
 // SSD1351 pin configuration
 
 #define PIN_CS D3
@@ -31,10 +28,8 @@
 
 // Globals
 
-Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);
+Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);  // TODO: Make this hardware accelerated
 DaisyHardware Seed;
-
-uint32_t DisplayTime;
 
 const uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
   0x00, 0x6F, 0xFF, 0x66, 0x06, 0x60, 0xCF, 0x3C, 0xD2, 0x6C, 0xDB, 0xFB,
@@ -365,7 +360,7 @@ void setup() {
   Seed = DAISY.init(DAISY_SEED, AUDIO_SR_48K);
   DAISY.begin(onAudio);
 
-  // Init Display
+  // Init display
 
   Display.begin();
 
@@ -393,7 +388,4 @@ void setup() {
 
   // System led off
   systemLed.Set(false);
-
-  // Misc
-  DisplayTime = millis();
 }
