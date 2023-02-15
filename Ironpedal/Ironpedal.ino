@@ -373,6 +373,70 @@ uint8_t SplashBitmap[] = {
 
 // Functions
 
+bool switchPressed() {
+  bool inputReceived = false;
+
+  // Handle foot switch 1
+
+  if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
+    Profile1 = !Profile1;
+    inputReceived = true;
+
+    Terrarium.leds[LED_1].Set(Profile1 ? true : false);
+  }
+
+  // Handle foot switch 2
+
+  if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
+    Profile2 = !Profile2;
+    inputReceived = true;
+
+    Terrarium.leds[LED_2].Set(Profile2 ? true : false);
+  }
+
+  // Handle switch 1
+
+  if (Terrarium.buttons[SWITCH_1].RisingEdge()) {
+    CurrentEffect.switch1 = true;
+    inputReceived = true;
+  } else if (Terrarium.buttons[SWITCH_1].FallingEdge()) {
+    CurrentEffect.switch1 = false;
+    inputReceived = true;
+  }
+
+  // Handle switch 2
+
+  if (Terrarium.buttons[SWITCH_2].RisingEdge()) {
+    CurrentEffect.switch2 = true;
+    inputReceived = true;
+  } else if (Terrarium.buttons[SWITCH_2].FallingEdge()) {
+    CurrentEffect.switch2 = false;
+    inputReceived = true;
+  }
+
+  // Handle switch 3
+
+  if (Terrarium.buttons[SWITCH_3].RisingEdge()) {
+    CurrentEffect.switch3 = true;
+    inputReceived = true;
+  } else if (Terrarium.buttons[SWITCH_3].FallingEdge()) {
+    CurrentEffect.switch3 = false;
+    inputReceived = true;
+  }
+
+  // Handle switch 4
+
+  if (Terrarium.buttons[SWITCH_4].RisingEdge()) {
+    CurrentEffect.switch4 = true;
+    inputReceived = true;
+  } else if (Terrarium.buttons[SWITCH_4].FallingEdge()) {
+    CurrentEffect.switch4 = false;
+    inputReceived = true;
+  }
+
+  return inputReceived;
+}
+
 void drawClean() {
   char buf[16];
 
@@ -411,68 +475,9 @@ void loop() {
   bool inputReceived;
 
   while (true) {
-    inputReceived = false;
     Terrarium.ProcessAllControls();
 
-    // Handle foot switch 1
-
-    if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
-      Profile1 = !Profile1;
-      inputReceived = true;
-
-      Terrarium.leds[LED_1].Set(Profile1 ? true : false);
-    }
-
-    // Handle foot switch 2
-
-    if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
-      Profile2 = !Profile2;
-      inputReceived = true;
-
-      Terrarium.leds[LED_2].Set(Profile2 ? true : false);
-    }
-
-    // Handle switch 1
-
-    if (Terrarium.buttons[SWITCH_1].RisingEdge()) {
-      CurrentEffect.switch1 = true;
-      inputReceived = true;
-    } else if (Terrarium.buttons[SWITCH_1].FallingEdge()) {
-      CurrentEffect.switch1 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 2
-
-    if (Terrarium.buttons[SWITCH_2].RisingEdge()) {
-      CurrentEffect.switch2 = true;
-      inputReceived = true;
-    } else if (Terrarium.buttons[SWITCH_2].FallingEdge()) {
-      CurrentEffect.switch2 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 3
-
-    if (Terrarium.buttons[SWITCH_3].RisingEdge()) {
-      CurrentEffect.switch3 = true;
-      inputReceived = true;
-    } else if (Terrarium.buttons[SWITCH_3].FallingEdge()) {
-      CurrentEffect.switch3 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 4
-
-    if (Terrarium.buttons[SWITCH_4].RisingEdge()) {
-      CurrentEffect.switch4 = true;
-      inputReceived = true;
-    } else if (Terrarium.buttons[SWITCH_4].FallingEdge()) {
-      CurrentEffect.switch4 = false;
-      inputReceived = true;
-    }
-
-    if (inputReceived) {
+    if (switchPressed()) {
       switch (CurrentEffect.type) {
         case CLEAN:
         default:
