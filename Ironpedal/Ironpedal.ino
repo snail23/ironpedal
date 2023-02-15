@@ -13,11 +13,18 @@
 
 // General pin configuration
 
-#define PIN_LED_1 D22
-#define PIN_LED_2 D23
-
 #define PIN_FOOT_SWITCH_1 D25
 #define PIN_FOOT_SWITCH_2 D26
+
+#define PIN_KNOB_1 A1
+#define PIN_KNOB_2 A2
+#define PIN_KNOB_3 A3
+#define PIN_KNOB_4 A4
+#define PIN_KNOB_5 A5
+#define PIN_KNOB_6 A6
+
+#define PIN_LED_1 A7
+#define PIN_LED_2 A8
 
 #define PIN_SWITCH_1 D10
 #define PIN_SWITCH_2 D9
@@ -39,10 +46,21 @@
 #include <Adafruit_SSD1351.h>
 #include <DaisyDuino.h>
 
+#include "Util.h"
+
 // Enums
 
 enum EffectType {
   MASTER
+};
+
+enum TerrariumKnob {
+  KNOB_1,
+  KNOB_2,
+  KNOB_3,
+  KNOB_4,
+  KNOB_5,
+  KNOB_6
 };
 
 enum TerrariumLed {
@@ -76,11 +94,13 @@ union {
 // Globals
 
 Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);  // TODO: Make this hardware accelerated
+AudioClass Seed;
 
 bool Profile1 = false;
 bool Profile2 = false;
 
 DaisyHardware Terrarium;
+float Volume = 0.0f;
 
 uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
   0x00, 0x6F, 0xFF, 0x66, 0x06, 0x60, 0xCF, 0x3C, 0xD2, 0x6C, 0xDB, 0xFB,
@@ -437,33 +457,24 @@ bool switchPressed() {
   return inputReceived;
 }
 
-void draw() {
-  switch (CurrentEffect.type) {
-    case MASTER:
-    default:
-      drawMaster();
-
-      break;
-  }
-}
-
 void drawMaster() {
   char buf[16];
 
   Display.fillScreen(0);
   Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
-  Display.setTextColor(COLOR_LIGHT);  
+  Display.setTextColor(COLOR_LIGHT, 0);
   printlnCentered("TUNER      VOL");
 
-  Display.setTextColor(COLOR);
-  printlnCentered("G+++       100");
+  Display.setTextColor(COLOR, 0xFFFF);
+  sprintf(buf, "G+++       %3u", (uint32_t)round(Terrarium.controls[KNOB_3].Value() * 100.0f));
+  printlnCentered(buf);
   printlnCentered(0);
 
-  Display.setTextColor(COLOR_LIGHT);
+  Display.setTextColor(COLOR_LIGHT, 0);
   printlnCentered("LO   HI   GAIN");
 
-  Display.setTextColor(COLOR);
+  Display.setTextColor(COLOR, 0);
   printlnCentered("100  10K   100");
   printlnCentered(0);
 
@@ -471,20 +482,35 @@ void drawMaster() {
   sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
   printlnCentered(buf);
 
-  Display.setTextColor(COLOR_DARK);
+  Display.setTextColor(COLOR_DARK, 0);
   sprintf(buf, "%s    %s", Profile1 ? "**" : "  ", Profile2 ? "**" : "  ");
   printlnCentered(buf);
 
-  Display.setTextColor(COLOR_LIGHT);
+  Display.setTextColor(COLOR_LIGHT, 0);
   printlnCentered("MASTER");
 }
 
 void loop() {
+  bool inputReceived;
+
+  uint32_t switchValues[Terrarium.numSwitches];
+  uint32_t val;
+
   while (true) {
     Terrarium.ProcessAllControls();
+    inputReceived = false;
 
-    if (switchPressed())
-      draw();
+    for (auto i = 0; i < Terrarium.numSwitches; ++i) {
+      val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
+
+      if (switchValues[i] != val) {
+        switchValues[i] = val;
+        inputReceived = true;
+      }
+    }
+
+    if (inputReceived || switchPressed())
+      onInput();
 
     delay(1);
   }
@@ -492,7 +518,20 @@ void loop() {
 
 void onAudio(float **in, float **out, size_t size) {
   // Bypass
-  memcpy(out, in, sizeof(float) * size);
+
+  for (auto i = 0; i < size; ++i)
+    out[0][i] = in[0][i] * Volume;
+}
+
+void onInput() {
+  switch (CurrentEffect.type) {
+    case MASTER:
+    default:
+      updateMaster();
+      drawMaster();
+
+      break;
+  }
 }
 
 void printlnCentered(char *text) {
@@ -512,7 +551,7 @@ void setup() {
   seedLed.Set(true);
 
   // Init terrarium
-  Terrarium = DAISY.init(DAISY_SEED, AUDIO_SR_96K);
+  Terrarium = Seed.init(DAISY_SEED, AUDIO_SR_96K);
 
   Terrarium.num_channels = 1;
   Terrarium.numControls = 6;
@@ -527,11 +566,18 @@ void setup() {
   Terrarium.buttons[SWITCH_3].Init(1000, true, PIN_SWITCH_3, INPUT_PULLUP);
   Terrarium.buttons[SWITCH_4].Init(1000, true, PIN_SWITCH_4, INPUT_PULLUP);
 
+  Terrarium.controls[KNOB_1].Init(PIN_KNOB_1, 1000);
+  Terrarium.controls[KNOB_2].Init(PIN_KNOB_2, 1000);
+  Terrarium.controls[KNOB_3].Init(PIN_KNOB_3, 1000);
+  Terrarium.controls[KNOB_4].Init(PIN_KNOB_4, 1000);
+  Terrarium.controls[KNOB_5].Init(PIN_KNOB_5, 1000);
+  Terrarium.controls[KNOB_6].Init(PIN_KNOB_6, 1000);
+
   Terrarium.leds[LED_1].Init(PIN_LED_1, false);
   Terrarium.leds[LED_2].Init(PIN_LED_2, false);
 
-  DAISY.SetAudioBlockSize(1);
-  DAISY.StartAudio(onAudio);
+  Seed.SetAudioBlockSize(1);
+  Seed.StartAudio(onAudio);
 
   // Init display
 
@@ -544,10 +590,15 @@ void setup() {
   Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
   delay(SPLASH_WAIT_MS);
+  Display.fillScreen(0);
 
   // System led off
   seedLed.Set(false);
 
-  // Initial draw
-  draw();
+  // Initial update
+  onInput();
+}
+
+void updateMaster() {
+  Volume = Terrarium.controls[KNOB_3].Value();
 }
