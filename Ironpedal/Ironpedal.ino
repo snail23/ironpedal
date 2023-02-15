@@ -42,7 +42,7 @@
 // Enums
 
 enum EffectType {
-  CLEAN
+  MASTER
 };
 
 enum TerrariumLed {
@@ -437,26 +437,34 @@ bool switchPressed() {
   return inputReceived;
 }
 
-void drawClean() {
+void draw() {
+  switch (CurrentEffect.type) {
+    case MASTER:
+    default:
+      drawMaster();
+
+      break;
+  }
+}
+
+void drawMaster() {
   char buf[16];
 
   Display.fillScreen(0);
   Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
+  Display.setTextColor(COLOR_LIGHT);  
+  printlnCentered("TUNER      VOL");
+
+  Display.setTextColor(COLOR);
+  printlnCentered("G+++       100");
+  printlnCentered(0);
+
   Display.setTextColor(COLOR_LIGHT);
   printlnCentered("LO   HI   GAIN");
 
   Display.setTextColor(COLOR);
-
   printlnCentered("100  10K   100");
-  printlnCentered(0);
-
-  Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("TUNER      VOL");
-
-  Display.setTextColor(COLOR);
-
-  printlnCentered("G+++       100");
   printlnCentered(0);
 
   Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
@@ -468,24 +476,15 @@ void drawClean() {
   printlnCentered(buf);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("CLEAN");
+  printlnCentered("MASTER");
 }
 
 void loop() {
-  bool inputReceived;
-
   while (true) {
     Terrarium.ProcessAllControls();
 
-    if (switchPressed()) {
-      switch (CurrentEffect.type) {
-        case CLEAN:
-        default:
-          drawClean();
-
-          break;
-      }
-    }
+    if (switchPressed())
+      draw();
 
     delay(1);
   }
@@ -546,9 +545,9 @@ void setup() {
 
   delay(SPLASH_WAIT_MS);
 
-  // Display main screen
-  drawClean();
-
   // System led off
   seedLed.Set(false);
+
+  // Initial draw
+  draw();
 }
