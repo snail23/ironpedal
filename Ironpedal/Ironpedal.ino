@@ -3,13 +3,26 @@
 
 // General configuration
 
-#define COLOR 0xE912  // Base color: 0xEE2391 (Prickly Pear)
+#define COLOR 0xE912        // Base color: 0xEE2391 (Prickly Pear)
+#define COLOR_DARK 0xA008   // 30% darker: 0xA20045
+#define COLOR_LIGHT 0xFB9B  // 30% lighter: 0xFF70DE
+
 #define FONT_WIDTH 8
-
 #define SPLASH_WAIT_MS 1500
-#define SYSTEM_WAIT_MS 10
-
 #define VERSION "v0.1.1"
+
+// General pin configuration
+
+#define PIN_LED_1 D22
+#define PIN_LED_2 D23
+
+#define PIN_FOOT_SWITCH_1 D25
+#define PIN_FOOT_SWITCH_2 D26
+
+#define PIN_SWITCH_1 D10
+#define PIN_SWITCH_2 D9
+#define PIN_SWITCH_3 D8
+#define PIN_SWITCH_4 D7
 
 // SSD1351 pin configuration
 
@@ -26,12 +39,50 @@
 #include <Adafruit_SSD1351.h>
 #include <DaisyDuino.h>
 
+// Enums
+
+enum EffectType {
+  CLEAN
+};
+
+enum TerrariumLed {
+  LED_1,
+  LED_2
+};
+
+enum TerrariumSwitch {
+  FOOT_SWITCH_1,
+  FOOT_SWITCH_2,
+
+  SWITCH_1,
+  SWITCH_2,
+  SWITCH_3,
+  SWITCH_4
+};
+
+// Unions
+
+union {
+  EffectType type;
+
+  struct {
+    bool switch1 : 1;
+    bool switch2 : 1;
+    bool switch3 : 1;
+    bool switch4 : 1;
+  };
+} CurrentEffect;
+
 // Globals
 
 Adafruit_SSD1351 Display = Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);  // TODO: Make this hardware accelerated
-DaisyHardware Seed;
 
-const uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
+bool Profile1 = false;
+bool Profile2 = false;
+
+DaisyHardware Terrarium;
+
+uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
   0x00, 0x6F, 0xFF, 0x66, 0x06, 0x60, 0xCF, 0x3C, 0xD2, 0x6C, 0xDB, 0xFB,
   0x66, 0xCD, 0xBF, 0xB6, 0x6C, 0x18, 0x31, 0xF6, 0x3C, 0x38, 0x1F, 0x03,
   0x87, 0x8D, 0xF0, 0xC1, 0x80, 0xC3, 0x8C, 0x30, 0xC3, 0x0C, 0xF1, 0x80,
@@ -85,7 +136,7 @@ const uint8_t Px437_IBM_VGA_8x148pt7bBitmaps[] = {
   0xFF, 0x3F, 0xC0, 0xE0, 0xC3, 0x0C, 0x1C, 0xC3, 0x0C, 0xE0, 0x77, 0xB8
 };
 
-const GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] = {
+GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] = {
   { 0, 1, 1, 8, 0, 0 },      // 0x20 ' '
   { 1, 4, 9, 8, 2, -8 },     // 0x21 '!'
   { 6, 6, 4, 8, 1, -9 },     // 0x22 '"'
@@ -183,13 +234,13 @@ const GFXglyph Px437_IBM_VGA_8x148pt7bGlyphs[] = {
   { 610, 7, 2, 8, 0, -8 }
 };  // 0x7E '~'
 
-const GFXfont Px437_IBM_VGA_8x148pt7b = {
+GFXfont Px437_IBM_VGA_8x148pt7b = {
   (uint8_t *)Px437_IBM_VGA_8x148pt7bBitmaps,
   (GFXglyph *)Px437_IBM_VGA_8x148pt7bGlyphs,
   0x20, 0x7E, 14
 };
 
-const uint8_t SplashBitmap[] = {
+uint8_t SplashBitmap[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -322,70 +373,177 @@ const uint8_t SplashBitmap[] = {
 
 // Functions
 
-void printlnCentered(const char *text) {
-  auto length = strlen(text);
+void drawClean() {
+  char buf[16];
 
-  for (auto i = 0u; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
-    Display.print(" ");
+  Display.fillScreen(0);
+  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
-  Display.println(text);
-}
+  Display.setTextColor(COLOR_LIGHT);
+  printlnCentered("LO   HI   GAIN");
 
-void printlnCenteredSeparator(const char *text) {
-  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance, SSD1351WIDTH, 0);
-  printlnCentered(text);
+  Display.setTextColor(COLOR);
+
+  printlnCentered("100  10K   100");
+  printlnCentered(0);
+
+  Display.setTextColor(COLOR_LIGHT);
+  printlnCentered("TUNER      VOL");
+
+  Display.setTextColor(COLOR);
+
+  printlnCentered("G+++       100");
+  printlnCentered(0);
+
+  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
+  sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
+  printlnCentered(buf);
+
+  Display.setTextColor(COLOR_DARK);
+  sprintf(buf, "%s    %s", Profile1 ? "**" : "  ", Profile2 ? "**" : "  ");
+  printlnCentered(buf);
+
+  Display.setTextColor(COLOR_LIGHT);
+  printlnCentered("CLEAN");
 }
 
 void loop() {
+  bool inputReceived;
+
   while (true) {
-    delay(SYSTEM_WAIT_MS);
+    inputReceived = false;
+    Terrarium.ProcessAllControls();
+
+    // Handle foot switch 1
+
+    if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
+      Profile1 = !Profile1;
+      inputReceived = true;
+
+      Terrarium.leds[LED_1].Set(Profile1 ? true : false);
+    }
+
+    // Handle foot switch 2
+
+    if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
+      Profile2 = !Profile2;
+      inputReceived = true;
+
+      Terrarium.leds[LED_2].Set(Profile2 ? true : false);
+    }
+
+    // Handle switch 1
+
+    if (Terrarium.buttons[SWITCH_1].RisingEdge()) {
+      CurrentEffect.switch1 = true;
+      inputReceived = true;
+    } else if (Terrarium.buttons[SWITCH_1].FallingEdge()) {
+      CurrentEffect.switch1 = false;
+      inputReceived = true;
+    }
+
+    // Handle switch 2
+
+    if (Terrarium.buttons[SWITCH_2].RisingEdge()) {
+      CurrentEffect.switch2 = true;
+      inputReceived = true;
+    } else if (Terrarium.buttons[SWITCH_2].FallingEdge()) {
+      CurrentEffect.switch2 = false;
+      inputReceived = true;
+    }
+
+    // Handle switch 3
+
+    if (Terrarium.buttons[SWITCH_3].RisingEdge()) {
+      CurrentEffect.switch3 = true;
+      inputReceived = true;
+    } else if (Terrarium.buttons[SWITCH_3].FallingEdge()) {
+      CurrentEffect.switch3 = false;
+      inputReceived = true;
+    }
+
+    // Handle switch 4
+
+    if (Terrarium.buttons[SWITCH_4].RisingEdge()) {
+      CurrentEffect.switch4 = true;
+      inputReceived = true;
+    } else if (Terrarium.buttons[SWITCH_4].FallingEdge()) {
+      CurrentEffect.switch4 = false;
+      inputReceived = true;
+    }
+
+    if (inputReceived) {
+      switch (CurrentEffect.type) {
+        case CLEAN:
+        default:
+          drawClean();
+
+          break;
+      }
+    }
+
+    delay(1);
   }
 }
 
 void onAudio(float **in, float **out, size_t size) {
   // Bypass
-  memcpy(*in, *out, size * sizeof(float) * Seed.num_channels);
+  memcpy(out, in, sizeof(float) * size);
+}
+
+void printlnCentered(char *text) {
+  auto length = strlen(text);
+
+  for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
+    Display.print(" ");
+
+  Display.println(text);
 }
 
 void setup() {
-  // System led on
+  // Seed led on
+  Led seedLed;
 
-  Led systemLed;
+  seedLed.Init(LED_BUILTIN, false);
+  seedLed.Set(true);
 
-  systemLed.Init(LED_BUILTIN, false);
-  systemLed.Set(true);
+  // Init terrarium
+  Terrarium = DAISY.init(DAISY_SEED, AUDIO_SR_96K);
 
-  // Init seed
+  Terrarium.num_channels = 1;
+  Terrarium.numControls = 6;
+  Terrarium.numLeds = 2;
+  Terrarium.numSwitches = 6;
 
-  Seed = DAISY.init(DAISY_SEED, AUDIO_SR_48K);
-  DAISY.begin(onAudio);
+  Terrarium.buttons[FOOT_SWITCH_1].Init(1000, true, PIN_FOOT_SWITCH_1, INPUT_PULLUP);
+  Terrarium.buttons[FOOT_SWITCH_2].Init(1000, true, PIN_FOOT_SWITCH_2, INPUT_PULLUP);
+
+  Terrarium.buttons[SWITCH_1].Init(1000, true, PIN_SWITCH_1, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_2].Init(1000, true, PIN_SWITCH_2, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_3].Init(1000, true, PIN_SWITCH_3, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_4].Init(1000, true, PIN_SWITCH_4, INPUT_PULLUP);
+
+  Terrarium.leds[LED_1].Init(PIN_LED_1, false);
+  Terrarium.leds[LED_2].Init(PIN_LED_2, false);
+
+  DAISY.SetAudioBlockSize(1);
+  DAISY.StartAudio(onAudio);
 
   // Init display
 
   Display.begin();
-
   Display.setFont(&Px437_IBM_VGA_8x148pt7b);
-  Display.setTextColor(0);
 
   // Display splash image
 
-  Display.fillScreen(COLOR);
-  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, 0);
+  Display.fillScreen(0);
+  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
-  // Wait
   delay(SPLASH_WAIT_MS);
 
   // Display main screen
-
-  Display.fillScreen(COLOR);
-  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
-
-  for (auto i = 0; i < 7; ++i)
-    Display.println("");
-
-  printlnCenteredSeparator("Clean");
-  printlnCentered("* 1011 *");
+  drawClean();
 
   // System led off
-  systemLed.Set(false);
+  seedLed.Set(false);
 }
