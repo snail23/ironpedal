@@ -108,6 +108,7 @@ void onAudio(float **in, float **out, size_t size) {
     case MASTER:
     default:
       Effect::Master::onAudio(in[0], out[0], size);
+      Effect::Master::onPostAudio(in[0], out[0], size);
 
       break;
   }
