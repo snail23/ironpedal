@@ -46,18 +46,8 @@ void onDraw() {
   Display.setTextColor(COLOR);
   sprintf(buf, "%3u %2u.%uK  %3u", (uint32_t)round(High.Value()), (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (uint32_t)round(Gain.Value() * 100.0f));
   printlnCentered(buf);
-  printlnCentered(0);
 
-  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
-  sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
-  printlnCentered(buf);
-
-  Display.setTextColor(COLOR_DARK);
-  sprintf(buf, "%s    %s", Profile1 ? "**" : "  ", Profile2 ? "**" : "  ");
-  printlnCentered(buf);
-
-  Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("OVERDRIVE");
+  printFooter("OVERDRIVE");
 }
 
 void onInput() {
