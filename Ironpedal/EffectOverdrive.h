@@ -20,7 +20,7 @@ void onAudio(float *in, float *out, size_t size) {
     Hpf.Process(Overdrive.Process(in[i]));
     Lpf.Process(Hpf.High());
 
-    out[i] = Lpf.Low() * Gain.Value();
+    out[i] = (in[i] * Blend.Value() + Lpf.Low() * (1.0f - Blend.Value())) * Gain.Value();
   }
 }
 
