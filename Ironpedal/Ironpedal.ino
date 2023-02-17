@@ -4,6 +4,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1351.h>
 #include <DaisyDuino.h>
+#include <utility/DaisySP/daisysp.h>
 
 #include "Config.h"
 #include "Effect.h"
@@ -12,6 +13,7 @@
 #include "Util.h"
 
 #include "EffectMaster.h"
+#include "EffectOverdrive.h"
 
 bool switchPressed() {
   bool inputReceived = false;
@@ -104,21 +106,31 @@ void loop() {
 }
 
 void onAudio(float **in, float **out, size_t size) {
-  switch (CurrentEffect.type) {
-    case MASTER:
-    default:
-      Effect::Master::onAudio(in[0], out[0], size);
-      Effect::Master::onPostAudio(in[0], out[0], size);
+  Effect::Master::onAudio(in[0], out[0], size);
 
+  switch (CurrentEffect.type) {
+    case OVERDRIVE:
+      Effect::Overdrive::onAudio(in[0], out[0], size);
+      break;
+
+    default:
       break;
   }
+
+  Effect::Master::onPostAudio(in[0], out[0], size);
 }
 
 void onInput() {
   switch (CurrentEffect.type) {
+    case OVERDRIVE:
+      Effect::Overdrive::onInput();
+      Effect::Overdrive::onDraw();
+
+      break;
+
     case MASTER:
     default:
-      Effect::Master::onUpdate();
+      Effect::Master::onInput();
       Effect::Master::onDraw();
 
       break;
@@ -158,13 +170,8 @@ void setup() {
   Terrarium.leds[LED_1].Init(PIN_LED_1, false);
   Terrarium.leds[LED_2].Init(PIN_LED_2, false);
 
-  switch (CurrentEffect.type) {
-    case MASTER:
-    default:
-      Effect::Master::onSetup();
-
-      break;
-  }
+  Effect::Master::onSetup();
+  Effect::Overdrive::onSetup();
 
   Seed.SetAudioBlockSize(1);
   Seed.StartAudio(onAudio);

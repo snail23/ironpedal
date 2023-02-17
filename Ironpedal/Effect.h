@@ -2,7 +2,8 @@
 // https://github.com/snail23/ironpedal
 
 enum EffectType {
-  MASTER
+  MASTER,
+  OVERDRIVE
 };
 
 enum TerrariumKnob {
@@ -33,9 +34,9 @@ union {
   EffectType type;
 
   struct {
-    bool switch1 : 1;
-    bool switch2 : 1;
-    bool switch3 : 1;
     bool switch4 : 1;
+    bool switch3 : 1;
+    bool switch2 : 1;
+    bool switch1 : 1;
   };
 } CurrentEffect;

@@ -2,19 +2,22 @@
 // https://github.com/snail23/ironpedal
 
 namespace Effect {
-namespace Master {
+namespace Overdrive {
 
+daisysp::Overdrive Overdrive;
+
+Parameter Blend;
+Parameter Drive;
 Parameter Gain;
 Parameter High;
 Parameter Low;
-Parameter Volume;
 
 Svf Hpf;
 Svf Lpf;
 
 void onAudio(float *in, float *out, size_t size) {
   for (auto i = 0; i < size; ++i) {
-    Hpf.Process(in[i]);
+    Hpf.Process(Overdrive.Process(in[i]));
     Lpf.Process(Hpf.High());
 
     out[i] = Lpf.Low() * Gain.Value();
@@ -28,10 +31,10 @@ void onDraw() {
   Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("TUNER      VOL");
+  printlnCentered("BLEND    DRIVE");
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "G+++       %3u", (uint32_t)round(Volume.Value() * 100.0f));
+  sprintf(buf, "%3u        %3u", (uint32_t)round(Blend.Value() * 100.0f), (uint32_t)round(Drive.Value() * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
@@ -54,26 +57,23 @@ void onDraw() {
   printlnCentered(buf);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("MASTER");
+  printlnCentered("OVERDRIVE");
 }
 
 void onInput() {
+  Blend.Process();
+  Overdrive.SetDrive(Drive.Process());
   Gain.Process();
   Hpf.SetFreq(High.Process());
   Lpf.SetFreq(Low.Process());
-  Volume.Process();
-}
-
-void onPostAudio(float *in, float *out, size_t size) {
-  for (auto i = 0; i < size; ++i)
-    out[i] *= Volume.Value();
 }
 
 void onSetup() {
+  Blend.Init(Terrarium.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
+  Drive.Init(Terrarium.controls[KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
   Gain.Init(Terrarium.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
   High.Init(Terrarium.controls[KNOB_4], 20.0f, 160.0f, Parameter::LINEAR);
   Low.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
-  Volume.Init(Terrarium.controls[KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
 
   Hpf.Init(Seed.AudioSampleRate());
   Hpf.SetRes(0.0f);
