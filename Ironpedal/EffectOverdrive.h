@@ -31,20 +31,20 @@ void onDraw() {
   Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("BLEND    DRIVE");
+  printlnCentered("BLEND      DRIVE");
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "%3u        %3u", (uint32_t)round(Blend.Value() * 100.0f), (uint32_t)round(Drive.Value() * 100.0f));
+  sprintf(buf, "%3u          %3u", (uint32_t)round(Blend.Value() * 100.0f), (uint32_t)round(Drive.Value() * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("HIGH LOW  GAIN");
+  printlnCentered("HIGH  LOW   GAIN");
 
   auto low = Low.Value() / 1000.0f;
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "%3u %2u.%uK  %3u", (uint32_t)round(High.Value()), (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (uint32_t)round(Gain.Value() * 100.0f));
+  sprintf(buf, "%3u  %2u.%uK  %4d", (uint32_t)round(High.Value()), (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)round((Gain.Value() - 1.0f) * 100.0f));
   printlnCentered(buf);
 
   printFooter("OVERDRIVE");
@@ -61,7 +61,7 @@ void onInput() {
 void onSetup() {
   Blend.Init(Terrarium.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
   Drive.Init(Terrarium.controls[KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
-  Gain.Init(Terrarium.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
+  Gain.Init(Terrarium.controls[KNOB_6], 0.0f, 2.0f, Parameter::LINEAR);
   High.Init(Terrarium.controls[KNOB_4], 20.0f, 160.0f, Parameter::LINEAR);
   Low.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
 

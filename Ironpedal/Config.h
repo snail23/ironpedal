@@ -7,7 +7,7 @@
 
 #define FONT_WIDTH 8
 #define SPLASH_WAIT_MS 1500
-#define VERSION "v0.1.1"
+#define VERSION "1.0.1"
 
 // General pin configuration
 

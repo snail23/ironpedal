@@ -2,8 +2,8 @@
 // https://github.com/snail23/ironpedal
 
 enum EffectType {
-  MASTER,
-  OVERDRIVE
+  MASTER,    // 0000
+  OVERDRIVE  // 0001
 };
 
 enum TerrariumKnob {
