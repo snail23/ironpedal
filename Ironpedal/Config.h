@@ -5,7 +5,6 @@
 #define COLOR_DARK 0xA008   // 30% darker: 0xA20045
 #define COLOR_LIGHT 0xFB9B  // 30% lighter: 0xFF70DE
 
-#define FONT_WIDTH 8
 #define VERSION "1.0.1"
 
 // General pin configuration
