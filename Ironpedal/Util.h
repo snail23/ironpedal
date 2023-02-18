@@ -1,6 +1,16 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
+void eepromRead(void *dest, size_t offset, size_t size) {
+  for (auto i = 0; i < size; ++i)
+    ((uint8_t *)dest)[i] = EEPROM[offset + i];
+}
+
+void eepromWrite(void *src, size_t offset, size_t size) {
+  for (auto i = 0; i < size; ++i)
+    EEPROM[offset + i] = ((uint8_t *)src)[i];
+}
+
 void printlnCentered(char *text) {
   auto length = strlen(text);
 
@@ -23,7 +33,7 @@ void printFooter(char *effectName) {
 
   Display.setTextColor(COLOR_DARK);
 
-  if (CurrentEffect.id == Effect::EFFECT_MASTER) {
+  if (CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id >= Effect::EFFECT_LAST) {
     if (Effects[CurrentEffect.id].locked) {
       Display.setTextColor(COLOR_DARK);
       printlnCentered("LOCKED");

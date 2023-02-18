@@ -3,7 +3,9 @@
 
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1351.h>
+
 #include <DaisyDuino.h>
+#include <EEPROM.h>
 #include <utility/DaisySP/daisysp.h>
 
 #include "Config.h"
@@ -16,19 +18,37 @@
 #include "EffectOverdrive.h"
 
 bool switchPressed() {
-  bool inputReceived = false;
+  auto inputReceived = false;
 
   // Handle foot switch 1
 
   if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
-    Effects[CurrentEffect.id].enabled = !Effects[CurrentEffect.id].enabled;
+    FootSwitch1TimeHeld = System::GetNow();
+  } else if (Terrarium.buttons[FOOT_SWITCH_1].FallingEdge()) {
+    auto now = System::GetNow();
+
+    if (now - FootSwitch1TimeHeld > 3000) {
+      eepromRead(&Effects, 0, sizeof(Effect::Effect) * Effect::EFFECT_LAST);
+      FootSwitch1TimeHeld = now;
+    } else
+      Effects[CurrentEffect.id].enabled = !Effects[CurrentEffect.id].enabled;
+
     inputReceived = true;
   }
 
   // Handle foot switch 2
 
   if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
-    Effects[CurrentEffect.id].locked = !Effects[CurrentEffect.id].locked;
+    FootSwitch2TimeHeld = System::GetNow();
+  } else if (Terrarium.buttons[FOOT_SWITCH_2].FallingEdge()) {
+    auto now = System::GetNow();
+
+    if (now - FootSwitch2TimeHeld > 3000) {
+      eepromWrite(&Effects, 0, sizeof(Effect::Effect) * Effect::EFFECT_LAST);
+      FootSwitch2TimeHeld = now;
+    } else
+      Effects[CurrentEffect.id].locked = !Effects[CurrentEffect.id].locked;
+
     inputReceived = true;
   }
 
@@ -78,18 +98,18 @@ bool switchPressed() {
 void loop() {
   bool inputReceived;
 
-  uint32_t switchValues[Terrarium.numSwitches];
+  uint32_t controlValues[Terrarium.numControls];
   uint32_t val;
 
   while (true) {
     Terrarium.ProcessAllControls();
     inputReceived = false;
 
-    for (auto i = 0; i < Terrarium.numSwitches; ++i) {
+    for (auto i = 0; i < Terrarium.numControls; ++i) {
       val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
 
-      if (switchValues[i] != val) {
-        switchValues[i] = val;
+      if (controlValues[i] != val) {
+        controlValues[i] = val;
         inputReceived = true;
       }
     }
@@ -111,7 +131,7 @@ void onAudio(float **in, float **out, size_t size) {
 }
 
 void onInput() {
-  Terrarium.leds[LED_1].Set(Effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER ? true : false);
+  Terrarium.leds[LED_1].Set(Effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id >= Effect::EFFECT_LAST ? true : false);
   Terrarium.leds[LED_2].Set(Effects[CurrentEffect.id].locked ? true : false);
 
   switch (CurrentEffect.id) {
@@ -186,7 +206,7 @@ void setup() {
   Display.fillScreen(0);
   Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
-  delay(SPLASH_WAIT_MS);
+  System::Delay(1500);
 
   // Initial update
   onInput();

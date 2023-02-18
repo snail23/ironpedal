@@ -32,3 +32,6 @@ DaisyHardware Terrarium;
 
 Effect::Effect Effects[Effect::EFFECT_LAST];
 Effect::Type CurrentEffect;
+
+uint32_t FootSwitch1TimeHeld = 0;
+uint32_t FootSwitch2TimeHeld = 0;
