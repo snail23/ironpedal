@@ -18,10 +18,19 @@ void printFooter(char *effectName) {
   sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
   printlnCentered(buf);
 
-  Display.setTextColor(COLOR_DARK);
-  sprintf(buf, "%s    %s", Profile1 ? "**" : "  ", Profile2 ? "**" : "  ");
-  printlnCentered(buf);
-
   Display.setTextColor(COLOR_LIGHT);
   printlnCentered(effectName);
+
+  Display.setTextColor(COLOR_DARK);
+
+  if (CurrentEffect.id == Effect::EFFECT_MASTER) {
+    if (Effects[CurrentEffect.id].locked) {
+      Display.setTextColor(COLOR_DARK);
+      printlnCentered("LOCKED");
+    }
+  } else {
+    Display.setTextColor(COLOR_DARK);
+    sprintf(buf, "%s%s", Effects[CurrentEffect.id].enabled ? "ON" : "OFF", Effects[CurrentEffect.id].locked ? " / LOCKED" : "");
+    printlnCentered(buf);
+  }
 }

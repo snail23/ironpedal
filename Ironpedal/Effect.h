@@ -1,37 +1,16 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
-enum EffectType {
-  MASTER,    // 0000
-  OVERDRIVE  // 0001
+namespace Effect {
+
+enum Id {
+  EFFECT_MASTER,     // 0000
+  EFFECT_OVERDRIVE,  // 0001
+  EFFECT_LAST
 };
 
-enum TerrariumKnob {
-  KNOB_1,
-  KNOB_2,
-  KNOB_3,
-  KNOB_4,
-  KNOB_5,
-  KNOB_6
-};
-
-enum TerrariumLed {
-  LED_1,
-  LED_2
-};
-
-enum TerrariumSwitch {
-  FOOT_SWITCH_1,
-  FOOT_SWITCH_2,
-
-  SWITCH_1,
-  SWITCH_2,
-  SWITCH_3,
-  SWITCH_4
-};
-
-union {
-  EffectType type;
+union Type {
+  Id id = EFFECT_MASTER;
 
   struct {
     bool switch4 : 1;
@@ -39,4 +18,13 @@ union {
     bool switch2 : 1;
     bool switch1 : 1;
   };
-} CurrentEffect;
+};
+
+struct Effect {
+  bool enabled = false;
+  bool locked = false;
+
+  Type type;
+};
+
+}

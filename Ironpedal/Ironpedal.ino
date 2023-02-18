@@ -21,19 +21,15 @@ bool switchPressed() {
   // Handle foot switch 1
 
   if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
-    Profile1 = !Profile1;
+    Effects[CurrentEffect.id].enabled = !Effects[CurrentEffect.id].enabled;
     inputReceived = true;
-
-    Terrarium.leds[LED_1].Set(Profile1 ? true : false);
   }
 
   // Handle foot switch 2
 
   if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
-    Profile2 = !Profile2;
+    Effects[CurrentEffect.id].locked = !Effects[CurrentEffect.id].locked;
     inputReceived = true;
-
-    Terrarium.leds[LED_2].Set(Profile2 ? true : false);
   }
 
   // Handle switch 1
@@ -101,36 +97,37 @@ void loop() {
     if (inputReceived || switchPressed())
       onInput();
 
-    delay(1);
+    System::Delay(1);
   }
 }
 
 void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onAudio(in[0], out[0], size);
 
-  switch (CurrentEffect.type) {
-    case OVERDRIVE:
-      Effect::Overdrive::onAudio(in[0], out[0], size);
-      break;
-
-    default:
-      break;
-  }
+  if (Effects[Effect::EFFECT_OVERDRIVE].enabled)
+    Effect::Overdrive::onAudio(in[0], out[0], size);
 
   Effect::Master::onPostAudio(in[0], out[0], size);
 }
 
 void onInput() {
-  switch (CurrentEffect.type) {
-    case OVERDRIVE:
-      Effect::Overdrive::onInput();
+  Terrarium.leds[LED_1].Set(Effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER ? true : false);
+  Terrarium.leds[LED_2].Set(Effects[CurrentEffect.id].locked ? true : false);
+
+  switch (CurrentEffect.id) {
+    case Effect::EFFECT_OVERDRIVE:
+      if (!Effects[Effect::EFFECT_OVERDRIVE].locked)
+        Effect::Overdrive::onInput();
+
       Effect::Overdrive::onDraw();
 
       break;
 
-    case MASTER:
+    case Effect::EFFECT_MASTER:
     default:
-      Effect::Master::onInput();
+      if (!Effects[Effect::EFFECT_MASTER].locked)
+        Effect::Master::onInput();
+
       Effect::Master::onDraw();
 
       break;
