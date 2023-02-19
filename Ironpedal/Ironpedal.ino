@@ -105,19 +105,19 @@ void loop() {
     Terrarium.ProcessAllControls();
     inputReceived = false;
 
-    for (auto i = 0; i < Terrarium.numControls; ++i) {
-      val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
+    if (!Effects[CurrentEffect.id].locked) {
+      for (auto i = 0; i < Terrarium.numControls; ++i) {
+        val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
 
-      if (controlValues[i] != val) {
-        controlValues[i] = val;
-        inputReceived = true;
+        if (controlValues[i] != val) {
+          controlValues[i] = val;
+          inputReceived = true;
+        }
       }
     }
 
     if (inputReceived || switchPressed())
       onInput();
-
-    System::Delay(1);
   }
 }
 
@@ -207,7 +207,4 @@ void setup() {
   Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
   System::Delay(1500);
-
-  // Initial update
-  onInput();
 }
