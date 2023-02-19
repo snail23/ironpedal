@@ -162,27 +162,27 @@ void setup() {
   seedLed.Set(true);
 
   // Init terrarium
-  Terrarium = Seed.init(DAISY_SEED, AUDIO_SR_96K);
+  Terrarium = Seed.init(DAISY_SEED);
 
   Terrarium.num_channels = 1;
   Terrarium.numControls = 6;
   Terrarium.numLeds = 2;
   Terrarium.numSwitches = 6;
 
-  Terrarium.buttons[FOOT_SWITCH_1].Init(1000, true, PIN_FOOT_SWITCH_1, INPUT_PULLUP);
-  Terrarium.buttons[FOOT_SWITCH_2].Init(1000, true, PIN_FOOT_SWITCH_2, INPUT_PULLUP);
+  Terrarium.buttons[FOOT_SWITCH_1].Init(1000.0f, true, PIN_FOOT_SWITCH_1, INPUT_PULLUP);
+  Terrarium.buttons[FOOT_SWITCH_2].Init(1000.0f, true, PIN_FOOT_SWITCH_2, INPUT_PULLUP);
 
-  Terrarium.buttons[SWITCH_1].Init(1000, true, PIN_SWITCH_1, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_2].Init(1000, true, PIN_SWITCH_2, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_3].Init(1000, true, PIN_SWITCH_3, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_4].Init(1000, true, PIN_SWITCH_4, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_1].Init(1000.0f, true, PIN_SWITCH_1, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_2].Init(1000.0f, true, PIN_SWITCH_2, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_3].Init(1000.0f, true, PIN_SWITCH_3, INPUT_PULLUP);
+  Terrarium.buttons[SWITCH_4].Init(1000.0f, true, PIN_SWITCH_4, INPUT_PULLUP);
 
-  Terrarium.controls[KNOB_1].Init(PIN_KNOB_1, 1000);
-  Terrarium.controls[KNOB_2].Init(PIN_KNOB_2, 1000);
-  Terrarium.controls[KNOB_3].Init(PIN_KNOB_3, 1000);
-  Terrarium.controls[KNOB_4].Init(PIN_KNOB_4, 1000);
-  Terrarium.controls[KNOB_5].Init(PIN_KNOB_5, 1000);
-  Terrarium.controls[KNOB_6].Init(PIN_KNOB_6, 1000);
+  Terrarium.controls[KNOB_1].Init(PIN_KNOB_1, 1000.0f);
+  Terrarium.controls[KNOB_2].Init(PIN_KNOB_2, 1000.0f);
+  Terrarium.controls[KNOB_3].Init(PIN_KNOB_3, 1000.0f);
+  Terrarium.controls[KNOB_4].Init(PIN_KNOB_4, 1000.0f);
+  Terrarium.controls[KNOB_5].Init(PIN_KNOB_5, 1000.0f);
+  Terrarium.controls[KNOB_6].Init(PIN_KNOB_6, 1000.0f);
 
   Terrarium.leds[LED_1].Init(PIN_LED_1, false);
   Terrarium.leds[LED_2].Init(PIN_LED_2, false);
@@ -190,7 +190,7 @@ void setup() {
   Effect::Master::onSetup();
   Effect::Overdrive::onSetup();
 
-  Seed.SetAudioBlockSize(1);
+  Seed.SetAudioBlockSize(128);
   Seed.StartAudio(onAudio);
 
   // System led off
