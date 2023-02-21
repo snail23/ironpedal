@@ -7,7 +7,7 @@ enum Id {
   EFFECT_MASTER,     // 0000
   EFFECT_OVERDRIVE,  // 0001
   EFFECT_CHORUS,     // 0010
-  EFFECT_LAST
+  EFFECT_LAST = 16
 };
 
 union Type {

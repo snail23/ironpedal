@@ -15,7 +15,7 @@ void printFooter(char *effectName) {
 
   printlnCentered(0);
   Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
-  
+
   sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
   printlnCentered(buf);
 

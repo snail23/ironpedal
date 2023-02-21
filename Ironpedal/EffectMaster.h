@@ -24,7 +24,7 @@ void onAudio(float *in, float *out, size_t size) {
 void onDraw() {
   char buf[16];
   printHeader();
-  
+
   Display.setTextColor(COLOR_LIGHT);
   printlnCentered("IRONPEDAL  VOL");
 
