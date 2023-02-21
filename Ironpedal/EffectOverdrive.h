@@ -26,9 +26,7 @@ void onAudio(float *in, float *out, size_t size) {
 
 void onDraw() {
   char buf[16];
-
-  Display.fillScreen(0);
-  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
+  printHeader();
 
   Display.setTextColor(COLOR_LIGHT);
   printlnCentered("BLEND    DRIVE");

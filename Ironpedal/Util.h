@@ -12,9 +12,10 @@ void printlnCentered(char *text) {
 
 void printFooter(char *effectName) {
   char buf[16];
-  printlnCentered(0);
 
+  printlnCentered(0);
   Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
+  
   sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
   printlnCentered(buf);
 
@@ -33,4 +34,9 @@ void printFooter(char *effectName) {
     sprintf(buf, "%s%s", Storage.GetSettings().effects[CurrentEffect.id].enabled ? "ON" : "OFF", Storage.GetSettings().effects[CurrentEffect.id].locked ? " / LOCKED" : "");
     printlnCentered(buf);
   }
+}
+
+void printHeader() {
+  Display.fillScreen(0);
+  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 }
