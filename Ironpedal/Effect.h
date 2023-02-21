@@ -12,7 +12,8 @@ enum Id {
 union Type {
   Id id = EFFECT_MASTER;
 
-  struct {
+  struct
+  {
     bool switch4 : 1;
     bool switch3 : 1;
     bool switch2 : 1;
@@ -24,6 +25,7 @@ struct Effect {
   bool enabled = false;
   bool locked = false;
 
+  float values[KNOB_LAST];
   Type type;
 };
 

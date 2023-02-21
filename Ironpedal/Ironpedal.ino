@@ -5,10 +5,9 @@
 #include <Adafruit_SSD1351.h>
 
 #include <DaisyDuino.h>
-#include <EEPROM.h>
-#include <utility/DaisySP/daisysp.h>
 
 #include "Config.h"
+#include "Terrarium.h"
 #include "Effect.h"
 #include "Globals.h"
 #include "Res.h"
@@ -28,10 +27,10 @@ bool switchPressed() {
     auto now = System::GetNow();
 
     if (now - FootSwitch1TimeHeld > 3000) {
-      eepromRead(&Effects, 0, sizeof(Effect::Effect) * Effect::EFFECT_LAST);
+      Storage.RestoreDefaults();
       FootSwitch1TimeHeld = now;
     } else
-      Effects[CurrentEffect.id].enabled = !Effects[CurrentEffect.id].enabled;
+      Storage.GetSettings().effects[CurrentEffect.id].enabled = !Storage.GetSettings().effects[CurrentEffect.id].enabled;
 
     inputReceived = true;
   }
@@ -44,10 +43,12 @@ bool switchPressed() {
     auto now = System::GetNow();
 
     if (now - FootSwitch2TimeHeld > 3000) {
-      eepromWrite(&Effects, 0, sizeof(Effect::Effect) * Effect::EFFECT_LAST);
+      Storage.Save();
+      Storage.GetDefaultSettings() = Storage.GetSettings();
+
       FootSwitch2TimeHeld = now;
     } else
-      Effects[CurrentEffect.id].locked = !Effects[CurrentEffect.id].locked;
+      Storage.GetSettings().effects[CurrentEffect.id].locked = !Storage.GetSettings().effects[CurrentEffect.id].locked;
 
     inputReceived = true;
   }
@@ -105,7 +106,7 @@ void loop() {
     Terrarium.ProcessAllControls();
     inputReceived = false;
 
-    if (!Effects[CurrentEffect.id].locked) {
+    if (!Storage.GetSettings().effects[CurrentEffect.id].locked) {
       for (auto i = 0; i < Terrarium.numControls; ++i) {
         val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
 
@@ -124,30 +125,26 @@ void loop() {
 void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onAudio(in[0], out[0], size);
 
-  if (Effects[Effect::EFFECT_OVERDRIVE].enabled)
+  if (Storage.GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
     Effect::Overdrive::onAudio(in[0], out[0], size);
 
   Effect::Master::onPostAudio(in[0], out[0], size);
 }
 
 void onInput() {
-  Terrarium.leds[LED_1].Set(Effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id >= Effect::EFFECT_LAST ? true : false);
-  Terrarium.leds[LED_2].Set(Effects[CurrentEffect.id].locked ? true : false);
+  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id >= Effect::EFFECT_LAST ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked ? true : false);
 
   switch (CurrentEffect.id) {
     case Effect::EFFECT_OVERDRIVE:
-      if (!Effects[Effect::EFFECT_OVERDRIVE].locked)
-        Effect::Overdrive::onInput();
-
+      Effect::Overdrive::onInput();
       Effect::Overdrive::onDraw();
 
       break;
 
     case Effect::EFFECT_MASTER:
     default:
-      if (!Effects[Effect::EFFECT_MASTER].locked)
-        Effect::Master::onInput();
-
+     Effect::Master::onInput();
       Effect::Master::onDraw();
 
       break;
@@ -187,8 +184,33 @@ void setup() {
   Terrarium.leds[LED_1].Init(PIN_LED_1, false);
   Terrarium.leds[LED_2].Init(PIN_LED_2, false);
 
+  // Init QSPI
+
+  QSPIHandle::Config qspiConfig;
+
+  qspiConfig.device = QSPIHandle::Config::IS25LP064A;
+  qspiConfig.mode = QSPIHandle::Config::MEMORY_MAPPED;
+
+  qspiConfig.pin_config.clk = PIN_QSPI_CLK;
+  qspiConfig.pin_config.io0 = PIN_QSPI_IO0;
+  qspiConfig.pin_config.io1 = PIN_QSPI_IO1;
+  qspiConfig.pin_config.io2 = PIN_QSPI_IO2;
+  qspiConfig.pin_config.io3 = PIN_QSPI_IO3;
+  qspiConfig.pin_config.ncs = PIN_QSPI_NCS;
+
+  QSPI.Init(qspiConfig);
+
+  // Init storage
+
+  Storage.Init({});
+  Storage.GetDefaultSettings() = Storage.GetSettings();
+
+  // Init effects
+
   Effect::Master::onSetup();
   Effect::Overdrive::onSetup();
+
+  // Init audio
 
   Seed.SetAudioBlockSize(128);
   Seed.StartAudio(onAudio);
@@ -207,4 +229,5 @@ void setup() {
   Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
   System::Delay(1500);
+  onInput();
 }

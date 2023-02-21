@@ -35,3 +35,12 @@
 #define PIN_SPI_MISO D1
 #define PIN_SPI_MOSI D6
 #define PIN_SPI_SCK D2
+
+// QSPI pin configuration
+
+#define PIN_QSPI_CLK dsy_pin(DSY_GPIOF, 10)
+#define PIN_QSPI_IO0 dsy_pin(DSY_GPIOF, 8)
+#define PIN_QSPI_IO1 dsy_pin(DSY_GPIOF, 9)
+#define PIN_QSPI_IO2 dsy_pin(DSY_GPIOF, 7)
+#define PIN_QSPI_IO3 dsy_pin(DSY_GPIOF, 6)
+#define PIN_QSPI_NCS dsy_pin(DSY_GPIOG, 6)
