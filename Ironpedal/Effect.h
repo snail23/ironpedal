@@ -6,11 +6,12 @@ namespace Effect {
 enum Id {
   EFFECT_MASTER,     // 0000
   EFFECT_OVERDRIVE,  // 0001
+  EFFECT_CHORUS,     // 0010
   EFFECT_LAST
 };
 
 union Type {
-  Id id = EFFECT_MASTER;
+  Id id;
 
   struct
   {
@@ -26,7 +27,6 @@ struct Effect {
   bool locked = false;
 
   float values[KNOB_LAST];
-  Type type;
 };
 
 }

@@ -13,6 +13,7 @@
 #include "Res.h"
 #include "Util.h"
 
+#include "EffectChorus.h"
 #include "EffectMaster.h"
 #include "EffectOverdrive.h"
 
@@ -43,8 +44,8 @@ bool switchPressed() {
     auto now = System::GetNow();
 
     if (now - FootSwitch2TimeHeld > 3000) {
-      Storage.Save();
       Storage.GetDefaultSettings() = Storage.GetSettings();
+      Storage.Save();
 
       FootSwitch2TimeHeld = now;
     } else
@@ -104,7 +105,7 @@ void loop() {
 
   while (true) {
     Terrarium.ProcessAllControls();
-    inputReceived = false;
+    inputReceived = switchPressed();
 
     if (!Storage.GetSettings().effects[CurrentEffect.id].locked) {
       for (auto i = 0; i < Terrarium.numControls; ++i) {
@@ -117,7 +118,7 @@ void loop() {
       }
     }
 
-    if (inputReceived || switchPressed())
+    if (inputReceived)
       onInput();
   }
 }
@@ -126,9 +127,12 @@ void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onAudio(in[0], out[0], size);
 
   if (Storage.GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
-    Effect::Overdrive::onAudio(in[0], out[0], size);
+    Effect::Overdrive::onAudio(out[0], out[0], size);
 
-  Effect::Master::onPostAudio(in[0], out[0], size);
+  if (Storage.GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
+    Effect::Chorus::onAudio(out[0], out[0], size);
+
+  Effect::Master::onPostAudio(out[0], out[0], size);
 }
 
 void onInput() {
@@ -136,6 +140,12 @@ void onInput() {
   Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked ? true : false);
 
   switch (CurrentEffect.id) {
+    case Effect::EFFECT_CHORUS:
+      Effect::Chorus::onInput();
+      Effect::Chorus::onDraw();
+
+      break;
+
     case Effect::EFFECT_OVERDRIVE:
       Effect::Overdrive::onInput();
       Effect::Overdrive::onDraw();
@@ -144,7 +154,7 @@ void onInput() {
 
     case Effect::EFFECT_MASTER:
     default:
-     Effect::Master::onInput();
+      Effect::Master::onInput();
       Effect::Master::onDraw();
 
       break;
@@ -207,6 +217,7 @@ void setup() {
 
   // Init effects
 
+  Effect::Chorus::onSetup();
   Effect::Master::onSetup();
   Effect::Overdrive::onSetup();
 
