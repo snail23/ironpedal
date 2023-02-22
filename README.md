@@ -1,6 +1,31 @@
 # Ironpedal
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
+# Features
+- 16 different effects
+- Save/load your effect settings to external flash via QSPI
+- Effects can individually be enabled/locked
+
+# Supported Effects
+| Effect     | Switch positions |
+| ---------- | ---------------- |
+| Master     | 0000             |
+| Overdrive  | 0001             |
+| Chorus     | 0010             |
+| Compressor | 0011             |
+
+# Usage
+| Operation                               | Instructions                                         |
+| --------------------------------------- | ---------------------------------------------------- |
+| Change the current effect screen        | Move the toggle switches into their correct position |
+| Enabling & disabling the current effect | Single tap the left foot switch                      |
+| Locking & unlocking the current effect  | Single tap the right foot switch                     |
+| Load saved effect settings              | Hold the left foot switch for 3 seconds              |
+| Save effect settings                    | Hold the right foot switch for 3 seconds             |
+
+# Physical build tutorial
+Todo.
+
 # Reporting bugs
 If you encounter a bug and wish to report it or have feature suggestions and other topics, please [open an issue](https://github.com/snail23/ironpedal/issues).
 
