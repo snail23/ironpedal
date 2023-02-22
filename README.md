@@ -2,6 +2,7 @@
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
 # Features
+- Retro looking small OLED display
 - 16 different effects
 - Save/load your effect settings to external flash via QSPI
 - Effects can individually be enabled/locked
@@ -28,6 +29,9 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Locking & unlocking the current effect  | Single tap the right foot switch                     |
 | Load saved effect settings              | Hold the left foot switch for 3 seconds              |
 | Save effect settings                    | Hold the right foot switch for 3 seconds             |
+
+# Pictures
+Todo.
 
 # Physical build tutorial
 Todo.
