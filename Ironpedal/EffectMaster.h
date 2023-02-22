@@ -29,7 +29,7 @@ void onDraw() {
   printlnCentered("IRONPEDAL  VOL");
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "VER " VERSION "  %3u", (uint32_t)round(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
+  sprintf(buf, "VER " VERSION "  %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
@@ -39,7 +39,7 @@ void onDraw() {
   auto low = Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] / 1000.0f;
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)round(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4]), (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)round((Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6] - 1.0f) * 100.0f));
+  sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6] - 1.0f) * 100.0f));
   printlnCentered(buf);
 
   printFooter("MASTER");

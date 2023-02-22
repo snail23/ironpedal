@@ -14,6 +14,7 @@
 #include "Util.h"
 
 #include "EffectChorus.h"
+#include "EffectCompressor.h"
 #include "EffectMaster.h"
 #include "EffectOverdrive.h"
 
@@ -126,6 +127,9 @@ void loop() {
 void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onAudio(in[0], out[0], size);
 
+  if (Storage.GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
+    Effect::Compressor::onAudio(out[0], out[0], size);
+
   if (Storage.GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
     Effect::Overdrive::onAudio(out[0], out[0], size);
 
@@ -143,6 +147,12 @@ void onInput() {
     case Effect::EFFECT_CHORUS:
       Effect::Chorus::onInput();
       Effect::Chorus::onDraw();
+
+      break;
+
+    case Effect::EFFECT_COMPRESSOR:
+      Effect::Compressor::onInput();
+      Effect::Compressor::onDraw();
 
       break;
 
@@ -218,6 +228,7 @@ void setup() {
   // Init effects
 
   Effect::Chorus::onSetup();
+  Effect::Compressor::onSetup();
   Effect::Master::onSetup();
   Effect::Overdrive::onSetup();
 

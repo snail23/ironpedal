@@ -4,9 +4,10 @@
 namespace Effect {
 
 enum Id {
-  EFFECT_MASTER,     // 0000
-  EFFECT_OVERDRIVE,  // 0001
-  EFFECT_CHORUS,     // 0010
+  EFFECT_MASTER,      // 0000
+  EFFECT_OVERDRIVE,   // 0001
+  EFFECT_CHORUS,      // 0010
+  EFFECT_COMPRESSOR,  // 0011
   EFFECT_LAST = 16
 };
 
