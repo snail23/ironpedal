@@ -22,13 +22,13 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Compressor        |           |         |                |
 
 # Usage
-| Operation                               | Instructions                                         |
-| --------------------------------------- | ---------------------------------------------------- |
-| Change the current effect screen        | Move the toggle switches into their correct position |
-| Enabling & disabling the current effect | Single tap the left foot switch                      |
-| Locking & unlocking the current effect  | Single tap the right foot switch                     |
-| Load saved effect settings              | Hold the left foot switch for 3 seconds              |
-| Save effect settings                    | Hold the right foot switch for 3 seconds             |
+| Operation                               | Instructions                                              |
+| --------------------------------------- | --------------------------------------------------------- |
+| Change the current effect screen        | Move the toggle switches into their correct position      |
+| Enabling & disabling the current effect | Single tap the left foot switch (has no effect on Master) |
+| Locking & unlocking the current effect  | Single tap the right foot switch                          |
+| Load saved effect settings              | Hold the left foot switch for 3 seconds                   |
+| Save effect settings                    | Hold the right foot switch for 3 seconds                  |
 
 # Pictures
 Todo.
