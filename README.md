@@ -14,6 +14,12 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Chorus     | 0010             |
 | Compressor | 0011             |
 
+# Effect order
+| Effects              | Effects   | Effects | Effects        |
+| -------------------- | --------- | ------- | -------------- |
+| Master: EQ & Pregain | Overdrive | Chorus  | Master: Volume |
+| Compressor           |           |         |                |
+
 # Usage
 | Operation                               | Instructions                                         |
 | --------------------------------------- | ---------------------------------------------------- |
