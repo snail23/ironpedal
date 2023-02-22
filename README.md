@@ -15,7 +15,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Chorus     | 0010             | Delay     | Depth  | Rate   | Feedback | LPF    | Gain    |
 | Compressor | 0011             | Threshold |        | Ratio  | Attack   |        | Release |
 
-# Effect order
+# Effect chain order
 | 1                 | 2         | 3       | 4              |
 | ----------------- | --------- | ------- | -------------- |
 | Master: EQ & Gain | Overdrive | Chorus  | Master: Volume |
