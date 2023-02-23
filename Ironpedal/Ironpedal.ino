@@ -112,7 +112,7 @@ void loop() {
     Terrarium.ProcessAllControls();
     inputReceived = switchPressed();
 
-    if (!Storage.GetSettings().effects[CurrentEffect.id].locked) {
+    if (!Storage.GetSettings().effects[CurrentEffect.id].locked && CurrentEffect.id != Effect::EFFECT_MISC) {
       for (auto i = 0; i < Terrarium.numControls; ++i) {
         val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
 
@@ -261,6 +261,9 @@ void setup() {
 
   Terrarium.leds[LED_1].Init(PIN_LED_1, false);
   Terrarium.leds[LED_2].Init(PIN_LED_2, false);
+  
+  // Audio buffer size
+  Seed.SetAudioBlockSize(128);
 
   // Init QSPI
 
@@ -292,8 +295,6 @@ void setup() {
   Effect::Reverb::onSetup();
 
   // Init audio
-
-  Seed.SetAudioBlockSize(128);
   Seed.StartAudio(onAudio);
 
   // System led off
