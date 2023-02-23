@@ -15,21 +15,23 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Chorus     | 0010             | Delay     | Depth    | Rate   | Feedback | LPF    | Gain    |
 | Compressor | 0011             | Threshold |          | Ratio  | Attack   |        | Release |
 | Reverb     | 0100             |           | Feedback |        |          | LPF    |         |
+| Misc       | 1111             |           |          |        |          |        |         |
 
 # Effect chain order
-| 1                 | 2         | 3       | 4              |
-| ----------------- | --------- | ------- | -------------- |
-| Master: EQ & Gain | Overdrive | Chorus  | Reverb         |
-| Compressor        |           |         | Master: Volume |
+| 1                 | 2         | 3       | 4                 |
+| ----------------- | --------- | ------- | ----------------- |
+| Master: EQ & Gain | Overdrive | Chorus  | Reverb            |
+| Compressor        |           |         | Master: Metronome |
+|                   |           |         | Master: Volume    |
 
 # Usage
-| Operation                               | Instructions                                              |
-| --------------------------------------- | --------------------------------------------------------- |
-| Change the current effect screen        | Move the toggle switches into their correct position      |
-| Enabling & disabling the current effect | Single tap the left foot switch (has no effect on Master) |
-| Locking & unlocking the current effect  | Single tap the right foot switch                          |
-| Load saved effect settings              | Hold the left foot switch for 3 seconds                   |
-| Save effect settings                    | Hold the right foot switch for 3 seconds                  |
+| Operation                               | Instructions                                                       |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| Change the current effect screen        | Move the toggle switches into their correct position               |
+| Enabling & disabling the current effect | Single tap the left foot switch (has no effect on Master and Misc) |
+| Locking & unlocking the current effect  | Single tap the right foot switch (has no effect on Misc)           |
+| Load saved effect settings              | Hold the left foot switch for 3 seconds                            |
+| Save effect settings                    | Hold the right foot switch for 3 seconds                           |
 
 # Pictures
 Todo.

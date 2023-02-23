@@ -16,6 +16,7 @@
 #include "EffectChorus.h"
 #include "EffectCompressor.h"
 #include "EffectMaster.h"
+#include "EffectMisc.h"
 #include "EffectOverdrive.h"
 #include "EffectReverb.h"
 
@@ -31,11 +32,13 @@ bool switchPressed() {
 
     if (now - FootSwitch1TimeHeld > 3000) {
       Storage.RestoreDefaults();
-      FootSwitch1TimeHeld = now;
-    } else
-      Storage.GetSettings().effects[CurrentEffect.id].enabled = !Storage.GetSettings().effects[CurrentEffect.id].enabled;
+      onInputAll();
 
-    inputReceived = true;
+      FootSwitch1TimeHeld = now;
+    } else {
+      Storage.GetSettings().effects[CurrentEffect.id].enabled = !Storage.GetSettings().effects[CurrentEffect.id].enabled;
+      inputReceived = true;
+    }
   }
 
   // Handle foot switch 2
@@ -144,8 +147,8 @@ void onAudio(float **in, float **out, size_t size) {
 }
 
 void onInput() {
-  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id >= Effect::EFFECT_LAST ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked ? true : false);
+  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
 
   switch (CurrentEffect.id) {
     case Effect::EFFECT_CHORUS:
@@ -167,6 +170,11 @@ void onInput() {
 
       break;
 
+    case Effect::EFFECT_MISC:
+      Effect::Misc::onDraw();
+
+      break;
+
     case Effect::EFFECT_OVERDRIVE:
       Effect::Overdrive::onInput();
       Effect::Overdrive::onDraw();
@@ -179,6 +187,17 @@ void onInput() {
 
       break;
   }
+}
+
+void onInputAll() {
+  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+
+  Effect::Chorus::onInput();
+  Effect::Compressor::onInput();
+  Effect::Master::onInput();
+  Effect::Overdrive::onInput();
+  Effect::Reverb::onInput();
 }
 
 void setup() {

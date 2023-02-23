@@ -4,9 +4,12 @@
 namespace Effect {
 namespace Master {
 
+Metro Metronome;
+
 Parameter Gain;
 Parameter High;
 Parameter Low;
+Parameter MetronomeBPM;
 Parameter Volume;
 
 Svf Hpf;
@@ -26,10 +29,10 @@ void onDraw() {
   printHeader();
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("IRONPEDAL  VOL");
+  printlnCentered("METRONOME  VOL");
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "VER " VERSION "  %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
+  sprintf(buf, "%3u BPM    %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] * 60.0f), (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
@@ -47,6 +50,7 @@ void onDraw() {
 
 void onInput() {
   if (!Storage.GetSettings().effects[EFFECT_MASTER].locked) {
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] = MetronomeBPM.Process();
     Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] = Volume.Process();
     Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4] = High.Process();
     Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] = Low.Process();
@@ -55,17 +59,19 @@ void onInput() {
 
   Hpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4]);
   Lpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5]);
+  Metronome.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1]);
 }
 
 void onPostAudio(float *in, float *out, size_t size) {
   for (auto i = 0; i < size; ++i)
-    out[i] *= Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3];
+    out[i] = (out[i] + Metronome.Process()) * Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3];
 }
 
 void onSetup() {
   Gain.Init(Terrarium.controls[KNOB_6], 0.0f, 2.0f, Parameter::LINEAR);
   High.Init(Terrarium.controls[KNOB_4], 20.0f, 160.0f, Parameter::LINEAR);
   Low.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
+  MetronomeBPM.Init(Terrarium.controls[KNOB_1], 0.0f, 3.0f, Parameter::LINEAR);
   Volume.Init(Terrarium.controls[KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
 
   Hpf.Init(Seed.AudioSampleRate());
@@ -77,6 +83,8 @@ void onSetup() {
   Lpf.SetDrive(0.0f);
   Lpf.SetFreq(Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
   Lpf.SetRes(0.0f);
+
+  Metronome.Init(Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_1], Seed.AudioSampleRate());
 }
 
 }
