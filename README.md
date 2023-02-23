@@ -8,18 +8,19 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Effects can individually be enabled/locked
 
 # Supported Effects
-| Effect     | Switch positions | Knob 1    | Knob 2 | Knob 3 | Knob 4   | Knob 5 | Knob 6  |
-| ---------- | ---------------- | --------- | ------ | ------ | -------- | ------ | ------- |
-| Master     | 0000             |           |        | Volume | HPF      | LPF    | Gain    |
-| Overdrive  | 0001             | Blend     |        | Drive  | HPF      | LPF    | Gain    |
-| Chorus     | 0010             | Delay     | Depth  | Rate   | Feedback | LPF    | Gain    |
-| Compressor | 0011             | Threshold |        | Ratio  | Attack   |        | Release |
+| Effect     | Switch positions | Knob 1    | Knob 2   | Knob 3 | Knob 4   | Knob 5 | Knob 6  |
+| ---------- | ---------------- | --------- | -------- | ------ | -------- | ------ | ------- |
+| Master     | 0000             |           |          | Volume | HPF      | LPF    | Gain    |
+| Overdrive  | 0001             | Blend     |          | Drive  | HPF      | LPF    | Gain    |
+| Chorus     | 0010             | Delay     | Depth    | Rate   | Feedback | LPF    | Gain    |
+| Compressor | 0011             | Threshold |          | Ratio  | Attack   |        | Release |
+| Reverb     | 0100             |           | Feedback |        |          | LPF    |         |
 
 # Effect chain order
 | 1                 | 2         | 3       | 4              |
 | ----------------- | --------- | ------- | -------------- |
-| Master: EQ & Gain | Overdrive | Chorus  | Master: Volume |
-| Compressor        |           |         |                |
+| Master: EQ & Gain | Overdrive | Chorus  | Reverb         |
+| Compressor        |           |         | Master: Volume |
 
 # Usage
 | Operation                               | Instructions                                              |

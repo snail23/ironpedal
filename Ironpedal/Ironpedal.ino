@@ -17,6 +17,7 @@
 #include "EffectCompressor.h"
 #include "EffectMaster.h"
 #include "EffectOverdrive.h"
+#include "EffectReverb.h"
 
 bool switchPressed() {
   auto inputReceived = false;
@@ -136,6 +137,9 @@ void onAudio(float **in, float **out, size_t size) {
   if (Storage.GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
     Effect::Chorus::onAudio(out[0], out[0], size);
 
+  if (Storage.GetSettings().effects[Effect::EFFECT_REVERB].enabled)
+    Effect::Reverb::onAudio(out[0], out[0], size);
+
   Effect::Master::onPostAudio(out[0], out[0], size);
 }
 
@@ -156,16 +160,22 @@ void onInput() {
 
       break;
 
+    case Effect::EFFECT_MASTER:
+    default:
+      Effect::Master::onInput();
+      Effect::Master::onDraw();
+
+      break;
+
     case Effect::EFFECT_OVERDRIVE:
       Effect::Overdrive::onInput();
       Effect::Overdrive::onDraw();
 
       break;
 
-    case Effect::EFFECT_MASTER:
-    default:
-      Effect::Master::onInput();
-      Effect::Master::onDraw();
+    case Effect::EFFECT_REVERB:
+      Effect::Reverb::onInput();
+      Effect::Reverb::onDraw();
 
       break;
   }
@@ -231,6 +241,7 @@ void setup() {
   Effect::Compressor::onSetup();
   Effect::Master::onSetup();
   Effect::Overdrive::onSetup();
+  Effect::Reverb::onSetup();
 
   // Init audio
 

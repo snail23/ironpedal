@@ -8,7 +8,9 @@ enum Id {
   EFFECT_OVERDRIVE,   // 0001
   EFFECT_CHORUS,      // 0010
   EFFECT_COMPRESSOR,  // 0011
-  EFFECT_LAST = 16
+  EFFECT_REVERB,      // 0100
+  EFFECT_MISC = 15,   // 1111
+  EFFECT_LAST
 };
 
 union Type {
