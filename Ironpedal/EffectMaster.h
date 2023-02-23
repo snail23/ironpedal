@@ -31,8 +31,15 @@ void onDraw() {
   Display.setTextColor(COLOR_LIGHT);
   printlnCentered("METRONOME  VOL");
 
+  auto bpm = (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] * 60.0f);
   Display.setTextColor(COLOR);
-  sprintf(buf, "%3u BPM    %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] * 60.0f), (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
+
+  if (bpm)
+    sprintf(buf, "%3u BPM    %3u", bpm, (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
+
+  else
+    sprintf(buf, "OFF        %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
+
   printlnCentered(buf);
   printlnCentered(0);
 

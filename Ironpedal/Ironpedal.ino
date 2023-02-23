@@ -146,26 +146,20 @@ void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onPostAudio(out[0], out[0], size);
 }
 
-void onInput() {
-  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-
+void onDraw() {
   switch (CurrentEffect.id) {
     case Effect::EFFECT_CHORUS:
-      Effect::Chorus::onInput();
       Effect::Chorus::onDraw();
 
       break;
 
     case Effect::EFFECT_COMPRESSOR:
-      Effect::Compressor::onInput();
       Effect::Compressor::onDraw();
 
       break;
 
     case Effect::EFFECT_MASTER:
     default:
-      Effect::Master::onInput();
       Effect::Master::onDraw();
 
       break;
@@ -176,17 +170,50 @@ void onInput() {
       break;
 
     case Effect::EFFECT_OVERDRIVE:
-      Effect::Overdrive::onInput();
       Effect::Overdrive::onDraw();
 
       break;
 
     case Effect::EFFECT_REVERB:
-      Effect::Reverb::onInput();
       Effect::Reverb::onDraw();
 
       break;
   }
+}
+
+void onInput() {
+  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+
+  switch (CurrentEffect.id) {
+    case Effect::EFFECT_CHORUS:
+      Effect::Chorus::onInput();
+
+      break;
+
+    case Effect::EFFECT_COMPRESSOR:
+      Effect::Compressor::onInput();
+
+      break;
+
+    case Effect::EFFECT_MASTER:
+    default:
+      Effect::Master::onInput();
+
+      break;
+
+    case Effect::EFFECT_OVERDRIVE:
+      Effect::Overdrive::onInput();
+
+      break;
+
+    case Effect::EFFECT_REVERB:
+      Effect::Reverb::onInput();
+
+      break;
+  }
+
+  onDraw();
 }
 
 void onInputAll() {
@@ -198,6 +225,8 @@ void onInputAll() {
   Effect::Master::onInput();
   Effect::Overdrive::onInput();
   Effect::Reverb::onInput();
+
+  onDraw();
 }
 
 void setup() {
