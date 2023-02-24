@@ -8,7 +8,7 @@ daisysp::Resonator Resonator;
 
 Parameter Brightness;
 Parameter Decay;
-Parameter Rate;
+Parameter Frequency;
 Parameter Stiffness;
 
 void onAudio(float *in, float *out, size_t size) {
@@ -41,7 +41,7 @@ void onDraw() {
 void onInput() {
   if (!Storage.GetSettings().effects[EFFECT_RESONATOR].locked) {
     Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] = Decay.Process();
-    Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3] = Rate.Process();
+    Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3] = Frequency.Process();
     Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] = Stiffness.Process();
     Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] = Brightness.Process();
   }
@@ -55,7 +55,7 @@ void onInput() {
 void onSetup() {
   Brightness.Init(Terrarium.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
   Decay.Init(Terrarium.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
-  Rate.Init(Terrarium.controls[KNOB_3], 110.0f, 880.0f, Parameter::LINEAR);
+  Frequency.Init(Terrarium.controls[KNOB_3], 110.0f, 880.0f, Parameter::LINEAR);
   Stiffness.Init(Terrarium.controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
 
   Resonator.Init(0.0f, 24, Seed.AudioSampleRate());
