@@ -58,7 +58,7 @@ void onSetup() {
   Rate.Init(Terrarium.controls[KNOB_3], 110.0f, 880.0f, Parameter::LINEAR);
   Stiffness.Init(Terrarium.controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
 
-  Resonator.Init(0.015f, 24, Seed.AudioSampleRate());
+  Resonator.Init(0.0f, 24, Seed.AudioSampleRate());
 
   Resonator.SetBrightness(Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6]);
   Resonator.SetDamping(Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1]);
