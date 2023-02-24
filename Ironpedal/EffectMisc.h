@@ -19,7 +19,6 @@ void onDraw() {
 
   Display.setTextColor(COLOR);
   printlnCentered("");
-  printlnCentered(buf);
 
   printFooter("MISC");
 }
