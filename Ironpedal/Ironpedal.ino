@@ -113,7 +113,7 @@ void loop() {
     Terrarium.ProcessAllControls();
     inputReceived = switchPressed();
 
-    if (!Storage.GetSettings().effects[CurrentEffect.id].locked && CurrentEffect.id != Effect::EFFECT_MISC) {
+    if (!Storage.GetSettings().effects[CurrentEffect.id].locked) {
       for (auto i = 0; i < Terrarium.numControls; ++i) {
         val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
 
@@ -147,6 +147,7 @@ void onAudio(float **in, float **out, size_t size) {
   if (Storage.GetSettings().effects[Effect::EFFECT_REVERB].enabled)
     Effect::Reverb::onAudio(out[0], out[0], size);
 
+  Effect::Misc::onPostAudio(out[0], out[0], size);
   Effect::Master::onPostAudio(out[0], out[0], size);
 }
 
@@ -192,7 +193,7 @@ void onDraw() {
 
 void onInput() {
   Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
 
   switch (CurrentEffect.id) {
     case Effect::EFFECT_CHORUS:
@@ -208,6 +209,11 @@ void onInput() {
     case Effect::EFFECT_MASTER:
     default:
       Effect::Master::onInput();
+
+      break;
+
+    case Effect::EFFECT_MISC:
+      Effect::Misc::onInput();
 
       break;
 
@@ -232,11 +238,12 @@ void onInput() {
 
 void onInputAll() {
   Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
 
   Effect::Chorus::onInput();
   Effect::Compressor::onInput();
   Effect::Master::onInput();
+  Effect::Misc::onInput();
   Effect::Overdrive::onInput();
   Effect::Resonator::onInput();
   Effect::Reverb::onInput();
@@ -306,6 +313,7 @@ void setup() {
   Effect::Chorus::onSetup();
   Effect::Compressor::onSetup();
   Effect::Master::onSetup();
+  Effect::Misc::onSetup();
   Effect::Overdrive::onSetup();
   Effect::Resonator::onSetup();
   Effect::Reverb::onSetup();

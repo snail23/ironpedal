@@ -32,7 +32,7 @@ void onDraw() {
   auto low = Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "%u.%uK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
+  sprintf(buf, "%u.%u KHZ", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
   printlnCentered(buf);
 
   printFooter("REVERB");

@@ -4,23 +4,27 @@
 namespace Effect {
 namespace Master {
 
-Metro Metronome;
+Parameter PostHigh;
+Parameter PostLow;
 
-Parameter Gain;
-Parameter High;
-Parameter Low;
-Parameter MetronomeBPM;
+Parameter PreGain;
+Parameter PreHigh;
+Parameter PreLow;
+
 Parameter Volume;
 
-Svf Hpf;
-Svf Lpf;
+Svf PostHpf;
+Svf PostLpf;
+
+Svf PreHpf;
+Svf PreLpf;
 
 void onAudio(float *in, float *out, size_t size) {
   for (auto i = 0; i < size; ++i) {
-    Hpf.Process(in[i]);
-    Lpf.Process(Hpf.High());
+    PreHpf.Process(in[i]);
+    PreLpf.Process(PreHpf.High());
 
-    out[i] = Lpf.Low() * Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6];
+    out[i] = PreLpf.Low() * Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3];
   }
 }
 
@@ -29,24 +33,19 @@ void onDraw() {
   printHeader();
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("METRONOME  VOL");
+  printlnCentered("HIGH LOW  GAIN");
 
-  auto bpm = (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] * 60.0f);
+  auto low = Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_2] / 1000.0f;
+
   Display.setTextColor(COLOR);
-
-  if (bpm)
-    sprintf(buf, "%3u BPM    %3u", bpm, (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
-
-  else
-    sprintf(buf, "OFF        %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] * 100.0f));
-
+  sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] - 1.0f) * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("HIGH LOW  GAIN");
+  printlnCentered("HIGH LOW   VOL");
 
-  auto low = Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] / 1000.0f;
+  low = Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] / 1000.0f;
 
   Display.setTextColor(COLOR);
   sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6] - 1.0f) * 100.0f));
@@ -57,41 +56,55 @@ void onDraw() {
 
 void onInput() {
   if (!Storage.GetSettings().effects[EFFECT_MASTER].locked) {
-    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] = MetronomeBPM.Process();
-    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] = Volume.Process();
-    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4] = High.Process();
-    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] = Low.Process();
-    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6] = Gain.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1] = PreHigh.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_2] = PreLow.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3] = PreGain.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4] = PostHigh.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5] = PostLow.Process();
+    Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6] = Volume.Process();
   }
 
-  Hpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4]);
-  Lpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5]);
-  Metronome.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1]);
+  PostHpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4]);
+  PostLpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5]);
+
+  PreHpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1]);
+  PreLpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_2]);
 }
 
 void onPostAudio(float *in, float *out, size_t size) {
   for (auto i = 0; i < size; ++i)
-    out[i] = (out[i] + Metronome.Process()) * Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_3];
+    out[i] *= Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_6];
 }
 
 void onSetup() {
-  Gain.Init(Terrarium.controls[KNOB_6], 0.0f, 2.0f, Parameter::LINEAR);
-  High.Init(Terrarium.controls[KNOB_4], 20.0f, 160.0f, Parameter::LINEAR);
-  Low.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
-  MetronomeBPM.Init(Terrarium.controls[KNOB_1], 0.0f, 3.0f, Parameter::LINEAR);
-  Volume.Init(Terrarium.controls[KNOB_3], 0.0f, 1.0f, Parameter::LINEAR);
+  PostHigh.Init(Terrarium.controls[KNOB_4], 20.0f, 160.0f, Parameter::LINEAR);
+  PostLow.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
 
-  Hpf.Init(Seed.AudioSampleRate());
-  Hpf.SetDrive(0.0f);
-  Hpf.SetFreq(Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_4]);
-  Hpf.SetRes(0.0f);
+  PreGain.Init(Terrarium.controls[KNOB_3], 0.0f, 2.0f, Parameter::LINEAR);
+  PreHigh.Init(Terrarium.controls[KNOB_1], 20.0f, 160.0f, Parameter::LINEAR);
+  PreLow.Init(Terrarium.controls[KNOB_2], 1280.0f, 10200.0f, Parameter::LINEAR);
 
-  Lpf.Init(Seed.AudioSampleRate());
-  Lpf.SetDrive(0.0f);
-  Lpf.SetFreq(Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
-  Lpf.SetRes(0.0f);
+  Volume.Init(Terrarium.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
 
-  Metronome.Init(Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_1], Seed.AudioSampleRate());
+  PostHpf.Init(Seed.AudioSampleRate());
+  PostHpf.SetDrive(0.0f);
+  PostHpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_4]);
+  PostHpf.SetRes(0.0f);
+
+  PostLpf.Init(Seed.AudioSampleRate());
+  PostLpf.SetDrive(0.0f);
+  PostLpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_5]);
+  PostLpf.SetRes(0.0f);
+
+  PreHpf.Init(Seed.AudioSampleRate());
+  PreHpf.SetDrive(0.0f);
+  PreHpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_1]);
+  PreHpf.SetRes(0.0f);
+
+  PreLpf.Init(Seed.AudioSampleRate());
+  PreLpf.SetDrive(0.0f);
+  PreLpf.SetFreq(Storage.GetSettings().effects[EFFECT_MASTER].values[KNOB_2]);
+  PreLpf.SetRes(0.0f);
 }
 
 }

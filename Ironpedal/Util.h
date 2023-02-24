@@ -25,7 +25,7 @@ void printFooter(char *effectName) {
   Display.setTextColor(COLOR_DARK);
 
   if (CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC) {
-    if (CurrentEffect.id == Effect::EFFECT_MASTER && Storage.GetSettings().effects[CurrentEffect.id].locked) {
+    if (Storage.GetSettings().effects[CurrentEffect.id].locked) {
       Display.setTextColor(COLOR_DARK);
       printlnCentered("LOCKED");
     }

@@ -8,21 +8,20 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Effects can individually be enabled/locked
 
 # Supported Effects
-| Effect     | Switch positions | Knob 1    | Knob 2   | Knob 3 | Knob 4   | Knob 5 | Knob 6  |
-| ---------- | ---------------- | --------- | -------- | ------ | -------- | ------ | ------- |
-| Master     | 0000             |           |          | Volume | HPF      | LPF    | Gain    |
-| Overdrive  | 0001             | Blend     |          | Drive  | HPF      | LPF    | Gain    |
-| Chorus     | 0010             | Delay     | Depth    | Rate   | Feedback | LPF    | Gain    |
-| Compressor | 0011             | Threshold |          | Ratio  | Attack   |        | Release |
-| Reverb     | 0100             |           | Feedback |        |          | LPF    |         |
-| Misc       | 1111             |           |          |        |          |        |         |
+| Effect     | Switch positions | Knob 1    | Knob 2   | Knob 3   | Knob 4   | Knob 5   | Knob 6    |
+| ---------- | ---------------- | --------- | -------- | -------- | -------- | -------- | --------- |
+| Master     | 0000             | Pre HPF   | Pre LPF  | Pre Gain | Post HPF | Post LPF | Volume    |
+| Overdrive  | 0001             |           | Blend    |          |          | Drive    |           |
+| Chorus     | 0010             | Delay     |          | Rate     | Feedback |          | Depth     |
+| Compressor | 0011             | Threshold |          | Ratio    | Attack   |          | Release   |
+| Reverb     | 0100             |           | Feedback |          |          | LPF      |           |
+| Misc       | 1111             |           |          |          |          |          | Metronome |
 
 # Effect chain order
-| 1                 | 2         | 3       | 4                 |
-| ----------------- | --------- | ------- | ----------------- |
-| Master: EQ & Gain | Overdrive | Chorus  | Reverb            |
-| Compressor        |           |         | Master: Metronome |
-|                   |           |         | Master: Volume    |
+| 1                     | 2         | 3         | 4      | 5                        |
+| --------------------- | --------- | --------- | ------ | ------------------------ |
+| Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          |
+| Compressor            |           | Chorus    |        | Master: Post EQ & Volume |
 
 # Usage
 | Operation                               | Instructions                                                       |

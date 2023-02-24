@@ -21,10 +21,10 @@ void onDraw() {
   printHeader();
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("DECAY     RATE");
+  printlnCentered("DECAY     FREQ");
 
   Display.setTextColor(COLOR);
-  sprintf(buf, "%3u        %3u", (uint32_t)(Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] * 100.0f), (uint32_t)Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
+  sprintf(buf, "%3u     %3u HZ", (uint32_t)(Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] * 100.0f), (uint32_t)Storage.GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
   printlnCentered(buf);
   printlnCentered(0);
 
