@@ -15,10 +15,11 @@ void onDraw() {
   printlnCentered(0);
 
   Display.setTextColor(COLOR_LIGHT);
-  printlnCentered("TUNER");
+  printlnCentered("");
 
   Display.setTextColor(COLOR);
-  printlnCentered("   G+++");
+  printlnCentered("");
+  printlnCentered(buf);
 
   printFooter("MISC");
 }
