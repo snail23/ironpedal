@@ -41,9 +41,9 @@ void onDraw() {
 void onInput() {
   if (!Storage.GetSettings().effects[EFFECT_CHORUS].locked) {
     Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] = Delay.Process();
-    Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] = Depth.Process();
     Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] = Rate.Process();
     Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] = Feedback.Process();
+    Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] = Depth.Process();
   }
 
   Chorus.SetDelay(Storage.GetSettings().effects[EFFECT_CHORUS].values[KNOB_1]);

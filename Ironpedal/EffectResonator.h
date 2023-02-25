@@ -55,7 +55,7 @@ void onInput() {
 void onSetup() {
   Brightness.Init(Terrarium.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
   Decay.Init(Terrarium.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
-  Frequency.Init(Terrarium.controls[KNOB_3], 110.0f, 880.0f, Parameter::LINEAR);
+  Frequency.Init(Terrarium.controls[KNOB_3], 65.0f, 880.0f, Parameter::LINEAR);
   Stiffness.Init(Terrarium.controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
 
   Resonator.Init(0.0f, 24, Seed.AudioSampleRate());

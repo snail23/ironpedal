@@ -16,13 +16,16 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Compressor | 0011            | Threshold |          | Ratio     | Attack    |          | Release    |
 | Reverb     | 0100            |           | Feedback |           |           | LPF      |            |
 | Resonator  | 0101            | Decay     |          | Frequency | Stiffness |          | Brightness |
+| Autowah    | 0110            |           | Blend    |           | Wah       |          |            |
+| Tremolo    | 0111            | Depth     |          | Frequency |           | Shape    |            |
 | Misc       | 1111            |           |          |           |           |          | Metronome  |
 
 # Effect chain order
 | 1                     | 2         | 3         | 4      | 5                        |
 | --------------------- | --------- | --------- | ------ | ------------------------ |
 | Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          |
-| Compressor            |           | Chorus    |        | Master: Post EQ & Volume |
+| Autowah               |           | Chorus    |        | Master: Post EQ & Volume |
+| Compressor            |           | Tremolo   |        |                          |
 
 # Usage
 | Operation                               | Instructions                                                       |

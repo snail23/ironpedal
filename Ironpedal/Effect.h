@@ -10,7 +10,16 @@ enum Id {
   EFFECT_COMPRESSOR,  // 0011
   EFFECT_REVERB,      // 0100
   EFFECT_RESONATOR,   // 0101
-  EFFECT_MISC = 15,   // 1111
+  EFFECT_AUTOWAH,     // 0110
+  EFFECT_TREMOLO,     // 0111
+  EFFECT_NYI_1,       // 1000
+  EFFECT_NYI_2,       // 1001
+  EFFECT_NYI_3,       // 1010
+  EFFECT_NYI_4,       // 1011
+  EFFECT_NYI_5,       // 1100
+  EFFECT_NYI_6,       // 1101
+  EFFECT_NYI_7,       // 1110
+  EFFECT_MISC,        // 1111
   EFFECT_LAST
 };
 

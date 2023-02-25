@@ -11,7 +11,7 @@ Parameter Drive;
 
 void onAudio(float *in, float *out, size_t size) {
   for (auto i = 0; i < size; ++i)
-    out[i] = in[i] * Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_1] + Overdrive.Process(in[i]) * (1.0f - Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_1]);
+    out[i] = in[i] * Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] + Overdrive.Process(in[i]) * (1.0f - Storage.GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2]);
 }
 
 void onDraw() {

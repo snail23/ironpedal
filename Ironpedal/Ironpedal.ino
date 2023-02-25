@@ -13,6 +13,7 @@
 #include "Res.h"
 #include "Util.h"
 
+#include "EffectAutowah.h"
 #include "EffectChorus.h"
 #include "EffectCompressor.h"
 #include "EffectMaster.h"
@@ -20,6 +21,7 @@
 #include "EffectOverdrive.h"
 #include "EffectResonator.h"
 #include "EffectReverb.h"
+#include "EffectTremolo.h"
 
 bool switchPressed() {
   auto inputReceived = false;
@@ -132,6 +134,9 @@ void loop() {
 void onAudio(float **in, float **out, size_t size) {
   Effect::Master::onAudio(in[0], out[0], size);
 
+  if (Storage.GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
+    Effect::Autowah::onAudio(out[0], out[0], size);
+
   if (Storage.GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
     Effect::Compressor::onAudio(out[0], out[0], size);
 
@@ -144,6 +149,9 @@ void onAudio(float **in, float **out, size_t size) {
   if (Storage.GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
     Effect::Chorus::onAudio(out[0], out[0], size);
 
+  if (Storage.GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
+    Effect::Tremolo::onAudio(out[0], out[0], size);
+
   if (Storage.GetSettings().effects[Effect::EFFECT_REVERB].enabled)
     Effect::Reverb::onAudio(out[0], out[0], size);
 
@@ -153,6 +161,10 @@ void onAudio(float **in, float **out, size_t size) {
 
 void onDraw() {
   switch (CurrentEffect.id) {
+    case Effect::EFFECT_AUTOWAH:
+      Effect::Autowah::onDraw();
+
+      break;
     case Effect::EFFECT_CHORUS:
       Effect::Chorus::onDraw();
 
@@ -188,6 +200,11 @@ void onDraw() {
       Effect::Reverb::onDraw();
 
       break;
+
+    case Effect::EFFECT_TREMOLO:
+      Effect::Tremolo::onDraw();
+
+      break;
   }
 }
 
@@ -196,6 +213,11 @@ void onInput() {
   Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
 
   switch (CurrentEffect.id) {
+    case Effect::EFFECT_AUTOWAH:
+      Effect::Autowah::onInput();
+
+      break;
+
     case Effect::EFFECT_CHORUS:
       Effect::Chorus::onInput();
 
@@ -231,6 +253,11 @@ void onInput() {
       Effect::Reverb::onInput();
 
       break;
+
+    case Effect::EFFECT_TREMOLO:
+      Effect::Tremolo::onInput();
+
+      break;
   }
 
   onDraw();
@@ -240,6 +267,7 @@ void onInputAll() {
   Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
   Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
 
+  Effect::Autowah::onInput();
   Effect::Chorus::onInput();
   Effect::Compressor::onInput();
   Effect::Master::onInput();
@@ -247,6 +275,7 @@ void onInputAll() {
   Effect::Overdrive::onInput();
   Effect::Resonator::onInput();
   Effect::Reverb::onInput();
+  Effect::Tremolo::onInput();
 
   onDraw();
 }
@@ -310,6 +339,7 @@ void setup() {
 
   // Init effects
 
+  Effect::Autowah::onSetup();
   Effect::Chorus::onSetup();
   Effect::Compressor::onSetup();
   Effect::Master::onSetup();
@@ -317,6 +347,7 @@ void setup() {
   Effect::Overdrive::onSetup();
   Effect::Resonator::onSetup();
   Effect::Reverb::onSetup();
+  Effect::Tremolo::onSetup();
 
   // Init audio
   Seed.StartAudio(onAudio);
