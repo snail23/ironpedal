@@ -7,10 +7,12 @@
 #include <DaisyDuino.h>
 
 #include "Config.h"
-#include "Terrarium.h"
 #include "Effect.h"
-#include "Globals.h"
 #include "Res.h"
+#include "Terrarium.h"
+#include "Ironpedal.h"
+
+#include "Globals.h"
 #include "Util.h"
 
 #include "EffectAutowah.h"
@@ -23,348 +25,169 @@
 #include "EffectReverb.h"
 #include "EffectTremolo.h"
 
-bool switchPressed() {
-  auto inputReceived = false;
+void Draw() {
+  switch (Ironpedal.currentEffect.id) {
+    case Effect::EFFECT_AUTOWAH:
+      Effect::Autowah::Draw();
 
-  // Handle foot switch 1
+      break;
+    case Effect::EFFECT_CHORUS:
+      Effect::Chorus::Draw();
 
-  if (Terrarium.buttons[FOOT_SWITCH_1].RisingEdge()) {
-    FootSwitch1TimeHeld = System::GetNow();
-  } else if (Terrarium.buttons[FOOT_SWITCH_1].FallingEdge()) {
-    auto now = System::GetNow();
+      break;
 
-    if (now - FootSwitch1TimeHeld > 3000) {
-      Storage.RestoreDefaults();
-      onInputAll();
+    case Effect::EFFECT_COMPRESSOR:
+      Effect::Compressor::Draw();
 
-      FootSwitch1TimeHeld = now;
-    } else {
-      Storage.GetSettings().effects[CurrentEffect.id].enabled = !Storage.GetSettings().effects[CurrentEffect.id].enabled;
-      inputReceived = true;
-    }
+      break;
+
+    case Effect::EFFECT_MASTER:
+    default:
+      Effect::Master::Draw();
+
+      break;
+
+    case Effect::EFFECT_MISC:
+      Effect::Misc::Draw();
+
+      break;
+
+    case Effect::EFFECT_OVERDRIVE:
+      Effect::Overdrive::Draw();
+
+      break;
+
+    case Effect::EFFECT_RESONATOR:
+      Effect::Resonator::Draw();
+
+      break;
+
+    case Effect::EFFECT_REVERB:
+      Effect::Reverb::Draw();
+
+      break;
+
+    case Effect::EFFECT_TREMOLO:
+      Effect::Tremolo::Draw();
+
+      break;
   }
-
-  // Handle foot switch 2
-
-  if (Terrarium.buttons[FOOT_SWITCH_2].RisingEdge()) {
-    FootSwitch2TimeHeld = System::GetNow();
-  } else if (Terrarium.buttons[FOOT_SWITCH_2].FallingEdge()) {
-    auto now = System::GetNow();
-
-    if (now - FootSwitch2TimeHeld > 3000) {
-      Storage.GetDefaultSettings() = Storage.GetSettings();
-      Storage.Save();
-
-      FootSwitch2TimeHeld = now;
-    } else
-      Storage.GetSettings().effects[CurrentEffect.id].locked = !Storage.GetSettings().effects[CurrentEffect.id].locked;
-
-    inputReceived = true;
-  }
-
-  // Handle switch 1
-
-  if (Terrarium.buttons[SWITCH_1].RisingEdge()) {
-    CurrentEffect.switch1 = true;
-    inputReceived = true;
-  } else if (Terrarium.buttons[SWITCH_1].FallingEdge()) {
-    CurrentEffect.switch1 = false;
-    inputReceived = true;
-  }
-
-  // Handle switch 2
-
-  if (Terrarium.buttons[SWITCH_2].RisingEdge()) {
-    CurrentEffect.switch2 = true;
-    inputReceived = true;
-  } else if (Terrarium.buttons[SWITCH_2].FallingEdge()) {
-    CurrentEffect.switch2 = false;
-    inputReceived = true;
-  }
-
-  // Handle switch 3
-
-  if (Terrarium.buttons[SWITCH_3].RisingEdge()) {
-    CurrentEffect.switch3 = true;
-    inputReceived = true;
-  } else if (Terrarium.buttons[SWITCH_3].FallingEdge()) {
-    CurrentEffect.switch3 = false;
-    inputReceived = true;
-  }
-
-  // Handle switch 4
-
-  if (Terrarium.buttons[SWITCH_4].RisingEdge()) {
-    CurrentEffect.switch4 = true;
-    inputReceived = true;
-  } else if (Terrarium.buttons[SWITCH_4].FallingEdge()) {
-    CurrentEffect.switch4 = false;
-    inputReceived = true;
-  }
-
-  return inputReceived;
 }
 
 void loop() {
-  bool inputReceived;
-
-  uint32_t controlValues[Terrarium.numControls];
-  uint32_t val;
-
-  while (true) {
-    Terrarium.ProcessAllControls();
-    inputReceived = switchPressed();
-
-    if (!Storage.GetSettings().effects[CurrentEffect.id].locked) {
-      for (auto i = 0; i < Terrarium.numControls; ++i) {
-        val = (uint32_t)round(Terrarium.controls[i].Value() * 100.0f);
-
-        if (controlValues[i] != val) {
-          controlValues[i] = val;
-          inputReceived = true;
-        }
-      }
-    }
-
-    if (inputReceived)
-      onInput();
-  }
+  Ironpedal.Loop();
 }
 
-void onAudio(float **in, float **out, size_t size) {
-  Effect::Master::onAudio(in[0], out[0], size);
+void OnAudio(float **in, float **out, size_t size) {
+  Effect::Master::OnAudio(in[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
-    Effect::Autowah::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
+    Effect::Autowah::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
-    Effect::Compressor::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
+    Effect::Compressor::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
-    Effect::Overdrive::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
+    Effect::Overdrive::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_RESONATOR].enabled)
-    Effect::Resonator::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_RESONATOR].enabled)
+    Effect::Resonator::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
-    Effect::Chorus::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
+    Effect::Chorus::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
-    Effect::Tremolo::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
+    Effect::Tremolo::OnAudio(out[0], out[0], size);
 
-  if (Storage.GetSettings().effects[Effect::EFFECT_REVERB].enabled)
-    Effect::Reverb::onAudio(out[0], out[0], size);
+  if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_REVERB].enabled)
+    Effect::Reverb::OnAudio(out[0], out[0], size);
 
-  Effect::Misc::onPostAudio(out[0], out[0], size);
-  Effect::Master::onPostAudio(out[0], out[0], size);
+  Effect::Misc::OnPostAudio(out[0], out[0], size);
+  Effect::Master::OnPostAudio(out[0], out[0], size);
 }
 
-void onDraw() {
-  switch (CurrentEffect.id) {
+void OnInput() {
+  Ironpedal.leds[LED_1].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled || Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Ironpedal.leds[LED_2].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked);
+
+  switch (Ironpedal.currentEffect.id) {
     case Effect::EFFECT_AUTOWAH:
-      Effect::Autowah::onDraw();
+      Effect::Autowah::OnInput();
 
       break;
+
     case Effect::EFFECT_CHORUS:
-      Effect::Chorus::onDraw();
+      Effect::Chorus::OnInput();
 
       break;
 
     case Effect::EFFECT_COMPRESSOR:
-      Effect::Compressor::onDraw();
+      Effect::Compressor::OnInput();
 
       break;
 
     case Effect::EFFECT_MASTER:
     default:
-      Effect::Master::onDraw();
+      Effect::Master::OnInput();
 
       break;
 
     case Effect::EFFECT_MISC:
-      Effect::Misc::onDraw();
+      Effect::Misc::OnInput();
 
       break;
 
     case Effect::EFFECT_OVERDRIVE:
-      Effect::Overdrive::onDraw();
+      Effect::Overdrive::OnInput();
 
       break;
 
     case Effect::EFFECT_RESONATOR:
-      Effect::Resonator::onDraw();
+      Effect::Resonator::OnInput();
 
       break;
 
     case Effect::EFFECT_REVERB:
-      Effect::Reverb::onDraw();
+      Effect::Reverb::OnInput();
 
       break;
 
     case Effect::EFFECT_TREMOLO:
-      Effect::Tremolo::onDraw();
-
-      break;
-  }
-}
-
-void onInput() {
-  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
-
-  switch (CurrentEffect.id) {
-    case Effect::EFFECT_AUTOWAH:
-      Effect::Autowah::onInput();
-
-      break;
-
-    case Effect::EFFECT_CHORUS:
-      Effect::Chorus::onInput();
-
-      break;
-
-    case Effect::EFFECT_COMPRESSOR:
-      Effect::Compressor::onInput();
-
-      break;
-
-    case Effect::EFFECT_MASTER:
-    default:
-      Effect::Master::onInput();
-
-      break;
-
-    case Effect::EFFECT_MISC:
-      Effect::Misc::onInput();
-
-      break;
-
-    case Effect::EFFECT_OVERDRIVE:
-      Effect::Overdrive::onInput();
-
-      break;
-
-    case Effect::EFFECT_RESONATOR:
-      Effect::Resonator::onInput();
-
-      break;
-
-    case Effect::EFFECT_REVERB:
-      Effect::Reverb::onInput();
-
-      break;
-
-    case Effect::EFFECT_TREMOLO:
-      Effect::Tremolo::onInput();
+      Effect::Tremolo::OnInput();
 
       break;
   }
 
-  onDraw();
+  Draw();
 }
 
-void onInputAll() {
-  Terrarium.leds[LED_1].Set(Storage.GetSettings().effects[CurrentEffect.id].enabled || CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC ? true : false);
-  Terrarium.leds[LED_2].Set(Storage.GetSettings().effects[CurrentEffect.id].locked);
+void OnInputAll() {
+  Ironpedal.leds[LED_1].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled || Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC ? true : false);
+  Ironpedal.leds[LED_2].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked);
 
-  Effect::Autowah::onInput();
-  Effect::Chorus::onInput();
-  Effect::Compressor::onInput();
-  Effect::Master::onInput();
-  Effect::Misc::onInput();
-  Effect::Overdrive::onInput();
-  Effect::Resonator::onInput();
-  Effect::Reverb::onInput();
-  Effect::Tremolo::onInput();
+  Effect::Autowah::OnInput();
+  Effect::Chorus::OnInput();
+  Effect::Compressor::OnInput();
+  Effect::Master::OnInput();
+  Effect::Misc::OnInput();
+  Effect::Overdrive::OnInput();
+  Effect::Resonator::OnInput();
+  Effect::Reverb::OnInput();
+  Effect::Tremolo::OnInput();
 
-  onDraw();
+  Draw();
 }
 
-void setup() {
-  // Seed led on
-  Led seedLed;
-
-  seedLed.Init(LED_BUILTIN, false);
-  seedLed.Set(true);
-
-  // Init terrarium
-  Terrarium = Seed.init(DAISY_SEED);
-
-  Terrarium.num_channels = 1;
-  Terrarium.numControls = 6;
-  Terrarium.numLeds = 2;
-  Terrarium.numSwitches = 6;
-
-  Terrarium.buttons[FOOT_SWITCH_1].Init(1000.0f, true, PIN_FOOT_SWITCH_1, INPUT_PULLUP);
-  Terrarium.buttons[FOOT_SWITCH_2].Init(1000.0f, true, PIN_FOOT_SWITCH_2, INPUT_PULLUP);
-
-  Terrarium.buttons[SWITCH_1].Init(1000.0f, true, PIN_SWITCH_1, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_2].Init(1000.0f, true, PIN_SWITCH_2, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_3].Init(1000.0f, true, PIN_SWITCH_3, INPUT_PULLUP);
-  Terrarium.buttons[SWITCH_4].Init(1000.0f, true, PIN_SWITCH_4, INPUT_PULLUP);
-
-  Terrarium.controls[KNOB_1].Init(PIN_KNOB_1, 1000.0f);
-  Terrarium.controls[KNOB_2].Init(PIN_KNOB_2, 1000.0f);
-  Terrarium.controls[KNOB_3].Init(PIN_KNOB_3, 1000.0f);
-  Terrarium.controls[KNOB_4].Init(PIN_KNOB_4, 1000.0f);
-  Terrarium.controls[KNOB_5].Init(PIN_KNOB_5, 1000.0f);
-  Terrarium.controls[KNOB_6].Init(PIN_KNOB_6, 1000.0f);
-
-  Terrarium.leds[LED_1].Init(PIN_LED_1, false);
-  Terrarium.leds[LED_2].Init(PIN_LED_2, false);
-  
-  // Audio buffer size
-  Seed.SetAudioBlockSize(128);
-
-  // Init QSPI
-
-  QSPIHandle::Config qspiConfig;
-
-  qspiConfig.device = QSPIHandle::Config::IS25LP064A;
-  qspiConfig.mode = QSPIHandle::Config::MEMORY_MAPPED;
-
-  qspiConfig.pin_config.clk = PIN_QSPI_CLK;
-  qspiConfig.pin_config.io0 = PIN_QSPI_IO0;
-  qspiConfig.pin_config.io1 = PIN_QSPI_IO1;
-  qspiConfig.pin_config.io2 = PIN_QSPI_IO2;
-  qspiConfig.pin_config.io3 = PIN_QSPI_IO3;
-  qspiConfig.pin_config.ncs = PIN_QSPI_NCS;
-
-  QSPI.Init(qspiConfig);
-
-  // Init storage
-
-  Storage.Init({});
-  Storage.GetDefaultSettings() = Storage.GetSettings();
-
-  // Init effects
-
-  Effect::Autowah::onSetup();
-  Effect::Chorus::onSetup();
-  Effect::Compressor::onSetup();
-  Effect::Master::onSetup();
-  Effect::Misc::onSetup();
-  Effect::Overdrive::onSetup();
-  Effect::Resonator::onSetup();
-  Effect::Reverb::onSetup();
-  Effect::Tremolo::onSetup();
-
-  // Init audio
-  Seed.StartAudio(onAudio);
-
-  // System led off
-  seedLed.Set(false);
-
-  // Init display
-
-  Display.begin();
-  Display.setFont(&Px437_IBM_VGA_8x148pt7b);
-
-  // Display splash image
-
-  Display.fillScreen(0);
-  Display.drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
-
-  System::Delay(1500);
-  onInput();
+void OnInit() {
+  Effect::Autowah::Init();
+  Effect::Chorus::Init();
+  Effect::Compressor::Init();
+  Effect::Master::Init();
+  Effect::Misc::Init();
+  Effect::Overdrive::Init();
+  Effect::Resonator::Init();
+  Effect::Reverb::Init();
+  Effect::Tremolo::Init();
 }
+
+void setup() {}

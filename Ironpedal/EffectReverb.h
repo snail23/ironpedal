@@ -9,53 +9,53 @@ daisysp::ReverbSc Reverb;
 Parameter Feedback;
 Parameter Low;
 
-void onAudio(float *in, float *out, size_t size) {
-  for (auto i = 0; i < size; ++i)
-    Reverb.Process(in[i], &out[i]);
-}
-
-void onDraw() {
+void Draw() {
   char buf[16];
   printHeader();
 
-  Display.setTextColor(COLOR_LIGHT);
+  Ironpedal.display->setTextColor(COLOR_LIGHT);
   printlnCentered("FEEDBACK");
 
-  Display.setTextColor(COLOR);
-  sprintf(buf, "%d", (uint32_t)(Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_2] * 100.0f));
+  Ironpedal.display->setTextColor(COLOR);
+  sprintf(buf, "%d", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] * 100.0f));
   printlnCentered(buf);
   printlnCentered(0);
 
-  Display.setTextColor(COLOR_LIGHT);
+  Ironpedal.display->setTextColor(COLOR_LIGHT);
   printlnCentered("LOW PASS");
 
-  auto low = Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
+  auto low = Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
 
-  Display.setTextColor(COLOR);
+  Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%u.%u KHZ", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
   printlnCentered(buf);
 
   printFooter("REVERB");
 }
 
-void onInput() {
-  if (!Storage.GetSettings().effects[EFFECT_REVERB].locked) {
-    Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_2] = Feedback.Process();
-    Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_5] = Low.Process();
-  }
+void Init() {
+  Feedback.Init(Ironpedal.controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
+  Low.Init(Ironpedal.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
 
-  Reverb.SetFeedback(Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
-  Reverb.SetLpFreq(Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
+  Reverb.Init(Ironpedal.AudioSampleRate());
+
+  Reverb.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+  Reverb.SetLpFreq(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
 }
 
-void onSetup() {
-  Feedback.Init(Terrarium.controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
-  Low.Init(Terrarium.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
+void OnAudio(float *in, float *out, size_t size) {
+  for (auto i = 0; i < size; ++i)
+    Reverb.Process(in[i], &out[i]);
+}
 
-  Reverb.Init(Seed.AudioSampleRate());
+void OnInput() {
+  if (!Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].locked) {
+    Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] = Feedback.Process();
+    Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] = Low.Process();
+  }
 
-  Reverb.SetFeedback(Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
-  Reverb.SetLpFreq(Storage.GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
+  Reverb.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+  Reverb.SetLpFreq(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
 }
 
 }

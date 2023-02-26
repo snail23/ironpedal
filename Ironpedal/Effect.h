@@ -36,10 +36,10 @@ union Type {
 };
 
 struct Effect {
-  bool enabled = false;
-  bool locked = false;
+  bool enabled;
+  bool locked;
 
-  float values[KNOB_LAST];
+  float values[16];  // KNOB_LAST
 };
 
 }

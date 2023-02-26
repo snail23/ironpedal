@@ -5,38 +5,38 @@ void printlnCentered(char *text) {
   auto length = strlen(text);
 
   for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
-    Display.print(" ");
+    Ironpedal.display->print(" ");
 
-  Display.println(text);
+  Ironpedal.display->println(text);
 }
 
 void printFooter(char *effectName) {
   char buf[16];
 
   printlnCentered(0);
-  Display.drawFastHLine(0, Display.getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
+  Ironpedal.display->drawFastHLine(0, Ironpedal.display->getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
 
-  sprintf(buf, "%c  %c  %c  %c", CurrentEffect.switch1 ? '1' : '0', CurrentEffect.switch2 ? '1' : '0', CurrentEffect.switch3 ? '1' : '0', CurrentEffect.switch4 ? '1' : '0');
+  sprintf(buf, "%c  %c  %c  %c", Ironpedal.currentEffect.switch1 ? '1' : '0', Ironpedal.currentEffect.switch2 ? '1' : '0', Ironpedal.currentEffect.switch3 ? '1' : '0', Ironpedal.currentEffect.switch4 ? '1' : '0');
   printlnCentered(buf);
 
-  Display.setTextColor(COLOR_LIGHT);
+  Ironpedal.display->setTextColor(COLOR_LIGHT);
   printlnCentered(effectName);
 
-  Display.setTextColor(COLOR_DARK);
+  Ironpedal.display->setTextColor(COLOR_DARK);
 
-  if (CurrentEffect.id == Effect::EFFECT_MASTER || CurrentEffect.id == Effect::EFFECT_MISC) {
-    if (Storage.GetSettings().effects[CurrentEffect.id].locked) {
-      Display.setTextColor(COLOR_DARK);
+  if (Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC) {
+    if (Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked) {
+      Ironpedal.display->setTextColor(COLOR_DARK);
       printlnCentered("LOCKED");
     }
   } else {
-    Display.setTextColor(COLOR_DARK);
-    sprintf(buf, "%s%s", Storage.GetSettings().effects[CurrentEffect.id].enabled ? "ON" : "OFF", Storage.GetSettings().effects[CurrentEffect.id].locked ? " / LOCKED" : "");
+    Ironpedal.display->setTextColor(COLOR_DARK);
+    sprintf(buf, "%s%s", Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled ? "ON" : "OFF", Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked ? " / LOCKED" : "");
     printlnCentered(buf);
   }
 }
 
 void printHeader() {
-  Display.fillScreen(0);
-  Display.setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
+  Ironpedal.display->fillScreen(0);
+  Ironpedal.display->setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 }
