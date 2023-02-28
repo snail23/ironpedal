@@ -30,93 +30,12 @@ public:
   Effect::Type currentEffect;
   PersistentStorage<StorageData> *storage;
 
-  bool SwitchPressed() {
-    auto inputReceived = false;
-
-    // Handle foot switch 1
-
-    if (this->buttons[FOOT_SWITCH_1].RisingEdge()) {
-      this->footSwitch1TimeHeld = System::GetNow();
-    } else if (this->buttons[FOOT_SWITCH_1].FallingEdge()) {
-      auto now = System::GetNow();
-
-      if (now - this->footSwitch1TimeHeld > 3000) {
-        this->storage->RestoreDefaults();
-        OnInputAll();
-
-        this->footSwitch1TimeHeld = now;
-      } else {
-        this->storage->GetSettings().effects[this->currentEffect.id].enabled = !this->storage->GetSettings().effects[this->currentEffect.id].enabled;
-        inputReceived = true;
-      }
-    }
-
-    // Handle foot switch 2
-
-    if (this->buttons[FOOT_SWITCH_2].RisingEdge()) {
-      this->footSwitch2TimeHeld = System::GetNow();
-    } else if (this->buttons[FOOT_SWITCH_2].FallingEdge()) {
-      auto now = System::GetNow();
-
-      if (now - this->footSwitch2TimeHeld > 3000) {
-        this->storage->GetDefaultSettings() = this->storage->GetSettings();
-        this->storage->Save();
-
-        this->footSwitch2TimeHeld = now;
-      } else
-        this->storage->GetSettings().effects[this->currentEffect.id].locked = !this->storage->GetSettings().effects[this->currentEffect.id].locked;
-
-      inputReceived = true;
-    }
-
-    // Handle switch 1
-
-    if (this->buttons[SWITCH_1].RisingEdge()) {
-      this->currentEffect.switch1 = true;
-      inputReceived = true;
-    } else if (this->buttons[SWITCH_1].FallingEdge()) {
-      this->currentEffect.switch1 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 2
-
-    if (this->buttons[SWITCH_2].RisingEdge()) {
-      this->currentEffect.switch2 = true;
-      inputReceived = true;
-    } else if (this->buttons[SWITCH_2].FallingEdge()) {
-      this->currentEffect.switch2 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 3
-
-    if (this->buttons[SWITCH_3].RisingEdge()) {
-      this->currentEffect.switch3 = true;
-      inputReceived = true;
-    } else if (this->buttons[SWITCH_3].FallingEdge()) {
-      this->currentEffect.switch3 = false;
-      inputReceived = true;
-    }
-
-    // Handle switch 4
-
-    if (this->buttons[SWITCH_4].RisingEdge()) {
-      this->currentEffect.switch4 = true;
-      inputReceived = true;
-    } else if (this->buttons[SWITCH_4].FallingEdge()) {
-      this->currentEffect.switch4 = false;
-      inputReceived = true;
-    }
-
-    return inputReceived;
-  }
-
   Ironpedal() {
+    this->controlValues = new uint32_t[this->numControls];
     this->currentEffect.id = Effect::EFFECT_MASTER;
 
-    this->footSwitch1TimeHeld = 0;
-    this->footSwitch2TimeHeld = 0;
+    for (auto i = 0; i < sizeof(this->footSwitchHoldTimes) / sizeof(uint32_t); ++i)
+      this->footSwitchHoldTimes[i] = 0;
 
     this->storage = new PersistentStorage<StorageData>(this->qspi);
     this->storage->Init({});
@@ -132,13 +51,14 @@ public:
     this->display->drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
     System::Delay(1500);
-    OnInput();
   }
 
   ~Ironpedal() {
+    delete[] this->controlValues;
     delete this->display;
     delete this->storage;
 
+    this->controlValues = 0;
     this->display = 0;
     this->storage = 0;
   }
@@ -146,23 +66,15 @@ public:
   void Loop() {
     bool inputReceived;
 
-    uint32_t controlValues[this->numControls];
-    uint32_t val;
-
     while (true) {
       this->ProcessAllControls();
-      inputReceived = this->SwitchPressed();
+      inputReceived = false;
 
-      if (!this->storage->GetSettings().effects[this->currentEffect.id].locked) {
-        for (auto i = 0; i < this->numControls; ++i) {
-          val = (uint32_t)round(this->controls[i].Value() * 100.0f);
+      if (this->IsSwitchPressed())
+        inputReceived = true;
 
-          if (controlValues[i] != val) {
-            controlValues[i] = val;
-            inputReceived = true;
-          }
-        }
-      }
+      if (!this->storage->GetSettings().effects[this->currentEffect.id].locked && this->HasControlChanged())
+        inputReceived = true;
 
       if (inputReceived)
         OnInput();
@@ -170,6 +82,124 @@ public:
   }
 
 private:
-  uint32_t footSwitch1TimeHeld;
-  uint32_t footSwitch2TimeHeld;
+  uint32_t *controlValues;
+  uint32_t footSwitchHoldTimes[FOOT_SWITCH_2 + 1];
+
+  bool HasControlChanged() {
+    auto inputReceived = false;
+    uint32_t val;
+
+    for (auto i = 0; i < this->numControls; ++i) {
+      val = (uint32_t)round(this->controls[i].Value() * 100.0f);
+
+      if (this->controlValues[i] != val) {
+        this->controlValues[i] = val;
+        inputReceived = true;
+      }
+    }
+
+    return inputReceived;
+  }
+
+  bool IsSwitchPressed() {
+    auto inputReceived = false;
+
+    for (auto i = 0; i < this->numSwitches; ++i) {
+      if (this->buttons[i].RisingEdge()) {
+        if (this->SwitchPressed(i))
+          inputReceived = true;
+      } else if (this->buttons[i].FallingEdge()) {
+        if (this->SwitchReleased(i))
+          inputReceived = true;
+      }
+    }
+
+    return inputReceived;
+  }
+
+  bool SwitchPressed(uint8_t id) {
+    switch (id) {
+      case FOOT_SWITCH_1:
+      case FOOT_SWITCH_2:
+        this->footSwitchHoldTimes[id] = System::GetNow();
+
+        break;
+
+      case SWITCH_1:
+        this->currentEffect.switch1 = true;
+
+        return true;
+
+      case SWITCH_2:
+        this->currentEffect.switch2 = true;
+
+        return true;
+
+      case SWITCH_3:
+        this->currentEffect.switch3 = true;
+
+        return true;
+
+      case SWITCH_4:
+        this->currentEffect.switch4 = true;
+
+        return true;
+    }
+
+    return false;
+  }
+
+  bool SwitchReleased(uint8_t id) {
+    uint32_t now;
+
+    switch (id) {
+      case FOOT_SWITCH_1:
+      case FOOT_SWITCH_2:
+        now = System::GetNow();
+
+        if (now - this->footSwitchHoldTimes[id] > 3000) {
+          if (id == FOOT_SWITCH_1) {
+            this->storage->RestoreDefaults();
+            OnInputAll();
+          } else {
+            this->storage->GetDefaultSettings() = this->storage->GetSettings();
+            this->storage->Save();
+          }
+
+          this->footSwitchHoldTimes[id] = now;
+        } else {
+          if (id == FOOT_SWITCH_1)
+            this->storage->GetSettings().effects[this->currentEffect.id].enabled = !this->storage->GetSettings().effects[this->currentEffect.id].enabled;
+
+          else
+            this->storage->GetSettings().effects[this->currentEffect.id].locked = !this->storage->GetSettings().effects[this->currentEffect.id].locked;
+
+          return true;
+        }
+
+        break;
+
+      case SWITCH_1:
+        this->currentEffect.switch1 = false;
+
+        return true;
+
+      case SWITCH_2:
+        this->currentEffect.switch2 = false;
+
+        return true;
+
+      case SWITCH_3:
+        this->currentEffect.switch3 = false;
+
+        return true;
+
+      case SWITCH_4:
+        this->currentEffect.switch4 = false;
+
+        return true;
+    }
+
+    return false;
+  }
 };

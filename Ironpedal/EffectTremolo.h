@@ -37,7 +37,6 @@ void Draw() {
       break;
 
     case Oscillator::WAVE_SIN:
-    default:
       printlnCentered("SINE WAVE");
       break;
 

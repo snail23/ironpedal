@@ -42,7 +42,6 @@ void Draw() {
       break;
 
     case Effect::EFFECT_MASTER:
-    default:
       Effect::Master::Draw();
 
       break;
@@ -127,7 +126,6 @@ void OnInput() {
       break;
 
     case Effect::EFFECT_MASTER:
-    default:
       Effect::Master::OnInput();
 
       break;
