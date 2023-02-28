@@ -35,7 +35,7 @@ public:
     this->currentEffect.id = Effect::EFFECT_MASTER;
 
     for (auto i = 0; i <= FOOT_SWITCH_2; ++i)
-      this->footSwitchHoldTimes[i] = 0;
+      this->ResetFootSwitchData(i);
 
     this->storage = new PersistentStorage<StorageData>(this->qspi);
     this->storage->Init({});
@@ -86,7 +86,11 @@ public:
 
 private:
   uint32_t *controlValues;
-  uint32_t footSwitchHoldTimes[FOOT_SWITCH_2 + 1];
+
+  struct {
+    bool events[5];
+    uint32_t holdTime;
+  } footSwitchData[FOOT_SWITCH_2 + 1];
 
   bool HasControlChanged() {
     auto inputReceived = false;
@@ -114,8 +118,8 @@ private:
           inputReceived = true;
       } else if (this->buttons[i].FallingEdge()) {
         if (i <= FOOT_SWITCH_2) {
-          if (now - this->footSwitchHoldTimes[i] <= 1000 && this->SwitchReleased(i)) {
-            this->footSwitchHoldTimes[i] = 0;
+          if (now - this->footSwitchData[i].holdTime < 4000 && this->SwitchReleased(i)) {
+            this->footSwitchData[i].holdTime = 0;
             inputReceived = true;
           }
         } else if (this->SwitchReleased(i))
@@ -130,7 +134,7 @@ private:
     switch (id) {
       case FOOT_SWITCH_1:
       case FOOT_SWITCH_2:
-        this->footSwitchHoldTimes[id] = System::GetNow();
+        this->footSwitchData[id].holdTime = System::GetNow();
 
         break;
 
@@ -196,19 +200,36 @@ private:
 
   void ProcessFootSwitches() {
     auto now = System::GetNow();
+    uint32_t event;
 
     for (auto i = 0; i <= FOOT_SWITCH_2; ++i) {
-      if (this->footSwitchHoldTimes[i] && now - this->footSwitchHoldTimes[i] > 3000) {
-        if (i == FOOT_SWITCH_1) {
-          this->storage->RestoreDefaults();
-          OnInputAll();
-        } else {
-          this->storage->GetDefaultSettings() = this->storage->GetSettings();
-          this->storage->Save();
-        }
+      event = (now - this->footSwitchData[i].holdTime) / 1000;
 
-        this->footSwitchHoldTimes[i] = 0;
+      if (this->footSwitchData[i].holdTime && this->footSwitchData[i].events[event]) {
+        switch (event) {
+          case 4:
+            if (i == FOOT_SWITCH_1) {
+              this->storage->RestoreDefaults();
+              OnInputAll();
+            } else {
+              this->storage->GetDefaultSettings() = this->storage->GetSettings();
+              this->storage->Save();
+
+              OnInput();
+            }
+
+            this->ResetFootSwitchData(i);
+
+            break;
+        }
       }
     }
+  }
+
+  void ResetFootSwitchData(uint8_t id) {
+    this->footSwitchData[id].holdTime = 0;
+
+    for (auto i = 0; i < sizeof(this->footSwitchData[id].events); ++i)
+      this->footSwitchData[id].events[i] = true;
   }
 };
