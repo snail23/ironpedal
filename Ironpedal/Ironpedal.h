@@ -34,7 +34,7 @@ public:
     this->controlValues = new uint32_t[this->numControls];
     this->currentEffect.id = Effect::EFFECT_MASTER;
 
-    for (auto i = 0; i < sizeof(this->footSwitchHoldTimes) / sizeof(uint32_t); ++i)
+    for (auto i = 0; i <= FOOT_SWITCH_2; ++i)
       this->footSwitchHoldTimes[i] = 0;
 
     this->storage = new PersistentStorage<StorageData>(this->qspi);
@@ -51,6 +51,7 @@ public:
     this->display->drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
 
     System::Delay(1500);
+    OnInput();
   }
 
   ~Ironpedal() {
@@ -68,6 +69,8 @@ public:
 
     while (true) {
       this->ProcessAllControls();
+      this->ProcessFootSwitches();
+
       inputReceived = false;
 
       if (this->IsSwitchPressed())
@@ -103,13 +106,19 @@ private:
 
   bool IsSwitchPressed() {
     auto inputReceived = false;
+    auto now = System::GetNow();
 
     for (auto i = 0; i < this->numSwitches; ++i) {
       if (this->buttons[i].RisingEdge()) {
         if (this->SwitchPressed(i))
           inputReceived = true;
       } else if (this->buttons[i].FallingEdge()) {
-        if (this->SwitchReleased(i))
+        if (i <= FOOT_SWITCH_2) {
+          if (now - this->footSwitchHoldTimes[i] <= 1000 && this->SwitchReleased(i)) {
+            this->footSwitchHoldTimes[i] = 0;
+            inputReceived = true;
+          }
+        } else if (this->SwitchReleased(i))
           inputReceived = true;
       }
     }
@@ -150,34 +159,16 @@ private:
   }
 
   bool SwitchReleased(uint8_t id) {
-    uint32_t now;
-
     switch (id) {
       case FOOT_SWITCH_1:
+        this->storage->GetSettings().effects[this->currentEffect.id].enabled = !this->storage->GetSettings().effects[this->currentEffect.id].enabled;
+
+        return true;
+
       case FOOT_SWITCH_2:
-        now = System::GetNow();
+        this->storage->GetSettings().effects[this->currentEffect.id].locked = !this->storage->GetSettings().effects[this->currentEffect.id].locked;
 
-        if (now - this->footSwitchHoldTimes[id] > 3000) {
-          if (id == FOOT_SWITCH_1) {
-            this->storage->RestoreDefaults();
-            OnInputAll();
-          } else {
-            this->storage->GetDefaultSettings() = this->storage->GetSettings();
-            this->storage->Save();
-          }
-
-          this->footSwitchHoldTimes[id] = now;
-        } else {
-          if (id == FOOT_SWITCH_1)
-            this->storage->GetSettings().effects[this->currentEffect.id].enabled = !this->storage->GetSettings().effects[this->currentEffect.id].enabled;
-
-          else
-            this->storage->GetSettings().effects[this->currentEffect.id].locked = !this->storage->GetSettings().effects[this->currentEffect.id].locked;
-
-          return true;
-        }
-
-        break;
+        return true;
 
       case SWITCH_1:
         this->currentEffect.switch1 = false;
@@ -201,5 +192,23 @@ private:
     }
 
     return false;
+  }
+
+  void ProcessFootSwitches() {
+    auto now = System::GetNow();
+
+    for (auto i = 0; i <= FOOT_SWITCH_2; ++i) {
+      if (this->footSwitchHoldTimes[i] && now - this->footSwitchHoldTimes[i] > 3000) {
+        if (i == FOOT_SWITCH_1) {
+          this->storage->RestoreDefaults();
+          OnInputAll();
+        } else {
+          this->storage->GetDefaultSettings() = this->storage->GetSettings();
+          this->storage->Save();
+        }
+
+        this->footSwitchHoldTimes[i] = 0;
+      }
+    }
   }
 };
