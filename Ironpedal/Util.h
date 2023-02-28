@@ -1,7 +1,7 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
-void PrintlnCentered(const char *text) {
+void PrintlnCentered(char *text) {
   auto length = strlen(text);
 
   for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
@@ -37,7 +37,7 @@ void MessageBox(const char *text, uint32_t event) {
   Ironpedal.display->println(buf);
 }
 
-void PrintFooter(const char *effectName) {
+void PrintFooter(char *effectName) {
   char buf[16];
 
   PrintlnCentered(0);

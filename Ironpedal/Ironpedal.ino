@@ -15,15 +15,15 @@
 #include "Globals.h"
 #include "Util.h"
 
-#include "EffectAutowah.h"
-#include "EffectChorus.h"
-#include "EffectCompressor.h"
-#include "EffectMaster.h"
-#include "EffectMisc.h"
-#include "EffectOverdrive.h"
-#include "EffectResonator.h"
-#include "EffectReverb.h"
-#include "EffectTremolo.h"
+#include "Effects/Autowah.h"
+#include "Effects/Chorus.h"
+#include "Effects/Compressor.h"
+#include "Effects/Master.h"
+#include "Effects/Misc.h"
+#include "Effects/Overdrive.h"
+#include "Effects/Resonator.h"
+#include "Effects/Reverb.h"
+#include "Effects/Tremolo.h"
 
 void Draw() {
   switch (Ironpedal.currentEffect.id) {
