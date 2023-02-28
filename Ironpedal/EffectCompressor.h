@@ -13,24 +13,24 @@ Parameter Threshold;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("THRESH   RATIO");
+  PrintlnCentered("THRESH   RATIO");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3d dB    %2u:1", (int32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1], (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("ATTACK RELEASE");
+  PrintlnCentered("ATTACK RELEASE");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%2u.%03u  %2u.%03u", (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4])) * 1000.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6])) * 1000.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("COMPRESSOR");
+  PrintFooter("COMPRESSOR");
 }
 
 void Init() {

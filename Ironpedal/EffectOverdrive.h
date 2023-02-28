@@ -11,24 +11,24 @@ Parameter Drive;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("BLEND");
+  PrintlnCentered("BLEND");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] * 100.0f));
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("DRIVE");
+  PrintlnCentered("DRIVE");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5] * 100.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("OVERDRIVE");
+  PrintFooter("OVERDRIVE");
 }
 
 void Init() {

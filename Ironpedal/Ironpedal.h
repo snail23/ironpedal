@@ -20,6 +20,9 @@ struct StorageData {
   }
 };
 
+void Draw();
+void MessageBox(const char *text, uint32_t event);
+
 void OnInit();
 void OnInput();
 void OnInputAll();
@@ -52,16 +55,6 @@ public:
 
     System::Delay(1500);
     OnInput();
-  }
-
-  ~Ironpedal() {
-    delete[] this->controlValues;
-    delete this->display;
-    delete this->storage;
-
-    this->controlValues = 0;
-    this->display = 0;
-    this->storage = 0;
   }
 
   void Loop() {
@@ -166,11 +159,13 @@ private:
     switch (id) {
       case FOOT_SWITCH_1:
         this->storage->GetSettings().effects[this->currentEffect.id].enabled = !this->storage->GetSettings().effects[this->currentEffect.id].enabled;
+        this->ResetFootSwitchData(id);
 
         return true;
 
       case FOOT_SWITCH_2:
         this->storage->GetSettings().effects[this->currentEffect.id].locked = !this->storage->GetSettings().effects[this->currentEffect.id].locked;
+        this->ResetFootSwitchData(id);
 
         return true;
 
@@ -207,6 +202,19 @@ private:
 
       if (this->footSwitchData[i].holdTime && this->footSwitchData[i].events[event]) {
         switch (event) {
+          case 0:
+            this->footSwitchData[i].events[event] = false;
+
+            break;
+
+          case 1:
+          case 2:
+          case 3:
+            MessageBox((i == FOOT_SWITCH_1) ? "LOADING IN %u" : "SAVING IN %u", 4 - event);
+            this->footSwitchData[i].events[event] = false;
+
+            break;
+
           case 4:
             if (i == FOOT_SWITCH_1) {
               this->storage->RestoreDefaults();
@@ -215,7 +223,7 @@ private:
               this->storage->GetDefaultSettings() = this->storage->GetSettings();
               this->storage->Save();
 
-              OnInput();
+              Draw();
             }
 
             this->ResetFootSwitchData(i);

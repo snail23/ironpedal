@@ -13,24 +13,24 @@ Parameter Stiffness;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("DECAY     FREQ");
+  PrintlnCentered("DECAY     FREQ");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u     %3u HZ", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("STIFF   BRIGHT");
+  PrintlnCentered("STIFF   BRIGHT");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u        %3u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] * 100.0f), (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] * 100.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("RESONATOR");
+  PrintFooter("RESONATOR");
 }
 
 void Init() {

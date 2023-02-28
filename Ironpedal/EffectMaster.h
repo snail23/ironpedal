@@ -21,28 +21,28 @@ Svf PreLpf;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("HIGH LOW  GAIN");
+  PrintlnCentered("HIGH LOW  GAIN");
 
   auto low = Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_2] / 1000.0f;
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_1], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_3] - 1.0f) * 100.0f));
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("HIGH LOW   VOL");
+  PrintlnCentered("HIGH LOW   VOL");
 
   low = Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_5] / 1000.0f;
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u %2u.%uK %4d", (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_4], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_MASTER].values[KNOB_6] - 1.0f) * 100.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("MASTER");
+  PrintFooter("MASTER");
 }
 
 void Init() {

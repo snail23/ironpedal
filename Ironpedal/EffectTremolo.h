@@ -12,44 +12,44 @@ Parameter Shape;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("DEPTH     FREQ");
+  PrintlnCentered("DEPTH     FREQ");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u     %3u HZ", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("SHAPE");
+  PrintlnCentered("SHAPE");
 
   Ironpedal.display->setTextColor(COLOR);
 
   switch ((uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5]) {
     case Oscillator::WAVE_RAMP:
-      printlnCentered("RAMP WAVE");
+      PrintlnCentered("RAMP WAVE");
       break;
 
     case Oscillator::WAVE_SAW:
-      printlnCentered("SAW WAVE");
+      PrintlnCentered("SAW WAVE");
       break;
 
     case Oscillator::WAVE_SIN:
-      printlnCentered("SINE WAVE");
+      PrintlnCentered("SINE WAVE");
       break;
 
     case Oscillator::WAVE_SQUARE:
-      printlnCentered("SQUARE WAVE");
+      PrintlnCentered("SQUARE WAVE");
       break;
 
     case Oscillator::WAVE_TRI:
-      printlnCentered("TRIANGLE WAVE");
+      PrintlnCentered("TRIANGLE WAVE");
       break;
   }
 
-  printFooter("TREMOLO");
+  PrintFooter("TREMOLO");
 }
 
 void Init() {

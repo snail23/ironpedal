@@ -9,17 +9,17 @@ Parameter MetronomeBPM;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("IRONPEDAL");
+  PrintlnCentered("IRONPEDAL");
 
   Ironpedal.display->setTextColor(COLOR);
-  printlnCentered("VER " VERSION);
-  printlnCentered(0);
+  PrintlnCentered("VER " VERSION);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("METRONOME");
+  PrintlnCentered("METRONOME");
 
   auto bpm = (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6] * 60.0f);
   Ironpedal.display->setTextColor(COLOR);
@@ -30,8 +30,8 @@ void Draw() {
   else
     sprintf(buf, "OFF");
 
-  printlnCentered(buf);
-  printFooter("MISC");
+  PrintlnCentered(buf);
+  PrintFooter("MISC");
 }
 
 void Init() {

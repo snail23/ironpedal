@@ -11,26 +11,26 @@ Parameter Low;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("FEEDBACK");
+  PrintlnCentered("FEEDBACK");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%d", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] * 100.0f));
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("LOW PASS");
+  PrintlnCentered("LOW PASS");
 
   auto low = Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%u.%u KHZ", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("REVERB");
+  PrintFooter("REVERB");
 }
 
 void Init() {

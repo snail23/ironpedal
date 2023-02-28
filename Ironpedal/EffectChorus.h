@@ -13,24 +13,24 @@ Parameter Rate;
 
 void Draw() {
   char buf[16];
-  printHeader();
+  PrintHeader();
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("DELAY     RATE");
+  PrintlnCentered("DELAY     RATE");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u       %u.%02u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3])) * 100.0f));
-  printlnCentered(buf);
-  printlnCentered(0);
+  PrintlnCentered(buf);
+  PrintlnCentered(0);
 
   Ironpedal.display->setTextColor(COLOR_LIGHT);
-  printlnCentered("FEEDBACK DEPTH");
+  PrintlnCentered("FEEDBACK DEPTH");
 
   Ironpedal.display->setTextColor(COLOR);
   sprintf(buf, "%3u        %3d", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] * 100.0f), (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] * 100.0f));
-  printlnCentered(buf);
+  PrintlnCentered(buf);
 
-  printFooter("CHORUS");
+  PrintFooter("CHORUS");
 }
 
 void Init() {
