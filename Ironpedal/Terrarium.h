@@ -92,7 +92,7 @@ public:
         this->leds[LED_1].Init(PIN_LED_1, false);
         this->leds[LED_2].Init(PIN_LED_2, false);
 
-        this->SetAudioBlockSize(128);
+        this->SetAudioBlockSize(64);
         QSPIHandle::Config qspiConfig;
 
         qspiConfig.device = QSPIHandle::Config::IS25LP064A;

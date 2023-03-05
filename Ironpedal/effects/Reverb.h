@@ -48,8 +48,14 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
+            float t;
+
             for (auto i = 0; i < size; ++i)
-                Reverb.Process(in[i], &out[i]);
+            {
+                t = in[i] * (1.0f - Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+                Reverb.Process(t, &out[i]);
+                out[i] += t;
+            }
         }
 
         void OnInput()
