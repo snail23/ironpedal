@@ -2,10 +2,11 @@
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
 # Features
-- Retro looking small OLED display
+- Small OLED display
 - 16 different effects
 - Save/load your effect settings to external flash via QSPI
 - Effects can individually be enabled/locked
+- Record and play back up to 5 minutes of audio via the Looper effect
 
 # Supported Effects
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
@@ -18,14 +19,15 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Resonator  | 0101            | Decay     |          | Frequency | Stiffness |          | Brightness |
 | Autowah    | 0110            |           | Blend    |           | Wah       |          |            |
 | Tremolo    | 0111            | Depth     |          | Frequency |           | Shape    |            |
+| Looper     | 1000            |           | Mode     |           |           | Volume   |            |
 | Misc       | 1111            |           |          |           |           |          | Metronome  |
 
 # Effect chain order
-| 1                     | 2         | 3         | 4      | 5                        |
-| --------------------- | --------- | --------- | ------ | ------------------------ |
-| Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          |
-| Autowah               |           | Chorus    |        | Master: Post EQ & Volume |
-| Compressor            |           | Tremolo   |        |                          |
+| 1                     | 2         | 3         | 4      | 5                        | 6      |
+| --------------------- | --------- | --------- | ------ | ------------------------ | ------ |
+| Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
+| Autowah               |           | Chorus    |        | Master: Post EQ & Volume |        |
+| Compressor            |           | Tremolo   |        |                          |        |
 
 # Usage
 | Operation                               | Instructions                                                       |
