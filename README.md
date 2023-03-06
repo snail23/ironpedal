@@ -8,7 +8,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Effects can individually be enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
 
-# Supported Effects
+# Supported effects
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
 | ---------- | --------------- | --------- | -------- | --------- | --------- | -------- | ---------- |
 | Master     | 0000            | Pre HPF   | Pre LPF  | Pre Gain  | Post HPF  | Post LPF | Volume     |
@@ -37,6 +37,22 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 | Locking & unlocking the current effect  | Single tap the right foot switch (has no effect on Misc)           |
 | Load saved effect settings              | Hold the left foot switch for 3 seconds                            |
 | Save effect settings                    | Hold the right foot switch for 3 seconds                           |
+
+# My settings, feel free to use these as a starting point
+| Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6     |
+| ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ---------- |
+| Master     | 0000            | 60 Hz     | 10.1 kHz | 0            | 60 Hz     | 10.1 kHz      | 100        |
+| Overdrive  | 0001            |           | 45       |              |           | 45            |            |
+| Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90         |
+| Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118      |
+| Reverb     | 0100            |           | 50       |              |           | 10.1 kHz      |            |
+| Resonator  | 0101            | 20        |          | 78 Hz (Eb2)  | 25        |               | 35         |
+| Autowah    | 0110            |           | 50       |              | 10        |               |            |
+| Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |            |
+| Looper     | 1000            |           | Playback |              |           | 100           |            |
+| Misc       | 1111            |           |          |              |           |               | Off        |
+
+You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 
 # Pictures
 Todo.
