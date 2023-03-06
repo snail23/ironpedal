@@ -12,7 +12,6 @@
 #include "Terrarium.h"
 #include "Ironpedal.h"
 
-#include "Globals.h"
 #include "Util.h"
 
 #include "Effects/Autowah.h"
@@ -26,56 +25,69 @@
 #include "Effects/Reverb.h"
 #include "Effects/Tremolo.h"
 
+Effect::Autowah *Autowah;
+Effect::Chorus *Chorus;
+Effect::Compressor *Compressor;
+Effect::Looper *Looper;
+Effect::Master *Master;
+Effect::Misc *Misc;
+Effect::Overdrive *Overdrive;
+Effect::Resonator *Resonator;
+Effect::Reverb *Reverb;
+Effect::Tremolo *Tremolo;
+
+Ironpedal *Pedal;
+
 void Draw()
 {
-    switch (Ironpedal.currentEffect.id)
+    switch (Pedal->currentEffect.id)
     {
     case Effect::EFFECT_AUTOWAH:
-        Effect::Autowah::Draw();
+        ::Autowah->Draw();
 
         break;
     case Effect::EFFECT_CHORUS:
-        Effect::Chorus::Draw();
+        ::Chorus->Draw();
 
         break;
 
     case Effect::EFFECT_COMPRESSOR:
-        Effect::Compressor::Draw();
+        ::Compressor->Draw();
 
         break;
 
     case Effect::EFFECT_LOOPER:
-        Effect::Looper::Draw();
+        ::Looper->Draw();
 
         break;
 
     case Effect::EFFECT_MASTER:
-        Effect::Master::Draw();
+        ::Master->Draw();
 
         break;
 
     case Effect::EFFECT_MISC:
-        Effect::Misc::Draw();
+        ::Misc->Draw();
 
         break;
 
     case Effect::EFFECT_OVERDRIVE:
-        Effect::Overdrive::Draw();
+        ::Overdrive->Draw();
 
         break;
 
     case Effect::EFFECT_RESONATOR:
-        Effect::Resonator::Draw();
+        ::Resonator->Draw();
 
         break;
 
     case Effect::EFFECT_REVERB:
-        Effect::Reverb::Draw();
+        ::Reverb->Draw();
 
         break;
 
     case Effect::EFFECT_TREMOLO:
-        Effect::Tremolo::Draw();
+        ::Tremolo->Draw();
 
         break;
     }
@@ -83,95 +95,142 @@ void Draw()
 
 void loop()
 {
-    Ironpedal.Loop();
+    // The purpose of having everything here is to force as much data on the stack as possible
+    // Otherwise, the generated binary is too large
+
+    Ironpedal pedal;
+    Pedal = &pedal;
+
+    Effect::Autowah autowah;
+    ::Autowah = &autowah;
+    ::Autowah->Init(Pedal);
+
+    Effect::Chorus chorus;
+    ::Chorus = &chorus;
+    ::Chorus->Init(Pedal);
+
+    Effect::Compressor compressor;
+    ::Compressor = &compressor;
+    ::Compressor->Init(Pedal);
+
+    Effect::Looper looper;
+    ::Looper = &looper;
+    ::Looper->Init(Pedal);
+
+    Effect::Master master;
+    Master = &master;
+    Master->Init(Pedal);
+
+    Effect::Misc misc;
+    Misc = &misc;
+    Misc->Init(Pedal);
+
+    Effect::Overdrive overdrive;
+    ::Overdrive = &overdrive;
+    ::Overdrive->Init(Pedal);
+
+    Effect::Resonator resonator;
+    ::Resonator = &resonator;
+    ::Resonator->Init(Pedal);
+
+    Effect::Reverb reverb;
+    Reverb = &reverb;
+    Reverb->Init(Pedal);
+
+    Effect::Tremolo tremolo;
+    ::Tremolo = &tremolo;
+    ::Tremolo->Init(Pedal);
+
+    Pedal->Splash();
+    Pedal->Loop();
 }
 
 void OnAudio(float **in, float **out, size_t size)
 {
-    Effect::Master::OnAudio(in[0], out[0], size);
+    Master->OnAudio(in[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
-        Effect::Autowah::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
+        ::Autowah->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
-        Effect::Compressor::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
+        ::Compressor->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
-        Effect::Overdrive::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
+        ::Overdrive->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_RESONATOR].enabled)
-        Effect::Resonator::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_RESONATOR].enabled)
+        ::Resonator->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
-        Effect::Chorus::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
+        ::Chorus->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
-        Effect::Tremolo::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
+        ::Tremolo->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_REVERB].enabled)
-        Effect::Reverb::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_REVERB].enabled)
+        Reverb->OnAudio(out[0], out[0], size);
 
-    Effect::Misc::OnPostAudio(out[0], out[0], size);
-    Effect::Master::OnPostAudio(out[0], out[0], size);
+    Misc->OnPostAudio(out[0], out[0], size);
+    Master->OnPostAudio(out[0], out[0], size);
 
-    if (Ironpedal.storage->GetSettings().effects[Effect::EFFECT_LOOPER].enabled)
-        Effect::Looper::OnAudio(out[0], out[0], size);
+    if (Pedal->storage->GetSettings().effects[Effect::EFFECT_LOOPER].enabled)
+        ::Looper->OnAudio(out[0], out[0], size);
 }
 
 void OnInput()
 {
-    Ironpedal.leds[LED_1].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled || Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC ? true : false);
-    Ironpedal.leds[LED_2].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked);
+    Pedal->leds[LED_1].Set(Pedal->storage->GetSettings().effects[Pedal->currentEffect.id].enabled || Pedal->currentEffect.id == Effect::EFFECT_MASTER || Pedal->currentEffect.id == Effect::EFFECT_MISC ? true : false);
+    Pedal->leds[LED_2].Set(Pedal->storage->GetSettings().effects[Pedal->currentEffect.id].locked);
 
-    switch (Ironpedal.currentEffect.id)
+    switch (Pedal->currentEffect.id)
     {
     case Effect::EFFECT_AUTOWAH:
-        Effect::Autowah::OnInput();
+        ::Autowah->OnInput();
 
         break;
 
     case Effect::EFFECT_CHORUS:
-        Effect::Chorus::OnInput();
+        ::Chorus->OnInput();
 
         break;
 
     case Effect::EFFECT_COMPRESSOR:
-        Effect::Compressor::OnInput();
+        ::Compressor->OnInput();
 
         break;
 
     case Effect::EFFECT_LOOPER:
-        Effect::Looper::OnInput();
+        ::Looper->OnInput();
 
         break;
 
     case Effect::EFFECT_MASTER:
-        Effect::Master::OnInput();
+        Master->OnInput();
 
         break;
 
     case Effect::EFFECT_MISC:
-        Effect::Misc::OnInput();
+        Misc->OnInput();
 
         break;
 
     case Effect::EFFECT_OVERDRIVE:
-        Effect::Overdrive::OnInput();
+        ::Overdrive->OnInput();
 
         break;
 
     case Effect::EFFECT_RESONATOR:
-        Effect::Resonator::OnInput();
+        ::Resonator->OnInput();
 
         break;
 
     case Effect::EFFECT_REVERB:
-        Effect::Reverb::OnInput();
+        Reverb->OnInput();
 
         break;
 
     case Effect::EFFECT_TREMOLO:
-        Effect::Tremolo::OnInput();
+        ::Tremolo->OnInput();
 
         break;
     }
@@ -181,35 +240,21 @@ void OnInput()
 
 void OnInputAll()
 {
-    Ironpedal.leds[LED_1].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled || Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC ? true : false);
-    Ironpedal.leds[LED_2].Set(Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked);
+    Pedal->leds[LED_1].Set(Pedal->storage->GetSettings().effects[Pedal->currentEffect.id].enabled || Pedal->currentEffect.id == Effect::EFFECT_MASTER || Pedal->currentEffect.id == Effect::EFFECT_MISC ? true : false);
+    Pedal->leds[LED_2].Set(Pedal->storage->GetSettings().effects[Pedal->currentEffect.id].locked);
 
-    Effect::Autowah::OnInput();
-    Effect::Chorus::OnInput();
-    Effect::Compressor::OnInput();
-    Effect::Looper::OnInput();
-    Effect::Master::OnInput();
-    Effect::Misc::OnInput();
-    Effect::Overdrive::OnInput();
-    Effect::Resonator::OnInput();
-    Effect::Reverb::OnInput();
-    Effect::Tremolo::OnInput();
+    ::Autowah->OnInput();
+    ::Chorus->OnInput();
+    ::Compressor->OnInput();
+    ::Looper->OnInput();
+    Master->OnInput();
+    Misc->OnInput();
+    ::Overdrive->OnInput();
+    ::Resonator->OnInput();
+    Reverb->OnInput();
+    ::Tremolo->OnInput();
 
     Draw();
-}
-
-void OnInit()
-{
-    Effect::Autowah::Init();
-    Effect::Chorus::Init();
-    Effect::Compressor::Init();
-    Effect::Looper::Init();
-    Effect::Master::Init();
-    Effect::Misc::Init();
-    Effect::Overdrive::Init();
-    Effect::Resonator::Init();
-    Effect::Reverb::Init();
-    Effect::Tremolo::Init();
 }
 
 void setup() {}

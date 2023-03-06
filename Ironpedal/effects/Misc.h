@@ -3,28 +3,26 @@
 
 namespace Effect
 {
-    namespace Misc
+    class Misc
     {
-        Metro Metronome;
-        Parameter MetronomeBPM;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("IRONPEDAL");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "IRONPEDAL");
 
-            Ironpedal.display->setTextColor(COLOR);
-            PrintlnCentered("VER " VERSION);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            PrintlnCentered(this->pedal, "VER " VERSION);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("METRONOME");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "METRONOME");
 
-            auto bpm = (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6] * 60.0f);
-            Ironpedal.display->setTextColor(COLOR);
+            auto bpm = (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6] * 60.0f);
+            this->pedal->display->setTextColor(COLOR);
 
             if (bpm)
                 sprintf(buf, "%u BPM", bpm);
@@ -32,28 +30,51 @@ namespace Effect
             else
                 sprintf(buf, "OFF");
 
-            PrintlnCentered(buf);
-            PrintFooter("MISC");
+            PrintlnCentered(this->pedal, buf);
+            PrintFooter(this->pedal, "MISC");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            MetronomeBPM.Init(Ironpedal.controls[KNOB_6], 0.0f, 3.0f, Parameter::LINEAR);
-            Metronome.Init(Ironpedal.storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6], Ironpedal.AudioSampleRate());
+            this->pedal = pedal;
+            this->metronomeBPM.Init(this->pedal->controls[KNOB_6], 0.0f, 3.0f, Parameter::LINEAR);
+
+            this->metronome.Init(this->pedal->storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6], this->pedal->AudioSampleRate());
+            // this->metronomeBass.Init(this->pedal->AudioSampleRate());
+            // this->metronomeBassTurn = true;
+            // this->metronomeSnare.Init(this->pedal->AudioSampleRate());
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_MISC].locked)
-                Ironpedal.storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6] = MetronomeBPM.Process();
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_MISC].locked)
+                this->pedal->storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6] = this->metronomeBPM.Process();
 
-            Metronome.SetFreq(Ironpedal.storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6]);
+            this->metronome.SetFreq(this->pedal->storage->GetSettings().effects[EFFECT_MISC].values[KNOB_6]);
         }
 
         void OnPostAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0; i < size; ++i)
-                out[i] += Metronome.Process();
+            /*for (auto i = 0; i < size; ++i)
+            {
+                if (this->metronome.Process())
+                {
+                    this->metronomeBassTurn ? this->metronomeBass.Trig() : this->metronomeSnare.Trig();
+                    this->metronomeBassTurn = !this->metronomeBassTurn;
+                }
+
+                out[i] += this->metronomeBass.Process() + this->metronomeSnare.Process();
+            }*/
         }
-    }
+
+    private:
+        // AnalogBassDrum metronomeBass;
+        // AnalogSnareDrum metronomeSnare;
+
+        // bool metronomeBassTurn;
+
+        Ironpedal *pedal;
+        Metro metronome;
+        Parameter metronomeBPM;
+    };
 }

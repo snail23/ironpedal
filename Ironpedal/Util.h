@@ -1,28 +1,18 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
-void PrintlnCentered(const char *text)
-{
-    auto length = strlen(text);
-
-    for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
-        Ironpedal.display->print(" ");
-
-    Ironpedal.display->println(text);
-}
-
-void MessageBox(const char *text, uint32_t event)
+void MessageBox(Ironpedal *pedal, char *text, uint32_t event)
 {
     char buf[16];
 
-    Ironpedal.display->setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance * 3);
-    Ironpedal.display->setTextColor(COLOR_DARK);
+    pedal->display->setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance * 3);
+    pedal->display->setTextColor(COLOR_DARK);
 
     sprintf(buf, text, event);
     auto length = strlen(text);
 
     for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
-        Ironpedal.display->print(" ");
+        pedal->display->print(" ");
 
     int16_t x;
     int16_t y;
@@ -30,48 +20,58 @@ void MessageBox(const char *text, uint32_t event)
     uint16_t h;
     uint16_t w;
 
-    Ironpedal.display->getTextBounds(buf, Ironpedal.display->getCursorX(), Ironpedal.display->getCursorY(), &x, &y, &w, &h);
-    Ironpedal.display->fillRect(x - 10, y - 10, w + 20, h + 20, 0);
+    pedal->display->getTextBounds(buf, pedal->display->getCursorX(), pedal->display->getCursorY(), &x, &y, &w, &h);
+    pedal->display->fillRect(x - 10, y - 10, w + 20, h + 20, 0);
 
-    Ironpedal.display->drawRoundRect(x - 6, y - 6, w + 12, h + 12, 4, COLOR_DARK);
-    Ironpedal.display->drawRoundRect(x - 5, y - 5, w + 10, h + 10, 4, COLOR_DARK);
+    pedal->display->drawRoundRect(x - 6, y - 6, w + 12, h + 12, 4, COLOR_DARK);
+    pedal->display->drawRoundRect(x - 5, y - 5, w + 10, h + 10, 4, COLOR_DARK);
 
-    Ironpedal.display->println(buf);
+    pedal->display->println(buf);
 }
 
-void PrintFooter(char *effectName)
+void PrintlnCentered(Ironpedal *pedal, char *text)
+{
+    auto length = strlen(text);
+
+    for (auto i = 0; i < SSD1351WIDTH / FONT_WIDTH / 2 - length / 2; ++i)
+        pedal->display->print(" ");
+
+    pedal->display->println(text);
+}
+
+void PrintFooter(Ironpedal *pedal, char *effectName)
 {
     char buf[16];
 
-    PrintlnCentered(0);
-    Ironpedal.display->drawFastHLine(0, Ironpedal.display->getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
+    PrintlnCentered(pedal, 0);
+    pedal->display->drawFastHLine(0, pedal->display->getCursorY() - Px437_IBM_VGA_8x148pt7b.yAdvance - Px437_IBM_VGA_8x148pt7b.yAdvance / 3, SSD1351WIDTH, COLOR_LIGHT);
 
-    sprintf(buf, "%c  %c  %c  %c", Ironpedal.currentEffect.switch1 ? '1' : '0', Ironpedal.currentEffect.switch2 ? '1' : '0', Ironpedal.currentEffect.switch3 ? '1' : '0', Ironpedal.currentEffect.switch4 ? '1' : '0');
-    PrintlnCentered(buf);
+    sprintf(buf, "%c  %c  %c  %c", pedal->currentEffect.switch1 ? '1' : '0', pedal->currentEffect.switch2 ? '1' : '0', pedal->currentEffect.switch3 ? '1' : '0', pedal->currentEffect.switch4 ? '1' : '0');
+    PrintlnCentered(pedal, buf);
 
-    Ironpedal.display->setTextColor(COLOR_LIGHT);
-    PrintlnCentered(effectName);
+    pedal->display->setTextColor(COLOR_LIGHT);
+    PrintlnCentered(pedal, effectName);
 
-    Ironpedal.display->setTextColor(COLOR_DARK);
+    pedal->display->setTextColor(COLOR_DARK);
 
-    if (Ironpedal.currentEffect.id == Effect::EFFECT_MASTER || Ironpedal.currentEffect.id == Effect::EFFECT_MISC)
+    if (pedal->currentEffect.id == Effect::EFFECT_MASTER || pedal->currentEffect.id == Effect::EFFECT_MISC)
     {
-        if (Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked)
+        if (pedal->storage->GetSettings().effects[pedal->currentEffect.id].locked)
         {
-            Ironpedal.display->setTextColor(COLOR_DARK);
-            PrintlnCentered("LOCKED");
+            pedal->display->setTextColor(COLOR_DARK);
+            PrintlnCentered(pedal, "LOCKED");
         }
     }
     else
     {
-        Ironpedal.display->setTextColor(COLOR_DARK);
-        sprintf(buf, "%s%s", Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].enabled ? "ON" : "OFF", Ironpedal.storage->GetSettings().effects[Ironpedal.currentEffect.id].locked ? " / LOCKED" : "");
-        PrintlnCentered(buf);
+        pedal->display->setTextColor(COLOR_DARK);
+        sprintf(buf, "%s%s", pedal->storage->GetSettings().effects[pedal->currentEffect.id].enabled ? "ON" : "OFF", pedal->storage->GetSettings().effects[pedal->currentEffect.id].locked ? " / LOCKED" : "");
+        PrintlnCentered(pedal, buf);
     }
 }
 
-void PrintHeader()
+void PrintHeader(Ironpedal *pedal)
 {
-    Ironpedal.display->fillScreen(0);
-    Ironpedal.display->setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
+    pedal->display->fillScreen(0);
+    pedal->display->setCursor(0, Px437_IBM_VGA_8x148pt7b.yAdvance);
 }

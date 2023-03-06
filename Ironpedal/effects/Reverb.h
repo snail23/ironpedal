@@ -3,47 +3,45 @@
 
 namespace Effect
 {
-    namespace Reverb
+    class Reverb
     {
-        daisysp::ReverbSc Reverb;
-
-        Parameter Feedback;
-        Parameter Low;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("FEEDBACK");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "FEEDBACK");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%d", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] * 100.0f));
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%d", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] * 100.0f));
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("LOW PASS");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "LOW PASS");
 
-            auto low = Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
+            auto low = this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] / 1000.0f;
 
-            Ironpedal.display->setTextColor(COLOR);
+            this->pedal->display->setTextColor(COLOR);
             sprintf(buf, "%u.%u KHZ", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
-            PrintlnCentered(buf);
+            PrintlnCentered(this->pedal, buf);
 
-            PrintFooter("REVERB");
+            PrintFooter(this->pedal, "REVERB");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Feedback.Init(Ironpedal.controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
-            Low.Init(Ironpedal.controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Reverb.Init(Ironpedal.AudioSampleRate());
+            this->feedback.Init(this->pedal->controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
+            this->low.Init(this->pedal->controls[KNOB_5], 1280.0f, 10200.0f, Parameter::LINEAR);
 
-            Reverb.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
-            Reverb.SetLpFreq(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
+            this->reverb.Init(this->pedal->AudioSampleRate());
+
+            this->reverb.SetFeedback(this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+            this->reverb.SetLpFreq(this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -52,22 +50,29 @@ namespace Effect
 
             for (auto i = 0; i < size; ++i)
             {
-                t = in[i] * (1.0f - Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
-                Reverb.Process(t, &out[i]);
+                t = in[i] * (1.0f - this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+                this->reverb.Process(t, &out[i]);
                 out[i] += t;
             }
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_REVERB].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] = Feedback.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] = Low.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2] = this->feedback.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5] = this->low.Process();
             }
 
-            Reverb.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
-            Reverb.SetLpFreq(Ironpedal.storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
+            this->reverb.SetFeedback(this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_2]);
+            this->reverb.SetLpFreq(this->pedal->storage->GetSettings().effects[EFFECT_REVERB].values[KNOB_5]);
         }
-    }
+
+    private:
+        daisysp::ReverbSc reverb;
+        Ironpedal *pedal;
+
+        Parameter feedback;
+        Parameter low;
+    };
 }

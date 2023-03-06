@@ -3,73 +3,78 @@
 
 namespace Effect
 {
-    namespace Resonator
+    class Resonator
     {
-        daisysp::Resonator Resonator;
-
-        Parameter Brightness;
-        Parameter Decay;
-        Parameter Frequency;
-        Parameter Stiffness;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("DECAY     FREQ");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "DECAY     FREQ");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3u     %3u HZ", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3u     %3u HZ", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] * 100.0f), (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("STIFF   BRIGHT");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "STIFF   BRIGHT");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3u        %3u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] * 100.0f), (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] * 100.0f));
-            PrintlnCentered(buf);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3u        %3u", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] * 100.0f), (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] * 100.0f));
+            PrintlnCentered(this->pedal, buf);
 
-            PrintFooter("RESONATOR");
+            PrintFooter(this->pedal, "RESONATOR");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Brightness.Init(Ironpedal.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
-            Decay.Init(Ironpedal.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
-            Frequency.Init(Ironpedal.controls[KNOB_3], 65.0f, 880.0f, Parameter::LINEAR);
-            Stiffness.Init(Ironpedal.controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Resonator.Init(0.0f, 24, Ironpedal.AudioSampleRate());
+            this->brightness.Init(this->pedal->controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
+            this->decay.Init(this->pedal->controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
+            this->frequency.Init(this->pedal->controls[KNOB_3], 65.0f, 880.0f, Parameter::LINEAR);
+            this->stiffness.Init(this->pedal->controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
 
-            Resonator.SetBrightness(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6]);
-            Resonator.SetDamping(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1]);
-            Resonator.SetFreq(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
-            Resonator.SetStructure(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4]);
+            this->resonator.Init(0.0f, 24, this->pedal->AudioSampleRate());
+
+            this->resonator.SetBrightness(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6]);
+            this->resonator.SetDamping(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1]);
+            this->resonator.SetFreq(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
+            this->resonator.SetStructure(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
         {
             for (auto i = 0; i < size; ++i)
-                out[i] = Resonator.Process(in[i]);
+                out[i] = this->resonator.Process(in[i]);
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] = Decay.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3] = Frequency.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] = Stiffness.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] = Brightness.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1] = this->decay.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3] = this->frequency.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4] = this->stiffness.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6] = this->brightness.Process();
             }
 
-            Resonator.SetBrightness(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6]);
-            Resonator.SetDamping(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1]);
-            Resonator.SetFreq(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
-            Resonator.SetStructure(Ironpedal.storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4]);
+            this->resonator.SetBrightness(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_6]);
+            this->resonator.SetDamping(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_1]);
+            this->resonator.SetFreq(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_3]);
+            this->resonator.SetStructure(this->pedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[KNOB_4]);
         }
-    }
+
+    private:
+        daisysp::Resonator resonator;
+        Ironpedal *pedal;
+
+        Parameter brightness;
+        Parameter decay;
+        Parameter frequency;
+        Parameter stiffness;
+    };
 }

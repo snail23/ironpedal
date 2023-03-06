@@ -3,89 +3,94 @@
 
 namespace Effect
 {
-    namespace Tremolo
+    class Tremolo
     {
-        daisysp::Tremolo Tremolo;
-
-        Parameter Depth;
-        Parameter Frequency;
-        Parameter Shape;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("DEPTH     FREQ");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "DEPTH     FREQ");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3u     %3u HZ", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3u     %3u HZ", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1] * 100.0f), (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("SHAPE");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "SHAPE");
 
-            Ironpedal.display->setTextColor(COLOR);
+            this->pedal->display->setTextColor(COLOR);
 
-            switch ((uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5])
+            switch ((uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5])
             {
             case Oscillator::WAVE_RAMP:
-                PrintlnCentered("RAMP WAVE");
+                PrintlnCentered(this->pedal, "RAMP WAVE");
                 break;
 
             case Oscillator::WAVE_SAW:
-                PrintlnCentered("SAW WAVE");
+                PrintlnCentered(this->pedal, "SAW WAVE");
                 break;
 
             case Oscillator::WAVE_SIN:
-                PrintlnCentered("SINE WAVE");
+                PrintlnCentered(this->pedal, "SINE WAVE");
                 break;
 
             case Oscillator::WAVE_SQUARE:
-                PrintlnCentered("SQUARE WAVE");
+                PrintlnCentered(this->pedal, "SQUARE WAVE");
                 break;
 
             case Oscillator::WAVE_TRI:
-                PrintlnCentered("TRIANGLE WAVE");
+                PrintlnCentered(this->pedal, "TRIANGLE WAVE");
                 break;
             }
 
-            PrintFooter("TREMOLO");
+            PrintFooter(this->pedal, "TREMOLO");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Depth.Init(Ironpedal.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
-            Frequency.Init(Ironpedal.controls[KNOB_3], 1.0f, 2880.0f, Parameter::LINEAR);
-            Shape.Init(Ironpedal.controls[KNOB_5], Oscillator::WAVE_SIN, Oscillator::WAVE_SQUARE, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Tremolo.Init(Ironpedal.AudioSampleRate());
+            this->depth.Init(this->pedal->controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
+            this->frequency.Init(this->pedal->controls[KNOB_3], 1.0f, 2880.0f, Parameter::LINEAR);
+            this->shape.Init(this->pedal->controls[KNOB_5], Oscillator::WAVE_SIN, Oscillator::WAVE_SQUARE, Parameter::LINEAR);
 
-            Tremolo.SetDepth(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1]);
-            Tremolo.SetFreq(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
-            Tremolo.SetWaveform(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5]);
+            this->tremolo.Init(this->pedal->AudioSampleRate());
+
+            this->tremolo.SetDepth(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1]);
+            this->tremolo.SetFreq(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
+            this->tremolo.SetWaveform(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
         {
             for (auto i = 0; i < size; ++i)
-                out[i] = Tremolo.Process(in[i]);
+                out[i] = this->tremolo.Process(in[i]);
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1] = Depth.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3] = Frequency.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5] = Shape.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1] = this->depth.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3] = this->frequency.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5] = this->shape.Process();
             }
 
-            Tremolo.SetDepth(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1]);
-            Tremolo.SetFreq(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
-            Tremolo.SetWaveform(Ironpedal.storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5]);
+            this->tremolo.SetDepth(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_1]);
+            this->tremolo.SetFreq(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_3]);
+            this->tremolo.SetWaveform(this->pedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[KNOB_5]);
         }
-    }
+
+    private:
+        daisysp::Tremolo tremolo;
+        Ironpedal *pedal;
+
+        Parameter depth;
+        Parameter frequency;
+        Parameter shape;
+    };
 }

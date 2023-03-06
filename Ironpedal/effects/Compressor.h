@@ -3,73 +3,78 @@
 
 namespace Effect
 {
-    namespace Compressor
+    class Compressor
     {
-        daisysp::Compressor Compressor;
-
-        Parameter Attack;
-        Parameter Ratio;
-        Parameter Release;
-        Parameter Threshold;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("THRESH   RATIO");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "THRESH   RATIO");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3d dB    %2u:1", (int32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1], (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3d dB    %2u:1", (int32_t)this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1], (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("ATTACK RELEASE");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "ATTACK RELEASE");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%2u.%03u  %2u.%03u", (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4])) * 1000.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6])) * 1000.0f));
-            PrintlnCentered(buf);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%2u.%03u  %2u.%03u", (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4], (uint32_t)((this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4] - floor(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4])) * 1000.0f), (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6], (uint32_t)((this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6] - floor(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6])) * 1000.0f));
+            PrintlnCentered(this->pedal, buf);
 
-            PrintFooter("COMPRESSOR");
+            PrintFooter(this->pedal, "COMPRESSOR");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Attack.Init(Ironpedal.controls[KNOB_4], 0.001f, 10.0f, Parameter::LINEAR);
-            Ratio.Init(Ironpedal.controls[KNOB_3], 1.0f, 40.0f, Parameter::LINEAR);
-            Release.Init(Ironpedal.controls[KNOB_6], 0.001f, 10.0f, Parameter::LINEAR);
-            Threshold.Init(Ironpedal.controls[KNOB_1], 0.0f, -80.0f, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Compressor.Init(Ironpedal.AudioSampleRate());
+            this->attack.Init(this->pedal->controls[KNOB_4], 0.001f, 10.0f, Parameter::LINEAR);
+            this->ratio.Init(this->pedal->controls[KNOB_3], 1.0f, 40.0f, Parameter::LINEAR);
+            this->release.Init(this->pedal->controls[KNOB_6], 0.001f, 10.0f, Parameter::LINEAR);
+            this->threshold.Init(this->pedal->controls[KNOB_1], 0.0f, -80.0f, Parameter::LINEAR);
 
-            Compressor.SetAttack(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4]);
-            Compressor.SetRatio(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
-            Compressor.SetRelease(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6]);
-            Compressor.SetThreshold(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1]);
+            this->compressor.Init(this->pedal->AudioSampleRate());
+
+            this->compressor.SetAttack(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4]);
+            this->compressor.SetRatio(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
+            this->compressor.SetRelease(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6]);
+            this->compressor.SetThreshold(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
         {
             for (auto i = 0; i < size; ++i)
-                out[i] = Compressor.Process(in[i]);
+                out[i] = this->compressor.Process(in[i]);
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1] = Threshold.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3] = Ratio.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4] = Attack.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6] = Release.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1] = this->threshold.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3] = this->ratio.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4] = this->attack.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6] = this->release.Process();
             }
 
-            Compressor.SetAttack(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4]);
-            Compressor.SetRatio(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
-            Compressor.SetRelease(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6]);
-            Compressor.SetThreshold(Ironpedal.storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1]);
+            this->compressor.SetAttack(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_4]);
+            this->compressor.SetRatio(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_3]);
+            this->compressor.SetRelease(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_6]);
+            this->compressor.SetThreshold(this->pedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[KNOB_1]);
         }
-    }
+
+    private:
+        daisysp::Compressor compressor;
+        Ironpedal *pedal;
+
+        Parameter attack;
+        Parameter ratio;
+        Parameter release;
+        Parameter threshold;
+    };
 }

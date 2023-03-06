@@ -3,59 +3,64 @@
 
 namespace Effect
 {
-    namespace Overdrive
+    class Overdrive
     {
-        daisysp::Overdrive Overdrive;
-
-        Parameter Blend;
-        Parameter Drive;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("BLEND");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "BLEND");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] * 100.0f));
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%u", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] * 100.0f));
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("DRIVE");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "DRIVE");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5] * 100.0f));
-            PrintlnCentered(buf);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%u", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5] * 100.0f));
+            PrintlnCentered(this->pedal, buf);
 
-            PrintFooter("OVERDRIVE");
+            PrintFooter(this->pedal, "OVERDRIVE");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Blend.Init(Ironpedal.controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
-            Drive.Init(Ironpedal.controls[KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Overdrive.SetDrive(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
+            this->blend.Init(this->pedal->controls[KNOB_2], 0.0f, 1.0f, Parameter::LINEAR);
+            this->drive.Init(this->pedal->controls[KNOB_5], 0.0f, 1.0f, Parameter::LINEAR);
+
+            this->overdrive.SetDrive(this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
         {
             for (auto i = 0; i < size; ++i)
-                out[i] = in[i] * Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] + Overdrive.Process(in[i]) * (1.0f - Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2]);
+                out[i] = in[i] * this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] + this->overdrive.Process(in[i]) * (1.0f - this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2]);
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] = Blend.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5] = Drive.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_2] = this->blend.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5] = this->drive.Process();
             }
 
-            Overdrive.SetDrive(Ironpedal.storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
+            this->overdrive.SetDrive(this->pedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[KNOB_5]);
         }
-    }
+
+    private:
+        daisysp::Overdrive overdrive;
+        Ironpedal *pedal;
+
+        Parameter blend;
+        Parameter drive;
+    };
 }

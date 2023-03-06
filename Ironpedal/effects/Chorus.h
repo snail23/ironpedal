@@ -3,73 +3,78 @@
 
 namespace Effect
 {
-    namespace Chorus
+    class Chorus
     {
-        daisysp::ChorusEngine Chorus;
-
-        Parameter Depth;
-        Parameter Delay;
-        Parameter Feedback;
-        Parameter Rate;
-
+    public:
         void Draw()
         {
             char buf[16];
-            PrintHeader();
+            PrintHeader(this->pedal);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("DELAY     RATE");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "DELAY     RATE");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3u       %u.%02u", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] * 100.0f), (uint32_t)Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3], (uint32_t)((Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] - floor(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3])) * 100.0f));
-            PrintlnCentered(buf);
-            PrintlnCentered(0);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3u       %u.%02u", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] * 100.0f), (uint32_t)this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3], (uint32_t)((this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] - floor(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3])) * 100.0f));
+            PrintlnCentered(this->pedal, buf);
+            PrintlnCentered(this->pedal, 0);
 
-            Ironpedal.display->setTextColor(COLOR_LIGHT);
-            PrintlnCentered("FEEDBACK DEPTH");
+            this->pedal->display->setTextColor(COLOR_LIGHT);
+            PrintlnCentered(this->pedal, "FEEDBACK DEPTH");
 
-            Ironpedal.display->setTextColor(COLOR);
-            sprintf(buf, "%3u        %3d", (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] * 100.0f), (uint32_t)(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] * 100.0f));
-            PrintlnCentered(buf);
+            this->pedal->display->setTextColor(COLOR);
+            sprintf(buf, "%3u        %3d", (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] * 100.0f), (uint32_t)(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] * 100.0f));
+            PrintlnCentered(this->pedal, buf);
 
-            PrintFooter("CHORUS");
+            PrintFooter(this->pedal, "CHORUS");
         }
 
-        void Init()
+        void Init(Ironpedal *pedal)
         {
-            Delay.Init(Ironpedal.controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
-            Depth.Init(Ironpedal.controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
-            Feedback.Init(Ironpedal.controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
-            Rate.Init(Ironpedal.controls[KNOB_3], 0.01f, 6.0f, Parameter::LINEAR);
+            this->pedal = pedal;
 
-            Chorus.Init(Ironpedal.AudioSampleRate());
+            this->delay.Init(this->pedal->controls[KNOB_1], 0.0f, 1.0f, Parameter::LINEAR);
+            this->depth.Init(this->pedal->controls[KNOB_6], 0.0f, 1.0f, Parameter::LINEAR);
+            this->feedback.Init(this->pedal->controls[KNOB_4], 0.0f, 1.0f, Parameter::LINEAR);
+            this->rate.Init(this->pedal->controls[KNOB_3], 0.01f, 6.0f, Parameter::LINEAR);
 
-            Chorus.SetDelay(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1]);
-            Chorus.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4]);
-            Chorus.SetLfoDepth(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6]);
-            Chorus.SetLfoFreq(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3]);
+            this->chorus.Init(this->pedal->AudioSampleRate());
+
+            this->chorus.SetDelay(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1]);
+            this->chorus.SetFeedback(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4]);
+            this->chorus.SetLfoDepth(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6]);
+            this->chorus.SetLfoFreq(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3]);
         }
 
         void OnAudio(float *in, float *out, size_t size)
         {
             for (auto i = 0; i < size; ++i)
-                out[i] = Chorus.Process(in[i]);
+                out[i] = this->chorus.Process(in[i]);
         }
 
         void OnInput()
         {
-            if (!Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].locked)
+            if (!this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].locked)
             {
-                Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] = Delay.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] = Rate.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] = Feedback.Process();
-                Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] = Depth.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1] = this->delay.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3] = this->rate.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4] = this->feedback.Process();
+                this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6] = this->depth.Process();
             }
 
-            Chorus.SetDelay(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1]);
-            Chorus.SetFeedback(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4]);
-            Chorus.SetLfoDepth(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6]);
-            Chorus.SetLfoFreq(Ironpedal.storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3]);
+            this->chorus.SetDelay(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_1]);
+            this->chorus.SetFeedback(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_4]);
+            this->chorus.SetLfoDepth(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_6]);
+            this->chorus.SetLfoFreq(this->pedal->storage->GetSettings().effects[EFFECT_CHORUS].values[KNOB_3]);
         }
-    }
+
+    private:
+        daisysp::ChorusEngine chorus;
+        Ironpedal *pedal;
+
+        Parameter depth;
+        Parameter delay;
+        Parameter feedback;
+        Parameter rate;
+    };
 }

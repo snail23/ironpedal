@@ -23,10 +23,11 @@ struct StorageData
     }
 };
 
-void Draw();
-void MessageBox(const char *text, uint32_t event);
+class Ironpedal;
 
-void OnInit();
+void Draw();
+void MessageBox(Ironpedal *pedal, char *text, uint32_t event);
+
 void OnInput();
 void OnInputAll();
 
@@ -48,18 +49,6 @@ public:
         this->storage = new PersistentStorage<StorageData>(this->qspi);
         this->storage->Init({});
         this->storage->GetDefaultSettings() = this->storage->GetSettings();
-
-        OnInit();
-
-        this->display = new Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);
-        this->display->begin();
-        this->display->setFont(&Px437_IBM_VGA_8x148pt7b);
-
-        this->display->fillScreen(0);
-        this->display->drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
-
-        System::Delay(1500);
-        OnInput();
     }
 
     void Loop()
@@ -82,6 +71,19 @@ public:
             if (inputReceived)
                 OnInput();
         }
+    }
+
+    void Splash()
+    {
+        this->display = new Adafruit_SSD1351(SSD1351WIDTH, SSD1351HEIGHT, PIN_CS, PIN_SPI_MISO, PIN_SPI_MOSI, PIN_SPI_SCK, PIN_RST);
+        this->display->begin();
+        this->display->setFont(&Px437_IBM_VGA_8x148pt7b);
+
+        this->display->fillScreen(0);
+        this->display->drawBitmap(0, 0, SplashBitmap, SSD1351WIDTH, SSD1351HEIGHT, COLOR);
+
+        System::Delay(1500);
+        OnInput();
     }
 
 private:
@@ -240,7 +242,7 @@ private:
                 case 1:
                 case 2:
                 case 3:
-                    MessageBox((i == FOOT_SWITCH_1) ? "LOADING IN %u" : "SAVING IN %u", 4 - event);
+                    MessageBox(this, (char *)((i == FOOT_SWITCH_1) ? "LOADING IN %u" : "SAVING IN %u"), 4 - event);
                     this->footSwitchData[i].events[event] = false;
 
                     break;
