@@ -2,10 +2,10 @@
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
 ## Features
-- Small OLED display (hardware accelerated)
+- Small hardware accelerated OLED display that can be toggled off to reduce EMI when not in use
 - 16 different effects
 - Save/load your effect settings to external flash via QSPI
-- Effects can individually be enabled/locked
+- Effects can be individually enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
 
 ## Building from source
@@ -37,6 +37,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 ## Usage
 | Operation                               | Instructions                                                       |
 | --------------------------------------- | ------------------------------------------------------------------ |
+| Turn the OLED display on/off            | Hold both foot switches for 3 seconds                              |
 | Change the current effect screen        | Move the toggle switches into their correct position               |
 | Enabling & disabling the current effect | Single tap the left foot switch (has no effect on Master and Misc) |
 | Locking & unlocking the current effect  | Single tap the right foot switch (has no effect on Misc)           |

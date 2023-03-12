@@ -13,7 +13,9 @@ void MessageBox(Snailsoft::Ironpedal *ironpedal, const char *text, uint32_t even
     for (auto i = 0u; i < COLUMNS / FontBm437_IBM_VGA_8x14.width / 2 - length / 2; ++i)
         SSD1351_write_string(COLOR_DARK, FontBm437_IBM_VGA_8x14, " ");
 
-    SSD1351_draw_filled_rect(SSD1351_cursor.x - 8, SSD1351_cursor.y - 8, FontBm437_IBM_VGA_8x14.width * (length - 1) + 16, FontBm437_IBM_VGA_8x14.height + 16 - 1, COLOR_BLACK);
+    SSD1351_draw_round_rect(SSD1351_cursor.x - 8, SSD1351_cursor.y - 8, FontBm437_IBM_VGA_8x14.width * (length - 1) + 16, FontBm437_IBM_VGA_8x14.height + 16 - 1, 4, COLOR_BLACK);
+    SSD1351_draw_round_rect(SSD1351_cursor.x - 7, SSD1351_cursor.y - 7, FontBm437_IBM_VGA_8x14.width * (length - 1) + 14, FontBm437_IBM_VGA_8x14.height + 14 - 1, 4, COLOR_BLACK);
+    SSD1351_draw_filled_rect(SSD1351_cursor.x - 6, SSD1351_cursor.y - 6, FontBm437_IBM_VGA_8x14.width * (length - 1) + 12, FontBm437_IBM_VGA_8x14.height + 12 - 1, COLOR_BLACK);
     SSD1351_draw_round_rect(SSD1351_cursor.x - 6, SSD1351_cursor.y - 6, FontBm437_IBM_VGA_8x14.width * (length - 1) + 12, FontBm437_IBM_VGA_8x14.height + 12 - 1, 4, COLOR_DARK);
     SSD1351_draw_round_rect(SSD1351_cursor.x - 5, SSD1351_cursor.y - 5, FontBm437_IBM_VGA_8x14.width * (length - 1) + 10, FontBm437_IBM_VGA_8x14.height + 10 - 1, 4, COLOR_DARK);
 
