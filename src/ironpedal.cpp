@@ -8,7 +8,6 @@
 
 #include "config.h"
 #include "effect.h"
-#include "res.h"
 #include "terrarium.h"
 #include "ironpedal.h"
 #include "util.h"
