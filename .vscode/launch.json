@@ -1,0 +1,35 @@
+{
+  "configurations": [
+    {
+      "configFiles": [
+        "interface/stlink.cfg",
+        "target/stm32h7x.cfg"
+      ],
+      "cwd": "${workspaceFolder}/dep/OpenOCD",
+      "debuggerArgs": [
+        "-d",
+        "${workspaceRoot}"
+      ],
+      "executable": "${workspaceRoot}/build/ironpedal.elf",
+      "interface": "swd",
+      "name": "Cortex Debug",
+      "openOCDLaunchCommands": [
+        "init",
+        "reset init"
+      ],
+      "preLaunchTask": "build_debug",
+      "preRestartCommands": [
+        "load",
+        "enable breakpoint",
+        "monitor reset"
+      ],
+      "request": "launch",
+      "runToEntryPoint": "main",
+      "servertype": "openocd",
+      "showDevDebugOutput": true,
+      "svdFile": "${workspaceRoot}/.vscode/STM32H750x.svd",
+      "type": "cortex-debug"
+    }
+  ],
+  "version": "0.2.0"
+}

@@ -1,0 +1,74 @@
+{
+  "tasks": [
+    {
+      "command": "make clean && make -s -j",
+      "group": {
+        "kind": "build"
+      },
+      "label": "build",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "type": "shell"
+    },
+    {
+      "command": "make clean && make DEBUG=1 -s -j",
+      "group": {
+        "kind": "build"
+      },
+      "label": "build_debug",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "type": "shell"
+    },
+    {
+      "command": "make clean && make -s -j && make program",
+      "label": "build_and_program",
+      "group": {
+        "isDefault": true,
+        "kind": "build"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "type": "shell"
+    },
+    {
+      "command": "make clean && make -s -j && make program-dfu",
+      "label": "build_and_program_dfu",
+      "group": {
+        "kind": "build"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [
+        "$gcc"
+      ],
+      "type": "shell"
+    },
+    {
+      "command": "make program-dfu",
+      "label": "program-dfu",
+      "problemMatcher": [],
+      "type": "shell"
+    },
+    {
+      "command": "make program",
+      "label": "program",
+      "problemMatcher": [],
+      "type": "shell"
+    }
+  ],
+  "version": "2.0.0"
+}
