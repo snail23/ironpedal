@@ -12,9 +12,7 @@ namespace Effect
             this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.0f, daisy::Parameter::LINEAR);
 
             this->metronome.Init(this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6], this->ironpedal->AudioSampleRate());
-            // this->metronomeBass.Init(this->ironpedal->AudioSampleRate());
-            // this->metronomeBassTurn = true;
-            // this->metronomeSnare.Init(this->ironpedal->AudioSampleRate());
+            this->metronome_bass.Init(this->ironpedal->AudioSampleRate());
         }
 
         void Draw()
@@ -49,25 +47,19 @@ namespace Effect
 
         void OnPostAudio(float *in, float *out, size_t size)
         {
-            /*for (auto i = 0; i < size; ++i)
+            for (auto i = 0u; i < size; ++i)
             {
                 if (this->metronome.Process())
-                {
-                    this->metronomeBassTurn ? this->metronomeBass.Trig() : this->metronomeSnare.Trig();
-                    this->metronomeBassTurn = !this->metronomeBassTurn;
-                }
+                    this->metronome_bass.Trig();
 
-                out[i] += this->metronomeBass.Process() + this->metronomeSnare.Process();
-            }*/
+                out[i] += this->metronome_bass.Process();
+            }
         }
 
     private:
-        // AnalogBassDrum metronome_bass;
-        // AnalogSnareDrum metronome_snare;
-
-        // bool metronome_bass_turn;
-
         daisy::Parameter metronome_bpm;
+
+        daisysp::AnalogBassDrum metronome_bass;
         daisysp::Metro metronome;
 
         Snailsoft::Ironpedal *ironpedal;
