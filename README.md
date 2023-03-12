@@ -2,11 +2,16 @@
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
 # Features
-- Small OLED display
+- Small OLED display (hardware accelerated)
 - 16 different effects
 - Save/load your effect settings to external flash via QSPI
 - Effects can individually be enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
+
+# Building from source
+Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
+
+`make clean && make -j && make program`
 
 # Supported effects
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
