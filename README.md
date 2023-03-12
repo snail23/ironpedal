@@ -1,19 +1,19 @@
 # Ironpedal
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
-# Features
+## Features
 - Small OLED display (hardware accelerated)
 - 16 different effects
 - Save/load your effect settings to external flash via QSPI
 - Effects can individually be enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
 
-# Building from source
+## Building from source
 Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
 
 `make clean && make -j && make program`
 
-# Supported effects
+## Supported effects
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
 | ---------- | --------------- | --------- | -------- | --------- | --------- | -------- | ---------- |
 | Master     | 0000            | Pre HPF   | Pre LPF  | Pre Gain  | Post HPF  | Post LPF | Volume     |
@@ -27,14 +27,14 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Looper     | 1000            |           | Mode     |           |           | Volume   |            |
 | Misc       | 1111            |           |          |           |           |          | Metronome  |
 
-# Effect chain order
+## Effect chain order
 | 1                     | 2         | 3         | 4      | 5                        | 6      |
 | --------------------- | --------- | --------- | ------ | ------------------------ | ------ |
 | Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
 | Autowah               |           | Chorus    |        | Master: Post EQ & Volume |        |
 | Compressor            |           | Tremolo   |        |                          |        |
 
-# Usage
+## Usage
 | Operation                               | Instructions                                                       |
 | --------------------------------------- | ------------------------------------------------------------------ |
 | Change the current effect screen        | Move the toggle switches into their correct position               |
@@ -43,7 +43,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Load saved effect settings              | Hold the left foot switch for 3 seconds                            |
 | Save effect settings                    | Hold the right foot switch for 3 seconds                           |
 
-# My settings, feel free to use these as a starting point
+## My settings, feel free to use these as a starting point
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6     |
 | ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ---------- |
 | Master     | 0000            | 60 Hz     | 10.1 kHz | 0            | 60 Hz     | 10.1 kHz      | 100        |
@@ -59,16 +59,16 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 
-# Pictures
+## Pictures
 Todo.
 
-# Physical build tutorial
+## Physical build tutorial
 Todo.
 
-# Reporting bugs
+## Reporting bugs
 If you encounter a bug and wish to report it or have feature suggestions and other topics, please [open an issue](https://github.com/snail23/ironpedal/issues).
 
-# License
+## License
 ```
 MIT License
 
