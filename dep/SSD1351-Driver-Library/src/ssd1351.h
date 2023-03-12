@@ -44,8 +44,8 @@ union DisplayRAM{
 
 struct cursor
 {
-    int8_t x;
-    int8_t y;
+    uint8_t x;
+    uint8_t y;
 } extern SSD1351_cursor;
 
 // SSD1351 Commands
@@ -113,26 +113,26 @@ void SSD1351_turn_on(void);
 
 void SSD1351_fill(uint16_t color);
 
-void SSD1351_write_pixel(int16_t x, int16_t y, uint16_t color);
+void SSD1351_write_pixel(uint8_t x, uint8_t y, uint16_t color);
 
 void SSD1351_update(void);
 
-void SSD1351_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
+void SSD1351_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color);
 
-void SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-void SSD1351_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
+void SSD1351_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
+void SSD1351_draw_round_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t r, uint16_t color);
 
-void SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
+void SSD1351_draw_filled_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color);
 
-void SSD1351_draw_circle(int16_t xc, int16_t yc, int16_t r, uint16_t color);
+void SSD1351_draw_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color);
 
-void SSD1351_draw_filled_circle(int16_t xc, int16_t yc, int16_t r, uint16_t color);
+void SSD1351_draw_filled_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color);
 
 void SSD1351_printf(uint16_t color, font_t font, const char *format, ...);
 void SSD1351_write_string(uint16_t color, font_t &font, const char *line);
 
 void SSD1351_set_cursor(uint8_t x, uint8_t y);
 
-void SSD1351_draw_bitmap(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t *data, uint16_t color);
+void SSD1351_draw_bitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t *data, uint16_t color);
 
 #endif //SSD1351_H

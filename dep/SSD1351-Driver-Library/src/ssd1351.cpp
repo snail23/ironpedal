@@ -224,29 +224,29 @@ void SSD1351_update(void)
  * @param y: Pixel's vertical position
  * @retval None
  */
-void SSD1351_write_pixel(int16_t x, int16_t y, uint16_t color)
+void SSD1351_write_pixel(uint8_t x, uint8_t y, uint16_t color)
 {
     DRAM_16[x + COLUMNS * y] = color;
 }
 
 /*  LINE DRAWING FUNCTIONS */
 
-void SSD1351_draw_line_low(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
+void SSD1351_draw_line_low(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color)
 {
-    int16_t dx = x1 - x0;
-    int16_t dy = y1 - y0;
-    int16_t yi = 1;
+    auto dx = x1 - x0;
+    auto dy = y1 - y0;
+    auto yi = 1;
     if (dy < 0)
     {
         yi = -1;
         dy = -dy;
     }
-    int16_t D = 2 * dy - dx;
-    int16_t y = y0;
+    auto D = 2 * dy - dx;
+    auto y = y0;
 
     if (x0 < x1)
     {
-        for (int16_t x = x0; x <= x1; x++)
+        for (auto x = x0; x <= x1; x++)
         {
             SSD1351_write_pixel(x, y, color);
             if (D > 0)
@@ -259,7 +259,7 @@ void SSD1351_draw_line_low(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint1
     }
     else
     {
-        for (int16_t x = x0; x >= x1; x--)
+        for (auto x = x0; x >= x1; x--)
         {
             SSD1351_write_pixel(x, y, color);
             if (D > 0)
@@ -272,22 +272,22 @@ void SSD1351_draw_line_low(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint1
     }
 }
 
-void SSD1351_draw_line_high(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
+void SSD1351_draw_line_high(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color)
 {
-    int16_t dx = x1 - x0;
-    int16_t dy = y1 - y0;
-    int16_t xi = 1;
+    auto dx = x1 - x0;
+    auto dy = y1 - y0;
+    auto xi = 1;
     if (dx < 0)
     {
         xi = -1;
         dx = -dx;
     }
-    int16_t D = 2 * dx - dy;
-    int16_t x = x0;
+    auto D = 2 * dx - dy;
+    auto x = x0;
 
     if (y0 < y1)
     {
-        for (int16_t y = y0; y <= y1; y++)
+        for (auto y = y0; y <= y1; y++)
         {
             SSD1351_write_pixel(x, y, color);
             if (D > 0)
@@ -300,7 +300,7 @@ void SSD1351_draw_line_high(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint
     }
     else
     {
-        for (int16_t y = y0; y >= y1; y--)
+        for (auto y = y0; y >= y1; y--)
         {
             SSD1351_write_pixel(x, y, color);
             if (D > 0)
@@ -322,7 +322,7 @@ void SSD1351_draw_line_high(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint
  * @color: color to use to draw the line
  * @reval None
  */
-void SSD1351_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
+void SSD1351_draw_line(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, uint16_t color)
 {
     if (abs(y1 - y0) < abs(x1 - x0))
     {
@@ -358,7 +358,7 @@ void SSD1351_draw_line(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t 
  * @color: color for the border
  * @reval None
  */
-void SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+void SSD1351_draw_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color)
 {
     SSD1351_draw_line(x, y, x + w, y, color);
     SSD1351_draw_line(x + w, y, x + w, y + h, color);
@@ -366,14 +366,14 @@ void SSD1351_draw_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t colo
     SSD1351_draw_line(x, y + h, x, y, color);
 }
 
-void drawCircleHelper(int16_t x0, int16_t y0, int16_t r,
+void drawCircleHelper(uint8_t x0, uint8_t y0, uint8_t r,
                       uint8_t cornername, uint16_t color)
 {
-    int16_t f = 1 - r;
-    int16_t ddF_x = 1;
-    int16_t ddF_y = -2 * r;
-    int16_t x = 0;
-    int16_t y = r;
+    auto f = 1 - r;
+    auto ddF_x = 1;
+    auto ddF_y = -2 * r;
+    auto x = 0;
+    auto y = r;
 
     while (x < y)
     {
@@ -408,13 +408,13 @@ void drawCircleHelper(int16_t x0, int16_t y0, int16_t r,
         }
     }
 }
-void drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color)
+void drawFastVLine(uint8_t x, uint8_t y, uint8_t h, uint16_t color)
 {
     // Trying to optimize line drawing in buffered mode is pretty pointless, it's stupid fast anyway.
     SSD1351_draw_line(x, y, x, y + h - 1, color);
 }
 
-void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
+void drawFastHLine(uint8_t x, uint8_t y, uint8_t w, uint16_t color)
 {
     // Trying to optimize line drawing in buffered mode is pretty pointless, it's stupid fast anyway.
     SSD1351_draw_line(x, y, x + w - 1, y, color);
@@ -429,7 +429,7 @@ void drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color)
  * @color: color for the border
  * @reval None
  */
-void SSD1351_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+void SSD1351_draw_round_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t r, uint16_t color)
 {
     drawFastHLine(x + r, y, w - 2 * r, color);         // Top
     drawFastHLine(x + r, y + h - 1, w - 2 * r, color); // Bottom
@@ -452,9 +452,9 @@ void SSD1351_draw_round_rect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t
  * @oaram color: color for the rectangle
  * @reval None
  */
-void SSD1351_draw_filled_rect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+void SSD1351_draw_filled_rect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint16_t color)
 {
-    for (int16_t i = x; i < x + w; i++)
+    for (auto i = x; i < x + w; i++)
         drawFastVLine(i, y, h, color);
 }
 
@@ -478,7 +478,7 @@ void SSD1351_draw_rotated_rect(int16_t xc, int16_t yc, int16_t w, int16_t h, int
   int16_t y0 = yc + (hyp * cos(rad));
 }*/
 
-void draw_circle(int16_t xc, int16_t yc, int16_t x, int16_t y, uint16_t color)
+void draw_circle(uint8_t xc, uint8_t yc, uint8_t x, uint8_t y, uint16_t color)
 {
     SSD1351_write_pixel(xc + x, yc + y, color);
     SSD1351_write_pixel(xc - x, yc + y, color);
@@ -490,7 +490,7 @@ void draw_circle(int16_t xc, int16_t yc, int16_t x, int16_t y, uint16_t color)
     SSD1351_write_pixel(xc - y, yc - x, color);
 }
 
-void draw_filled_circle(int16_t xc, int16_t yc, int16_t x, int16_t y, uint16_t color)
+void draw_filled_circle(uint8_t xc, uint8_t yc, uint8_t x, uint8_t y, uint16_t color)
 {
     SSD1351_draw_line(xc - x, yc + y, xc + x, yc + y, color);
     SSD1351_draw_line(xc - x, yc - y, xc + x, yc - y, color);
@@ -505,7 +505,7 @@ void draw_filled_circle(int16_t xc, int16_t yc, int16_t x, int16_t y, uint16_t c
  * @param color: color for the border
  * @reval None
  */
-void SSD1351_draw_circle(int16_t xc, int16_t yc, uint16_t r, uint16_t color)
+void SSD1351_draw_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color)
 {
     int x = 0, y = r;
     int d = 3 - 2 * r;
@@ -533,7 +533,7 @@ void SSD1351_draw_circle(int16_t xc, int16_t yc, uint16_t r, uint16_t color)
  * @param color: color for the circle
  * @reval None
  */
-void SSD1351_draw_filled_circle(int16_t xc, int16_t yc, uint16_t r, uint16_t color)
+void SSD1351_draw_filled_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color)
 {
     int x = 0, y = r;
     int d = 3 - 2 * r;
@@ -556,7 +556,6 @@ void SSD1351_draw_filled_circle(int16_t xc, int16_t yc, uint16_t r, uint16_t col
 
 void SSD1351_write_char(uint16_t color, font_t &font, char c)
 {
-    uint16_t fd;
     if (c == '\n')
     {
         SSD1351_cursor.y = SSD1351_cursor.y + font.height;
@@ -564,13 +563,15 @@ void SSD1351_write_char(uint16_t color, font_t &font, char c)
     }
     else
     {
+        uint8_t glyph;
+
         for (int i = 0; i < font.height; i++)
         {
-            fd = font.data[(c - font.first) * font.height + i];
+            glyph = font.data[(c - font.first) * font.height + i];
 
             for (int j = 0; j < font.width; j++)
             {
-                if ((fd << j) & 0x80)
+                if ((glyph << j) & 0x80)
                     SSD1351_write_pixel(SSD1351_cursor.x + j, SSD1351_cursor.y + i, color);
             }
         }
@@ -607,7 +608,7 @@ void SSD1351_set_cursor(uint8_t x, uint8_t y)
  * @param sp: pointer to struct holding sprite data
  */
 
-void SSD1351_draw_bitmap(int16_t x, int16_t y, int16_t width, int16_t height, uint8_t *data, uint16_t color)
+void SSD1351_draw_bitmap(uint8_t x, uint8_t y, uint8_t width, uint8_t height, uint8_t *data, uint16_t color)
 {
     int16_t i, j, byteWidth = (width + 7) / 8;
 
