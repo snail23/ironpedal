@@ -37,10 +37,10 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 ## Usage
 | Operation                               | Instructions                                                       |
 | --------------------------------------- | ------------------------------------------------------------------ |
-| Turn the OLED display on/off            | Hold both foot switches for 3 seconds                              |
+| Turn the OLED display on/off            | Single tap both foot switches                                      |
 | Change the current effect screen        | Move the toggle switches into their correct position               |
 | Enabling & disabling the current effect | Single tap the left foot switch (has no effect on Master and Misc) |
-| Locking & unlocking the current effect  | Single tap the right foot switch (has no effect on Misc)           |
+| Locking & unlocking the current effect  | Single tap the right foot switch                                   |
 | Load saved effect settings              | Hold the left foot switch for 3 seconds                            |
 | Save effect settings                    | Hold the right foot switch for 3 seconds                           |
 

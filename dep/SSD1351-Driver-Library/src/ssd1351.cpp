@@ -1,9 +1,9 @@
 #include "ssd1351.h"
 #include <string.h>
 
-DisplayRAM *DRAM;
-#define DRAM_16 DRAM->halfw
-#define DRAM_8 DRAM->byte
+DisplayRAM DRAM;
+#define DRAM_16 DRAM.halfw
+#define DRAM_8 DRAM.byte
 
 /* Screen cursor for printing */
 cursor SSD1351_cursor;
@@ -71,9 +71,6 @@ uint16_t SSD1351_get_rgb(uint8_t r, uint8_t g, uint8_t b)
  */
 void SSD1351_init(void)
 {
-    DRAM = new DisplayRAM;
-    memset(DRAM, 0, DRAM_SIZE_8);
-
     SSD1351_SetResetPin();
     SSD1351_DelayMs(10);
     SSD1351_ClearResetPin();

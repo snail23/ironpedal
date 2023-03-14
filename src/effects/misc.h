@@ -25,7 +25,7 @@ namespace Effect
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRONOME\n", ALIGN_CENTER);
 
-            auto bpm = (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6] * 60.0f);
+            uint32_t bpm = this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6] * 60.0f;
 
             if (bpm)
                 sprintf(buf, "%lu BPM\n", bpm);
@@ -47,7 +47,7 @@ namespace Effect
 
         void OnPostAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
             {
                 if (this->metronome.Process())
                     this->metronome_bass.Trig();

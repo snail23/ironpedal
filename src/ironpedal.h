@@ -286,6 +286,8 @@ namespace Snailsoft
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
             this->current_effect.id = Effect::EFFECT_MASTER;
+            this->display_enabled = false;
+
             this->font =
                 {
                     8,
@@ -306,6 +308,7 @@ namespace Snailsoft
         void Run()
         {
             SSD1351_init();
+            this->display_enabled = true;
 
             this->Splash();
             this->Start();
@@ -335,6 +338,7 @@ namespace Snailsoft
         }
 
     private:
+        bool display_enabled;
         uint32_t control_values[PedalPCB::KNOB_LAST];
 
         struct
@@ -434,13 +438,31 @@ namespace Snailsoft
             switch (id)
             {
             case PedalPCB::FOOT_SWITCH_1:
-                this->storage->GetSettings().effects[this->current_effect.id].enabled = !this->storage->GetSettings().effects[this->current_effect.id].enabled;
+                if (this->foot_switch_data[PedalPCB::FOOT_SWITCH_2].hold_time)
+                {
+                    this->display_enabled ? SSD1351_turn_off() : SSD1351_init();
+                    this->display_enabled = !this->display_enabled;
+
+                    this->foot_switch_data[PedalPCB::FOOT_SWITCH_2].hold_time = 9999;
+                }
+                else
+                    this->storage->GetSettings().effects[this->current_effect.id].enabled = !this->storage->GetSettings().effects[this->current_effect.id].enabled;
+
                 this->ResetFootSwitchData(id);
 
                 return true;
 
             case PedalPCB::FOOT_SWITCH_2:
-                this->storage->GetSettings().effects[this->current_effect.id].locked = !this->storage->GetSettings().effects[this->current_effect.id].locked;
+                if (this->foot_switch_data[PedalPCB::FOOT_SWITCH_1].hold_time)
+                {
+                    this->display_enabled ? SSD1351_turn_off() : SSD1351_init();
+                    this->display_enabled = !this->display_enabled;
+                    
+                    this->foot_switch_data[PedalPCB::FOOT_SWITCH_1].hold_time = 9999;
+                }
+                else
+                    this->storage->GetSettings().effects[this->current_effect.id].locked = !this->storage->GetSettings().effects[this->current_effect.id].locked;
+
                 this->ResetFootSwitchData(id);
 
                 return true;
