@@ -295,7 +295,7 @@ namespace Snailsoft
 
             memcpy(this->font.data, Bm437_IBM_VGA_8x14, sizeof(Bm437_IBM_VGA_8x14));
 
-            for (auto i = 0; i <= PedalPCB::FOOT_SWITCH_2; ++i)
+            for (uint8_t i = 0; i <= PedalPCB::FOOT_SWITCH_2; ++i)
                 this->ResetFootSwitchData(i);
 
             this->storage = new daisy::PersistentStorage<StorageData>(this->qspi);
@@ -314,10 +314,10 @@ namespace Snailsoft
 
             while (true)
             {
-                for (auto i = 0; i < PedalPCB::KNOB_LAST; ++i)
+                for (uint8_t i = 0; i < PedalPCB::KNOB_LAST; ++i)
                     this->knobs[i].Process();
 
-                for (auto i = 0; i < PedalPCB::SWITCH_LAST; ++i)
+                for (uint8_t i = 0; i < PedalPCB::SWITCH_LAST; ++i)
                     this->switches[i].Debounce();
 
                 this->ProcessFootSwitches();
@@ -345,10 +345,10 @@ namespace Snailsoft
 
         bool HasControlChanged()
         {
-            auto input_received = false;
+            bool input_received = false;
             uint32_t val;
 
-            for (auto i = 0; i < PedalPCB::KNOB_LAST; ++i)
+            for (uint8_t i = 0; i < PedalPCB::KNOB_LAST; ++i)
             {
                 val = (uint32_t)round(this->knobs[i].Value() * 100.0f);
 
@@ -364,10 +364,10 @@ namespace Snailsoft
 
         bool IsSwitchPressed()
         {
-            auto input_received = false;
-            auto now = daisy::System::GetNow();
+            bool input_received = false;
+            uint32_t now = daisy::System::GetNow();
 
-            for (auto i = 0; i < PedalPCB::SWITCH_LAST; ++i)
+            for (uint8_t i = 0; i < PedalPCB::SWITCH_LAST; ++i)
             {
                 if (this->switches[i].RisingEdge())
                 {
@@ -471,10 +471,10 @@ namespace Snailsoft
 
         void ProcessFootSwitches()
         {
-            auto now = daisy::System::GetNow();
             uint32_t event;
+            uint32_t now = daisy::System::GetNow();
 
-            for (auto i = 0; i <= PedalPCB::FOOT_SWITCH_2; ++i)
+            for (uint8_t i = 0; i <= PedalPCB::FOOT_SWITCH_2; ++i)
             {
                 event = (now - this->foot_switch_data[i].hold_time) / 1000;
 
@@ -521,7 +521,7 @@ namespace Snailsoft
         {
             this->foot_switch_data[id].hold_time = 0;
 
-            for (auto i = 0u; i < sizeof(this->foot_switch_data[id].events); ++i)
+            for (size_t i = 0; i < sizeof(this->foot_switch_data[id].events); ++i)
                 this->foot_switch_data[id].events[i] = true;
         }
 

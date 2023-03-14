@@ -108,7 +108,7 @@ namespace PedalPCB
             this->adc.Init(adc_config, KNOB_LAST);
             this->adc.Start();
 
-            for (auto i = 0; i < KNOB_LAST; ++i)
+            for (uint8_t i = 0; i < KNOB_LAST; ++i)
                 this->knobs[i].Init(this->adc.GetPtr(i), 1000.0f);
 
             this->leds[LED_1].Init(PIN_LED_1);

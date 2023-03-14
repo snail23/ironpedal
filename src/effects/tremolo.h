@@ -70,7 +70,7 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
                 out[i] = this->tremolo.Process(in[i]);
         }
 

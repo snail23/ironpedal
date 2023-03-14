@@ -35,7 +35,7 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
                 out[i] = in[i] * this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_2] + this->overdrive.Process(in[i]) * (1.0f - this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_2]);
         }
 

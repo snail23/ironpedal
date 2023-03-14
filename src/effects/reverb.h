@@ -30,8 +30,8 @@ namespace Effect
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW PASS\n", ALIGN_CENTER);
-            auto lpf = this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_5] / 1000.0f;
-            sprintf(buf, "%lu.%lu KHZ\n", (uint32_t)lpf, (uint32_t)((lpf - floor(lpf)) * 10.0f));
+            float low = this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_5] / 1000.0f;
+            sprintf(buf, "%lu.%lu KHZ\n", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
             PrintFooter(this->ironpedal, "REVERB\n");
@@ -41,7 +41,7 @@ namespace Effect
         {
             float t;
 
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
             {
                 t = in[i] * (1.0f - this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_2]);
                 this->reverb.Process(t, &out[i]);

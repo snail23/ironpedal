@@ -48,7 +48,7 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_CENTER);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "GAIN\n", ALIGN_RIGHT);
 
-            auto low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2] / 1000.0f;
+            float low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2] / 1000.0f;
 
             sprintf(buf, "%lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
@@ -81,7 +81,7 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
             {
                 this->pre_hpf.Process(in[i]);
                 this->pre_lpf.Process(this->pre_hpf.High());
@@ -111,7 +111,7 @@ namespace Effect
 
         void OnPostAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
                 out[i] *= this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6];
         }
 

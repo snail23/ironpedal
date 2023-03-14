@@ -39,7 +39,7 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
-            for (auto i = 0u; i < size; ++i)
+            for (size_t i = 0; i < size; ++i)
             {
                 if (this->ironpedal->storage->GetSettings().effects[EFFECT_LOOPER].values[PedalPCB::KNOB_2] > 0.5f)
                     Buffer[this->buffer_size = this->buffer_size < sizeof(Buffer) / sizeof(float) ? this->buffer_size + 1 : 0] = in[i];
