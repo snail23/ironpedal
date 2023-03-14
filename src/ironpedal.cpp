@@ -57,7 +57,7 @@ int main()
 void Draw()
 {
     SSD1351_fill(COLOR_BLACK);
-    SSD1351_set_cursor(0, 0);
+    SSD1351_set_cursor(1, 0);
 
     switch (Ironpedal->current_effect.id)
     {

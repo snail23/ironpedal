@@ -25,15 +25,16 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "MODE", COLOR_LIGHT);
-            PrintlnCentered(this->ironpedal, this->ironpedal->storage->GetSettings().effects[EFFECT_LOOPER].values[PedalPCB::KNOB_2] > 0.5f ? "RECORD" : "PLAYBACK", COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "MODE\n", ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, this->ironpedal->storage->GetSettings().effects[EFFECT_LOOPER].values[PedalPCB::KNOB_2] > 0.5f ? "RECORD\n" : "PLAYBACK\n", ALIGN_CENTER);
+            
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
-            PrintlnCentered(this->ironpedal, "VOLUME", COLOR_LIGHT);
-            sprintf(buf, "%ld", (int32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_LOOPER].values[PedalPCB::KNOB_5] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOLUME\n", ALIGN_CENTER);
+            sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_LOOPER].values[PedalPCB::KNOB_5] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            PrintFooter(this->ironpedal, "LOOPER");
+            PrintFooter(this->ironpedal, "LOOPER\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)

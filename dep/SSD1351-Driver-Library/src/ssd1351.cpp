@@ -559,7 +559,7 @@ void SSD1351_write_char(uint16_t color, font_t &font, char c)
     if (c == '\n')
     {
         SSD1351_cursor.y = SSD1351_cursor.y + font.height;
-        SSD1351_cursor.x = 0;
+        SSD1351_cursor.x = 1;
     }
     else
     {
@@ -582,8 +582,16 @@ void SSD1351_write_char(uint16_t color, font_t &font, char c)
     return;
 }
 
-void SSD1351_write_string(uint16_t color, font_t &font, const char *line)
+void SSD1351_write_string(uint16_t color, font_t &font, const char *line, uint8_t alignment)
 {
+    auto length = strlen(line) - 1;
+
+    if (alignment == ALIGN_CENTER)
+        SSD1351_cursor.x = 64 - (length * font.width) / 2;
+
+    else if (alignment == ALIGN_RIGHT)
+        SSD1351_cursor.x = 128 - length * font.width;
+
     while (*line != 0)
     {
         SSD1351_write_char(color, font, *line);

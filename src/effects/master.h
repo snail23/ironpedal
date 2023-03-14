@@ -44,18 +44,39 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "HIGH LOW  GAIN", COLOR_LIGHT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "HIGH", ALIGN_LEFT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_CENTER);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "GAIN\n", ALIGN_RIGHT);
+
             auto low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2] / 1000.0f;
-            sprintf(buf, "%3lu %2lu.%luK %4ld", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_3] - 1.0f) * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
 
-            PrintlnCentered(this->ironpedal, "HIGH LOW   VOL", COLOR_LIGHT);
+            sprintf(buf, "%lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1]);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+
+            sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+
+            sprintf(buf, "%ld\n", (int32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_3] - 1.0f) * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "HIGH", ALIGN_LEFT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_CENTER);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOL\n", ALIGN_RIGHT);
+
             low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_5] / 1000.0f;
-            sprintf(buf, "%3lu %2lu.%luK %4ld", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4], (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f), (int32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
+            
+            sprintf(buf, "%lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4]);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            
+            sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            
+            sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            PrintFooter(this->ironpedal, "MASTER");
+            PrintFooter(this->ironpedal, "MASTER\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)

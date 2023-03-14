@@ -91,6 +91,10 @@ struct cursor
 #define COLOR_BLACK 0x0000
 #define COLOR_WHITE 0xFFFF
 
+#define ALIGN_LEFT 0
+#define ALIGN_CENTER 1
+#define ALIGN_RIGHT 3
+
 uint16_t SSD1351_get_rgb(uint8_t r, uint8_t g, uint8_t b);
 
 void SSD1351_ClearDCPin();
@@ -129,7 +133,7 @@ void SSD1351_draw_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color);
 void SSD1351_draw_filled_circle(uint8_t xc, uint8_t yc, uint8_t r, uint16_t color);
 
 void SSD1351_printf(uint16_t color, font_t font, const char *format, ...);
-void SSD1351_write_string(uint16_t color, font_t &font, const char *line);
+void SSD1351_write_string(uint16_t color, font_t &font, const char *line, uint8_t alignment = ALIGN_LEFT);
 
 void SSD1351_set_cursor(uint8_t x, uint8_t y);
 

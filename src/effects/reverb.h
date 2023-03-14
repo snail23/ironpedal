@@ -23,17 +23,18 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "FEEDBACK", COLOR_LIGHT);
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_2] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FEEDBACK\n", ALIGN_CENTER);
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_2] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            PrintlnCentered(this->ironpedal, "LOW PASS", COLOR_LIGHT);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW PASS\n", ALIGN_CENTER);
             auto lpf = this->ironpedal->storage->GetSettings().effects[EFFECT_REVERB].values[PedalPCB::KNOB_5] / 1000.0f;
-            sprintf(buf, "%lu.%lu KHZ", (uint32_t)lpf, (uint32_t)((lpf - floor(lpf)) * 10.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
+            sprintf(buf, "%lu.%lu KHZ\n", (uint32_t)lpf, (uint32_t)((lpf - floor(lpf)) * 10.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            PrintFooter(this->ironpedal, "REVERB");
+            PrintFooter(this->ironpedal, "REVERB\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)

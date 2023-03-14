@@ -19,22 +19,22 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "IRONPEDAL", COLOR_LIGHT);
-            PrintlnCentered(this->ironpedal, "VER " VERSION, COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "IRONPEDAL\n", ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "VER " VERSION "\n", ALIGN_CENTER);
 
-            PrintlnCentered(this->ironpedal, "METRONOME", COLOR_LIGHT);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRONOME\n", ALIGN_CENTER);
 
             auto bpm = (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6] * 60.0f);
 
             if (bpm)
-                sprintf(buf, "%lu BPM", bpm);
+                sprintf(buf, "%lu BPM\n", bpm);
 
             else
-                sprintf(buf, "OFF");
+                sprintf(buf, "OFF\n");
 
-            PrintlnCentered(this->ironpedal, buf, COLOR);
-            PrintFooter(this->ironpedal, "MISC");
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            PrintFooter(this->ironpedal, "MISC\n");
         }
 
         void OnInput()

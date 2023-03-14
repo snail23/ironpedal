@@ -20,16 +20,17 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "BLEND", COLOR_LIGHT);
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_2] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "BLEND\n", ALIGN_CENTER);
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_2] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            PrintlnCentered(this->ironpedal, "DRIVE", COLOR_LIGHT);
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_5] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
-            PrintFooter(this->ironpedal, "OVERDRIVE");
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DRIVE\n", ALIGN_CENTER);
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_OVERDRIVE].values[PedalPCB::KNOB_5] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+
+            PrintFooter(this->ironpedal, "OVERDRIVE\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)

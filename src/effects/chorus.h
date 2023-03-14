@@ -27,16 +27,27 @@ namespace Effect
         {
             char buf[16];
 
-            PrintlnCentered(this->ironpedal, "DELAY     RATE", COLOR_LIGHT);
-            sprintf(buf, "%3lu       %lu.%02lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_1] * 100.0f), (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3], (uint32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3] - floor(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3])) * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
-            PrintlnCentered(this->ironpedal, "", COLOR);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DELAY", ALIGN_LEFT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RATE\n", ALIGN_RIGHT);
 
-            PrintlnCentered(this->ironpedal, "FEEDBACK DEPTH", COLOR_LIGHT);
-            sprintf(buf, "%3lu        %3ld", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_4] * 100.0f), (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_6] * 100.0f));
-            PrintlnCentered(this->ironpedal, buf, COLOR);
+            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_1] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            PrintFooter(this->ironpedal, "CHORUS");
+            sprintf(buf, "%lu.%02lu\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3], (uint32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3] - floor(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_3])) * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", COLOR);
+
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FEEDBACK", ALIGN_LEFT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DEPTH\n", ALIGN_RIGHT);
+
+            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_4] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_CHORUS].values[PedalPCB::KNOB_6] * 100.0f));
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+
+            PrintFooter(this->ironpedal, "CHORUS\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
