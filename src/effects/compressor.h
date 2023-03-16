@@ -17,10 +17,10 @@ namespace Effect
 
             this->compressor.Init(this->ironpedal->AudioSampleRate());
 
-            this->compressor.SetAttack(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4]);
-            this->compressor.SetRatio(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_3]);
-            this->compressor.SetRelease(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6]);
-            this->compressor.SetThreshold(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_1]);
+            this->compressor.SetAttack(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4]);
+            this->compressor.SetRatio(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_3]);
+            this->compressor.SetRelease(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6]);
+            this->compressor.SetThreshold(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_1]);
         }
 
         void Draw()
@@ -30,10 +30,10 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "THRESH", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RATIO\n", ALIGN_RIGHT);
 
-            sprintf(buf, "%ld dB", (int32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_1]);
+            sprintf(buf, "%ld dB", (int32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_1]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            sprintf(buf, "%lu:1\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_3]);
+            sprintf(buf, "%lu:1\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_3]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n", COLOR);
@@ -41,13 +41,13 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "ATTACK", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RELEASE\n", ALIGN_RIGHT);
 
-            sprintf(buf, "%lu.%03lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4], (uint32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4] - floor(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4])) * 1000.0f));
+            sprintf(buf, "%lu.%03lu", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4], (uint32_t)((this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4] - floor(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4])) * 1000.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            sprintf(buf, "%lu.%03lu\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6], (uint32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6] - floor(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6])) * 1000.0f));
+            sprintf(buf, "%lu.%03lu\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6], (uint32_t)((this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6] - floor(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6])) * 1000.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            PrintFooter(this->ironpedal, "COMPRESSOR\n");
+            this->ironpedal->PrintFooter("COMPRESSOR\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -58,18 +58,18 @@ namespace Effect
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].locked)
+            if (!this->ironpedal->GetEffect(EFFECT_COMPRESSOR).locked)
             {
-                this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_1] = this->threshold.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_3] = this->ratio.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4] = this->attack.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6] = this->release.Process();
+                this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_1] = this->threshold.Process();
+                this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_3] = this->ratio.Process();
+                this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4] = this->attack.Process();
+                this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6] = this->release.Process();
             }
 
-            this->compressor.SetAttack(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_4]);
-            this->compressor.SetRatio(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_3]);
-            this->compressor.SetRelease(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_6]);
-            this->compressor.SetThreshold(this->ironpedal->storage->GetSettings().effects[EFFECT_COMPRESSOR].values[PedalPCB::KNOB_1]);
+            this->compressor.SetAttack(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4]);
+            this->compressor.SetRatio(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_3]);
+            this->compressor.SetRelease(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6]);
+            this->compressor.SetThreshold(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_1]);
         }
 
     private:

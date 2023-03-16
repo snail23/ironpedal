@@ -10,7 +10,6 @@
 #include "effect.h"
 #include "terrarium.h"
 #include "ironpedal.h"
-#include "util.h"
 
 #include "effects/autowah.h"
 #include "effects/chorus.h"
@@ -121,38 +120,38 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
 {
     Master->OnAudio((float *)in[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_AUTOWAH].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_AUTOWAH).enabled)
         Autowah->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_COMPRESSOR].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_COMPRESSOR).enabled)
         Compressor->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_OVERDRIVE].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_OVERDRIVE).enabled)
         Overdrive->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_RESONATOR].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_RESONATOR).enabled)
         Resonator->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_CHORUS].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_CHORUS).enabled)
         Chorus->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_TREMOLO].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_TREMOLO).enabled)
         Tremolo->OnAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_REVERB].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_REVERB).enabled)
         Reverb->OnAudio(out[0], out[0], size);
 
     Misc->OnPostAudio(out[0], out[0], size);
     Master->OnPostAudio(out[0], out[0], size);
 
-    if (Ironpedal->storage->GetSettings().effects[Effect::EFFECT_LOOPER].enabled)
+    if (Ironpedal->GetEffect(Effect::EFFECT_LOOPER).enabled)
         Looper->OnAudio(out[0], out[0], size);
 }
 
 void OnInput()
 {
-    Ironpedal->leds[PedalPCB::LED_1].Set(Ironpedal->storage->GetSettings().effects[Ironpedal->current_effect.id].enabled || Ironpedal->current_effect.id == Effect::EFFECT_MASTER || Ironpedal->current_effect.id == Effect::EFFECT_MISC ? true : false);
-    Ironpedal->leds[PedalPCB::LED_2].Set(Ironpedal->storage->GetSettings().effects[Ironpedal->current_effect.id].locked);
+    Ironpedal->leds[PedalPCB::LED_1].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).enabled || Ironpedal->current_effect.id == Effect::EFFECT_MASTER || Ironpedal->current_effect.id == Effect::EFFECT_MISC);
+    Ironpedal->leds[PedalPCB::LED_2].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).locked);
 
     switch (Ironpedal->current_effect.id)
     {
@@ -215,8 +214,8 @@ void OnInput()
 
 void OnInputAll()
 {
-    Ironpedal->leds[PedalPCB::LED_1].Set(Ironpedal->storage->GetSettings().effects[Ironpedal->current_effect.id].enabled || Ironpedal->current_effect.id == Effect::EFFECT_MASTER || Ironpedal->current_effect.id == Effect::EFFECT_MISC ? true : false);
-    Ironpedal->leds[PedalPCB::LED_2].Set(Ironpedal->storage->GetSettings().effects[Ironpedal->current_effect.id].locked);
+    Ironpedal->leds[PedalPCB::LED_1].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).enabled || Ironpedal->current_effect.id == Effect::EFFECT_MASTER || Ironpedal->current_effect.id == Effect::EFFECT_MISC);
+    Ironpedal->leds[PedalPCB::LED_2].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).locked);
 
     Autowah->OnInput();
     Chorus->OnInput();

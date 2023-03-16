@@ -17,10 +17,10 @@ namespace Effect
 
             this->resonator.Init(0.0f, 24, this->ironpedal->AudioSampleRate());
 
-            this->resonator.SetBrightness(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_6]);
-            this->resonator.SetDamping(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_1]);
-            this->resonator.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_3]);
-            this->resonator.SetStructure(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_4]);
+            this->resonator.SetBrightness(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_6]);
+            this->resonator.SetDamping(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_1]);
+            this->resonator.SetFreq(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3]);
+            this->resonator.SetStructure(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_4]);
         }
 
         void Draw()
@@ -30,10 +30,10 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DECAY", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
 
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_1] * 100.0f));
+            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_1] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_3]);
+            sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
             
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
@@ -41,13 +41,13 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "STIFF", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "BRIGHT\n", ALIGN_RIGHT);
 
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_4] * 100.0f));
+            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_4] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_6] * 100.0f));
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_6] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            PrintFooter(this->ironpedal, "RESONATOR\n");
+            this->ironpedal->PrintFooter("RESONATOR\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -58,18 +58,18 @@ namespace Effect
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].locked)
+            if (!this->ironpedal->GetEffect(EFFECT_RESONATOR).locked)
             {
-                this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_1] = this->decay.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_3] = this->frequency.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_4] = this->stiffness.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_6] = this->brightness.Process();
+                this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_1] = this->decay.Process();
+                this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3] = this->frequency.Process();
+                this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_4] = this->stiffness.Process();
+                this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_6] = this->brightness.Process();
             }
 
-            this->resonator.SetBrightness(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_6]);
-            this->resonator.SetDamping(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_1]);
-            this->resonator.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_3]);
-            this->resonator.SetStructure(this->ironpedal->storage->GetSettings().effects[EFFECT_RESONATOR].values[PedalPCB::KNOB_4]);
+            this->resonator.SetBrightness(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_6]);
+            this->resonator.SetDamping(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_1]);
+            this->resonator.SetFreq(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3]);
+            this->resonator.SetStructure(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_4]);
         }
 
     private:

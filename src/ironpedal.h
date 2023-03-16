@@ -7,7 +7,6 @@ namespace Snailsoft
 }
 
 void Draw();
-void MessageBox(Snailsoft::Ironpedal *ironpedal, const char *text, uint32_t event);
 
 void OnInput();
 void OnInputAll();
@@ -32,9 +31,16 @@ namespace Snailsoft
     class Ironpedal : public PedalPCB::Terrarium
     {
     public:
+        bool display_enabled;
+
         daisy::PersistentStorage<StorageData> *storage;
         font_t font;
         Effect::Type current_effect;
+
+        Effect::Effect &GetEffect(uint8_t id)
+        {
+            return this->storage->GetSettings().effects[this->current_effect.id];
+        }
 
         Ironpedal()
         {
@@ -305,6 +311,29 @@ namespace Snailsoft
             this->storage->GetDefaultSettings() = this->storage->GetSettings();
         }
 
+        void PrintFooter(const char *effect_name)
+        {
+            char buf[16];
+            SSD1351_write_string(COLOR, this->font, "\n");
+
+            uint8_t y = SSD1351_cursor.y - this->font.height / 2 - 1;
+            SSD1351_draw_line(0, y, COLUMNS, y, COLOR_LIGHT);
+            sprintf(buf, "%c  %c  %c  %c\n", this->current_effect.switch1 ? '1' : '0', this->current_effect.switch2 ? '1' : '0', this->current_effect.switch3 ? '1' : '0', this->current_effect.switch4 ? '1' : '0');
+            SSD1351_write_string(COLOR, this->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(COLOR_LIGHT, this->font, effect_name, ALIGN_CENTER);
+
+            if (this->current_effect.id == Effect::EFFECT_MASTER || this->current_effect.id == Effect::EFFECT_MISC)
+            {
+                if (this->GetEffect(this->current_effect.id).locked)
+                    SSD1351_write_string(COLOR_DARK, this->font, "LOCKED\n", ALIGN_CENTER);
+            }
+            else
+            {
+                sprintf(buf, "%s%s", this->GetEffect(this->current_effect.id).enabled ? "ON" : "OFF", this->GetEffect(this->current_effect.id).locked ? " / LOCKED\n" : "\n");
+                SSD1351_write_string(COLOR_DARK, this->font, buf, ALIGN_CENTER);
+            }
+        }
+
         void Run()
         {
             SSD1351_init();
@@ -329,7 +358,7 @@ namespace Snailsoft
                 if (this->IsSwitchPressed())
                     input_received = true;
 
-                if (!this->storage->GetSettings().effects[this->current_effect.id].locked && this->HasControlChanged())
+                if (!this->GetEffect(this->current_effect.id).locked && this->HasControlChanged())
                     input_received = true;
 
                 if (input_received)
@@ -338,7 +367,6 @@ namespace Snailsoft
         }
 
     private:
-        bool display_enabled;
         uint32_t control_values[PedalPCB::KNOB_LAST];
 
         struct
@@ -446,7 +474,7 @@ namespace Snailsoft
                     this->foot_switch_data[PedalPCB::FOOT_SWITCH_2].hold_time = 9999;
                 }
                 else
-                    this->storage->GetSettings().effects[this->current_effect.id].enabled = !this->storage->GetSettings().effects[this->current_effect.id].enabled;
+                    this->GetEffect(this->current_effect.id).enabled = !this->GetEffect(this->current_effect.id).enabled;
 
                 this->ResetFootSwitchData(id);
 
@@ -457,11 +485,11 @@ namespace Snailsoft
                 {
                     this->display_enabled ? SSD1351_turn_off() : SSD1351_init();
                     this->display_enabled = !this->display_enabled;
-                    
+
                     this->foot_switch_data[PedalPCB::FOOT_SWITCH_1].hold_time = 9999;
                 }
                 else
-                    this->storage->GetSettings().effects[this->current_effect.id].locked = !this->storage->GetSettings().effects[this->current_effect.id].locked;
+                    this->GetEffect(this->current_effect.id).locked = !this->GetEffect(this->current_effect.id).locked;
 
                 this->ResetFootSwitchData(id);
 
@@ -491,6 +519,24 @@ namespace Snailsoft
             return false;
         }
 
+        void MessageBox(const char *text, uint32_t event)
+        {
+            char buf[16];
+            sprintf(buf, text, event);
+
+            size_t length = strlen(buf);
+            SSD1351_set_cursor(64 - (length * this->font.width) / 2, this->font.height * 2);
+
+            SSD1351_draw_round_rect(SSD1351_cursor.x - 8, SSD1351_cursor.y - 8, this->font.width * length + 16, this->font.height + 16 - 1, 4, COLOR_BLACK);
+            SSD1351_draw_round_rect(SSD1351_cursor.x - 7, SSD1351_cursor.y - 7, this->font.width * length + 14, this->font.height + 14 - 1, 4, COLOR_BLACK);
+            SSD1351_draw_filled_rect(SSD1351_cursor.x - 6, SSD1351_cursor.y - 6, this->font.width * length + 12, this->font.height + 12 - 1, COLOR_BLACK);
+            SSD1351_draw_round_rect(SSD1351_cursor.x - 6, SSD1351_cursor.y - 6, this->font.width * length + 12, this->font.height + 12 - 1, 4, COLOR_DARK);
+            SSD1351_draw_round_rect(SSD1351_cursor.x - 5, SSD1351_cursor.y - 5, this->font.width * length + 10, this->font.height + 10 - 1, 4, COLOR_DARK);
+
+            SSD1351_write_string(COLOR_DARK, this->font, buf);
+            SSD1351_update();
+        }
+
         void ProcessFootSwitches()
         {
             uint32_t event;
@@ -512,7 +558,7 @@ namespace Snailsoft
                     case 1:
                     case 2:
                     case 3:
-                        MessageBox(this, (i == PedalPCB::FOOT_SWITCH_1) ? "LOADING IN %u" : "SAVING IN %u", 4 - event);
+                        this->MessageBox((i == PedalPCB::FOOT_SWITCH_1) ? "LOADING IN %u" : "SAVING IN %u", 4 - event);
                         this->foot_switch_data[i].events[event] = false;
 
                         break;

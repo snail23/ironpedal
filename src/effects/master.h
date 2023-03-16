@@ -21,22 +21,22 @@ namespace Effect
 
             this->post_hpf.Init(this->ironpedal->AudioSampleRate());
             this->post_hpf.SetDrive(0.0f);
-            this->post_hpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4]);
+            this->post_hpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4]);
             this->post_hpf.SetRes(0.0f);
 
             this->post_lpf.Init(this->ironpedal->AudioSampleRate());
             this->post_lpf.SetDrive(0.0f);
-            this->post_lpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_5]);
+            this->post_lpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5]);
             this->post_lpf.SetRes(0.0f);
 
             this->pre_hpf.Init(this->ironpedal->AudioSampleRate());
             this->pre_hpf.SetDrive(0.0f);
-            this->pre_hpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1]);
+            this->pre_hpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_1]);
             this->pre_hpf.SetRes(0.0f);
 
             this->pre_lpf.Init(this->ironpedal->AudioSampleRate());
             this->pre_lpf.SetDrive(0.0f);
-            this->pre_lpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2]);
+            this->pre_lpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_2]);
             this->pre_lpf.SetRes(0.0f);
         }
 
@@ -48,15 +48,15 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_CENTER);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "GAIN\n", ALIGN_RIGHT);
 
-            float low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2] / 1000.0f;
+            float low = this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_2] / 1000.0f;
 
-            sprintf(buf, "%lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1]);
+            sprintf(buf, "%lu", (uint32_t)this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_1]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            sprintf(buf, "%ld\n", (int32_t)((this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_3] - 1.0f) * 100.0f));
+            sprintf(buf, "%ld\n", (int32_t)((this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_3] - 1.0f) * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
@@ -65,18 +65,18 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_CENTER);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOL\n", ALIGN_RIGHT);
 
-            low = this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_5] / 1000.0f;
+            low = this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5] / 1000.0f;
             
-            sprintf(buf, "%lu", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4]);
+            sprintf(buf, "%lu", (uint32_t)this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
             
             sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
             
-            sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6] * 100.0f));
+            sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            PrintFooter(this->ironpedal, "MASTER\n");
+            this->ironpedal->PrintFooter("MASTER\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -86,33 +86,33 @@ namespace Effect
                 this->pre_hpf.Process(in[i]);
                 this->pre_lpf.Process(this->pre_hpf.High());
 
-                out[i] = this->pre_lpf.Low() * this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_3];
+                out[i] = this->pre_lpf.Low() * this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_3];
             }
         }
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].locked)
+            if (!this->ironpedal->GetEffect(EFFECT_MASTER).locked)
             {
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1] = this->pre_high.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2] = this->pre_low.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_3] = this->pre_gain.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4] = this->post_high.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_5] = this->post_low.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6] = this->volume.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_1] = this->pre_high.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_2] = this->pre_low.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_3] = this->pre_gain.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4] = this->post_high.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5] = this->post_low.Process();
+                this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6] = this->volume.Process();
             }
 
-            this->post_hpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_4]);
-            this->post_lpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_5]);
+            this->post_hpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4]);
+            this->post_lpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5]);
 
-            this->pre_hpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_1]);
-            this->pre_lpf.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_2]);
+            this->pre_hpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_1]);
+            this->pre_lpf.SetFreq(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_2]);
         }
 
         void OnPostAudio(float *in, float *out, size_t size)
         {
             for (size_t i = 0; i < size; ++i)
-                out[i] *= this->ironpedal->storage->GetSettings().effects[EFFECT_MASTER].values[PedalPCB::KNOB_6];
+                out[i] *= this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6];
         }
 
     private:

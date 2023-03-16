@@ -15,9 +15,9 @@ namespace Effect
 
             this->autowah.Init(this->ironpedal->AudioSampleRate());
 
-            this->autowah.SetDryWet(100.0f - this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_2]);
+            this->autowah.SetDryWet(100.0f - this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_2]);
             this->autowah.SetLevel(1.0f);
-            this->autowah.SetWah(this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_5]);
+            this->autowah.SetWah(this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_5]);
         }
 
         void Draw()
@@ -25,16 +25,16 @@ namespace Effect
             char buf[16];
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "BLEND\n", ALIGN_CENTER);
-            sprintf(buf, "%lu\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_2]);
+            sprintf(buf, "%lu\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_2]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
             
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "WAH\n", ALIGN_CENTER);
-            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_5] * 100.0f));
+            sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_5] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            PrintFooter(this->ironpedal, "AUTOWAH\n");
+            this->ironpedal->PrintFooter("AUTOWAH\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -45,14 +45,14 @@ namespace Effect
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].locked)
+            if (!this->ironpedal->GetEffect(EFFECT_AUTOWAH).locked)
             {
-                this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_2] = this->blend.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_5] = this->wah.Process();
+                this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_2] = this->blend.Process();
+                this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_5] = this->wah.Process();
             }
 
-            this->autowah.SetDryWet(100.0f - this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_2]);
-            this->autowah.SetWah(this->ironpedal->storage->GetSettings().effects[EFFECT_AUTOWAH].values[PedalPCB::KNOB_5]);
+            this->autowah.SetDryWet(100.0f - this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_2]);
+            this->autowah.SetWah(this->ironpedal->GetEffect(EFFECT_AUTOWAH).values[PedalPCB::KNOB_5]);
         }
 
     private:

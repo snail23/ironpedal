@@ -11,7 +11,7 @@ namespace Effect
             this->ironpedal = ironpedal;
             this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.0f, daisy::Parameter::LINEAR);
 
-            this->metronome.Init(this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6], this->ironpedal->AudioSampleRate());
+            this->metronome.Init(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6], this->ironpedal->AudioSampleRate());
             this->metronome_bass.Init(this->ironpedal->AudioSampleRate());
         }
 
@@ -25,7 +25,7 @@ namespace Effect
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRONOME\n", ALIGN_CENTER);
 
-            uint32_t bpm = this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6] * 60.0f;
+            uint32_t bpm = this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f;
 
             if (bpm)
                 sprintf(buf, "%lu BPM\n", bpm);
@@ -34,15 +34,15 @@ namespace Effect
                 sprintf(buf, "OFF\n");
 
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
-            PrintFooter(this->ironpedal, "MISC\n");
+            this->ironpedal->PrintFooter("MISC\n");
         }
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].locked)
-                this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6] = this->metronome_bpm.Process();
+            if (!this->ironpedal->GetEffect(EFFECT_MISC).locked)
+                this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] = this->metronome_bpm.Process();
 
-            this->metronome.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_MISC].values[PedalPCB::KNOB_6]);
+            this->metronome.SetFreq(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6]);
         }
 
         void OnPostAudio(float *in, float *out, size_t size)

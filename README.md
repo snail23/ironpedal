@@ -28,11 +28,11 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Misc       | 1111            |           |          |           |           |          | Metronome  |
 
 ## Effect chain order
-| 1                     | 2         | 3         | 4      | 5                        | 6      |
-| --------------------- | --------- | --------- | ------ | ------------------------ | ------ |
-| Master: Pre EQ & Gain | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
-| Autowah               |           | Chorus    |        | Master: Post EQ & Volume |        |
-| Compressor            |           | Tremolo   |        |                          |        |
+| 1                     | 2          | 3         | 4         | 5      | 6                        | 7      |
+| --------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
+| Master: Pre EQ & Gain | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
+|                       | Compressor |           | Chorus    |        | Master: Post EQ & Volume |        |
+|                       |            |           | Tremolo   |        |                          |        |
 
 ## Usage
 | Operation                               | Instructions                                                       |

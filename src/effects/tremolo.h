@@ -16,9 +16,9 @@ namespace Effect
 
             this->tremolo.Init(this->ironpedal->AudioSampleRate());
 
-            this->tremolo.SetDepth(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_1]);
-            this->tremolo.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_3]);
-            this->tremolo.SetWaveform(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_5]);
+            this->tremolo.SetDepth(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1]);
+            this->tremolo.SetFreq(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3]);
+            this->tremolo.SetWaveform(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_5]);
         }
 
         void Draw()
@@ -28,16 +28,16 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DEPTH", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
             
-            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_1] * 100.0f));
+            sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
             
-            sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_3]);
+            sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "SHAPE\n", ALIGN_CENTER);
 
-            switch ((uint32_t)this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_5])
+            switch ((uint32_t)this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_5])
             {
             case daisysp::Oscillator::WAVE_RAMP:
                 SSD1351_write_string(COLOR, this->ironpedal->font, "RAMP WAVE\n", ALIGN_CENTER);
@@ -65,7 +65,7 @@ namespace Effect
                 break;
             }
 
-            PrintFooter(this->ironpedal, "TREMOLO\n");
+            this->ironpedal->PrintFooter("TREMOLO\n");
         }
 
         void OnAudio(float *in, float *out, size_t size)
@@ -76,16 +76,16 @@ namespace Effect
 
         void OnInput()
         {
-            if (!this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].locked)
+            if (!this->ironpedal->GetEffect(EFFECT_TREMOLO).locked)
             {
-                this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_1] = this->depth.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_3] = this->frequency.Process();
-                this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_5] = this->shape.Process();
+                this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1] = this->depth.Process();
+                this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3] = this->frequency.Process();
+                this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_5] = this->shape.Process();
             }
 
-            this->tremolo.SetDepth(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_1]);
-            this->tremolo.SetFreq(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_3]);
-            this->tremolo.SetWaveform(this->ironpedal->storage->GetSettings().effects[EFFECT_TREMOLO].values[PedalPCB::KNOB_5]);
+            this->tremolo.SetDepth(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1]);
+            this->tremolo.SetFreq(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3]);
+            this->tremolo.SetWaveform(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_5]);
         }
 
     private:
