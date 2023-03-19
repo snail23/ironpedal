@@ -7,6 +7,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Save/load your effect settings to external flash via QSPI
 - Effects can be individually enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
+- 10 different profiles that you can use to save your settings
 
 ## Building from source
 Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
@@ -25,7 +26,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Autowah    | 0110            |           | Blend    |           | Wah       |          |            |
 | Tremolo    | 0111            | Depth     |          | Frequency |           | Shape    |            |
 | Looper     | 1000            |           | Mode     |           |           | Volume   |            |
-| Misc       | 1111            |           |          |           |           |          | Metronome  |
+| Misc       | 1111            |           |          | Metronome |           |          | Profile    |
 
 ## Effect chain order
 | 1                     | 2          | 3         | 4         | 5      | 6                        | 7      |
@@ -56,7 +57,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Autowah    | 0110            |           | 50       |              | 10        |               |            |
 | Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |            |
 | Looper     | 1000            |           | Playback |              |           | 100           |            |
-| Misc       | 1111            |           |          |              |           |               | Off        |
+| Misc       | 1111            |           |          | Off          |           |               | 1          |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 

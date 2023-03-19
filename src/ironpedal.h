@@ -11,11 +11,14 @@ void Draw();
 void OnInput();
 void OnInputAll();
 
+void Update();
+
 namespace Snailsoft
 {
     struct StorageData
     {
-        Effect::Effect effects[Effect::EFFECT_LAST];
+        Effect::Effect effects[PROFILES][Effect::EFFECT_LAST];
+        uint8_t profile;
 
         bool operator==(StorageData &rhs)
         {
@@ -39,7 +42,7 @@ namespace Snailsoft
 
         Effect::Effect &GetEffect(uint8_t id)
         {
-            return this->storage->GetSettings().effects[this->current_effect.id];
+            return this->storage->GetSettings().effects[this->storage->GetSettings().profile][id];
         }
 
         Ironpedal()
@@ -318,6 +321,7 @@ namespace Snailsoft
 
             uint8_t y = SSD1351_cursor.y - this->font.height / 2 - 1;
             SSD1351_draw_line(0, y, COLUMNS, y, COLOR_LIGHT);
+            
             sprintf(buf, "%c  %c  %c  %c\n", this->current_effect.switch1 ? '1' : '0', this->current_effect.switch2 ? '1' : '0', this->current_effect.switch3 ? '1' : '0', this->current_effect.switch4 ? '1' : '0');
             SSD1351_write_string(COLOR, this->font, buf, ALIGN_CENTER);
             SSD1351_write_string(COLOR_LIGHT, this->font, effect_name, ALIGN_CENTER);
@@ -358,16 +362,18 @@ namespace Snailsoft
                 if (this->IsSwitchPressed())
                     input_received = true;
 
-                if (!this->GetEffect(this->current_effect.id).locked && this->HasControlChanged())
+                if ((!this->GetEffect(this->current_effect.id).locked || this->current_effect.id == Effect::EFFECT_MISC) && this->HasKnobChanged())
                     input_received = true;
 
                 if (input_received)
                     OnInput();
+
+                Update();
             }
         }
 
     private:
-        uint32_t control_values[PedalPCB::KNOB_LAST];
+        uint32_t knob_values[PedalPCB::KNOB_LAST];
 
         struct
         {
@@ -375,7 +381,7 @@ namespace Snailsoft
             uint32_t hold_time;
         } foot_switch_data[PedalPCB::FOOT_SWITCH_2 + 1];
 
-        bool HasControlChanged()
+        bool HasKnobChanged()
         {
             bool input_received = false;
             uint32_t val;
@@ -384,9 +390,9 @@ namespace Snailsoft
             {
                 val = (uint32_t)round(this->knobs[i].Value() * 100.0f);
 
-                if (this->control_values[i] != val)
+                if (this->knob_values[i] != val)
                 {
-                    this->control_values[i] = val;
+                    this->knob_values[i] = val;
                     input_received = true;
                 }
             }
@@ -416,7 +422,7 @@ namespace Snailsoft
                         else
                         {
                             this->ResetFootSwitchData(i);
-                            input_received = true;
+                            input_received = false;
                         }
                     }
                     else
