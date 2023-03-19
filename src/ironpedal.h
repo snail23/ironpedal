@@ -6,12 +6,11 @@ namespace Snailsoft
     class Ironpedal;
 }
 
+bool Update();
 void Draw();
 
 void OnInput();
 void OnInputAll();
-
-void Update();
 
 namespace Snailsoft
 {
@@ -368,7 +367,8 @@ namespace Snailsoft
                 if (input_received)
                     OnInput();
 
-                Update();
+                if(Update())
+                    Draw();
             }
         }
 

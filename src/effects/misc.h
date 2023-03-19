@@ -6,6 +6,24 @@ namespace Effect
     class Misc
     {
     public:
+        bool Update()
+        {
+            if (this->tuner_updated)
+            {
+                uint32_t now = daisy::System::GetNow();
+
+                if (now - this->tuner_time > 1000)
+                {
+                    this->tuner_time = now;
+                    this->tuner_updated = false;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         Misc(Snailsoft::Ironpedal *ironpedal)
         {
             this->ironpedal = ironpedal;
@@ -70,7 +88,7 @@ namespace Effect
 
             if (!this->ironpedal->GetEffect(EFFECT_MISC).locked)
                 this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_3] = this->metronome_bpm.Process();
-                
+
             this->metronome.SetFreq(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_3]);
         }
 
@@ -82,22 +100,6 @@ namespace Effect
                     this->metronome_bass.Trig();
 
                 out[i] += this->metronome_bass.Process();
-            }
-        }
-
-        void Update()
-        {
-            if (this->tuner_updated)
-            {
-                uint32_t now = daisy::System::GetNow();
-
-                if (now - this->tuner_time > 1000)
-                {
-                    this->Draw();
-
-                    this->tuner_time = now;
-                    this->tuner_updated = false;
-                }
             }
         }
 
@@ -116,66 +118,7 @@ namespace Effect
 
         float Autocorrelate(float *in, size_t size)
         {
-            // Implements the ACF2+ algorithm
-            float rms = 0;
-
-            for (size_t i = 0; i < size; i++)
-            {
-                float val = in[i];
-                rms += val * val;
-            }
-            rms = sqrt(rms / size);
-            if (rms < 0.01) // not enough signal
-                return 0.0f;
-
-            size_t r1 = 0, r2 = size - 1;
-            float thres = 0.2;
-            for (size_t i = 0; i < size / 2; i++)
-                if (fabs(in[i]) < thres)
-                {
-                    r1 = i;
-                    break;
-                }
-            for (size_t i = 1; i < size / 2; i++)
-                if (fabs(in[size - i]) < thres)
-                {
-                    r2 = size - i;
-                    break;
-                }
-
-            in = &in[r1];
-            size = r2;
-
-            float c[size] = {0.0f};
-            for (size_t i = 0; i < size; i++)
-                for (size_t j = 0; j < size - i; j++)
-                    c[i] = c[i] + in[j] * in[j + i];
-
-            size_t d = 0;
-            while (c[d] > c[d + 1])
-                d++;
-            float maxval = -1;
-            size_t maxpos = -1;
-            for (size_t i = d; i < size; i++)
-            {
-                if (c[i] > maxval)
-                {
-                    maxval = c[i];
-                    maxpos = i;
-                }
-            }
-            size_t T0 = maxpos;
-
-            float x1 = c[T0 - 1];
-            float x2 = c[T0];
-            float x3 = c[T0 + 1];
-            float a = (x1 + x3 - 2 * x2) / 2;
-            float b = (x3 - x1) / 2;
-            if (a)
-                T0 = T0 - b / (2 * a);
-
-            return this->ironpedal->AudioSampleRate() / T0;
-            /*float rms = 0.0f;
+            float rms = 0.0f;
 
             for (size_t i = 0; i < size; ++i)
                 rms += in[i] * in[i];
@@ -183,7 +126,7 @@ namespace Effect
             rms = sqrt(rms / size);
 
             if (rms < 0.01f)
-                return;
+                return 0.0f;
 
             bool found = false;
 
@@ -221,7 +164,7 @@ namespace Effect
 
             index = 0;
 
-            while (diffs[index] > diffs[index + 1])
+            while (index < size && diffs[index] > diffs[index + 1])
                 index++;
 
             float max = -1.0f;
@@ -236,7 +179,7 @@ namespace Effect
             }
 
             float val = (diffs[index - 1] + diffs[index + 1] - 2.0f * diffs[index]) / 2.0f;
-            this->tuner_frequency = this->ironpedal->AudioSampleRate() / (val ? index - (diffs[index + 1] - diffs[index - 1]) / 2.0f / (2.0f * val) : index);*/
+            return this->ironpedal->AudioSampleRate() / 2.0f / (val ? index - (diffs[index + 1] - diffs[index - 1]) / 2.0f / (2.0f * val) : index);
         }
     };
 }

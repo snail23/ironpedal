@@ -35,6 +35,14 @@ Effect::Tremolo *Tremolo;
 
 Snailsoft::Ironpedal *Ironpedal;
 
+bool Update()
+{
+    if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
+        return Misc->Update();
+
+    return false;
+}
+
 int main()
 {
     Ironpedal = new Snailsoft::Ironpedal;
@@ -275,12 +283,6 @@ void SSD1351_SetDCPin()
 void SSD1351_SetResetPin()
 {
     Ironpedal->spi_rst.Write(true);
-}
-
-void Update()
-{
-    if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
-        Misc->Update();
 }
 
 // Shuts the compiler up
