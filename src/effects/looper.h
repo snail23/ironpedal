@@ -27,7 +27,7 @@ namespace Effect
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "MODE\n", ALIGN_CENTER);
             SSD1351_write_string(COLOR, this->ironpedal->font, this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_2] > 0.5f ? "RECORD\n" : "PLAYBACK\n", ALIGN_CENTER);
-            
+
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOLUME\n", ALIGN_CENTER);
@@ -76,7 +76,7 @@ namespace Effect
 
         Snailsoft::Ironpedal *ironpedal;
 
-        uint32_t buffer_index;
-        uint32_t buffer_size;
+        size_t buffer_index;
+        size_t buffer_size;
     };
 }

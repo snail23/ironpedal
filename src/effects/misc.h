@@ -1,6 +1,14 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
+#ifndef max
+#define max(a, b) ((a < b) ? b : a)
+#endif
+
+#ifndef min
+#define min(a, b) ((a < b) ? a : b)
+#endif
+
 namespace Effect
 {
     class Misc
@@ -12,7 +20,7 @@ namespace Effect
             {
                 uint32_t now = daisy::System::GetNow();
 
-                if (now - this->tuner_time > 1000)
+                if (now - this->tuner_time > 250)
                 {
                     this->tuner_time = now;
                     this->tuner_updated = false;
@@ -31,6 +39,8 @@ namespace Effect
             this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 0.0f, 3.0f, daisy::Parameter::LINEAR);
             this->profile.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, PROFILES - 1.0f, daisy::Parameter::LINEAR);
 
+            this->buffer_index = 0;
+
             this->metronome.Init(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_3], this->ironpedal->AudioSampleRate());
             this->metronome_bass.Init(this->ironpedal->AudioSampleRate());
 
@@ -41,7 +51,8 @@ namespace Effect
 
         void Draw()
         {
-            char buf[16];
+            char buf[24];
+            char *buf2 = buf;
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "IRONPEDAL", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_RIGHT);
@@ -61,7 +72,29 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "PROFILE\n", ALIGN_RIGHT);
 
-            sprintf(buf, "%lu", (uint32_t)round(this->tuner_frequency));
+            int16_t cents = max(-5, min(5, this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency))));
+
+            if (cents < 0)
+            {
+                for (int16_t i = cents; i < 0; ++i)
+                {
+                    *buf2++ = '-';
+                    *buf2 = 0;
+                }
+            }
+
+            sprintf(buf2, "%s%u", this->ironpedal->notes[this->ironpedal->Note(this->tuner_frequency) % 12], this->ironpedal->Octave(this->tuner_frequency));
+            buf2 += strlen(buf2);
+
+            if (cents > 0)
+            {
+                for (int16_t i = 0; i < cents; ++i)
+                {
+                    *buf2++ = '+';
+                    *buf2 = 0;
+                }
+            }
+
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%u\n", this->ironpedal->storage->GetSettings().profile + 1);
@@ -72,12 +105,22 @@ namespace Effect
 
         void OnAudio(float *in, float *out, size_t size)
         {
-            float frequency = this->Autocorrelate(in, size);
-
-            if (round(this->tuner_frequency) != round(frequency))
+            for (size_t i = 0; i < size; ++i)
             {
-                this->tuner_frequency = frequency;
-                this->tuner_updated = true;
+                if (this->buffer_index < sizeof(this->buffer) / sizeof(float))
+                    this->buffer[this->buffer_index++] = in[i];
+
+                else
+                {
+                    this->buffer_index = 0;
+                    float frequency = round(this->ironpedal->Autocorrelate(this->buffer, sizeof(this->buffer) / sizeof(float)));
+
+                    if (frequency && round(this->tuner_frequency) != frequency)
+                    {
+                        this->tuner_frequency = frequency;
+                        this->tuner_updated = true;
+                    }
+                }
             }
         }
 
@@ -112,74 +155,12 @@ namespace Effect
         daisysp::AnalogBassDrum metronome_bass;
         daisysp::Metro metronome;
 
+        float buffer[2048];
         float tuner_frequency;
+
+        size_t buffer_index;
         Snailsoft::Ironpedal *ironpedal;
+
         uint32_t tuner_time;
-
-        float Autocorrelate(float *in, size_t size)
-        {
-            float rms = 0.0f;
-
-            for (size_t i = 0; i < size; ++i)
-                rms += in[i] * in[i];
-
-            rms = sqrt(rms / size);
-
-            if (rms < 0.01f)
-                return 0.0f;
-
-            bool found = false;
-
-            size_t index = 0;
-            size_t new_size = size - 1;
-
-            for (size_t i = 0; i < size / 2; ++i)
-            {
-                if (fabs(in[i]) < 0.2f)
-                {
-                    found = true;
-                    index = i;
-                }
-
-                if (i + 1 < size && fabs(in[size - i + 1]) < 0.2f)
-                {
-                    found = true;
-                    new_size = size - i;
-                }
-
-                if(found)
-                    break;
-            }
-
-            in = &in[index];
-            size = new_size;
-
-            float diffs[size] = {0.0f};
-
-            for (size_t i = 0; i < size; ++i)
-            {
-                for (size_t j = 0; j < size - i; ++j)
-                    diffs[i] = diffs[i] + in[j] * in[j + i];
-            }
-
-            index = 0;
-
-            while (index < size && diffs[index] > diffs[index + 1])
-                index++;
-
-            float max = -1.0f;
-
-            for (size_t i = index; i < size; ++i)
-            {
-                if (diffs[i] > max)
-                {
-                    max = diffs[i];
-                    index = i;
-                }
-            }
-
-            float val = (diffs[index - 1] + diffs[index + 1] - 2.0f * diffs[index]) / 2.0f;
-            return this->ironpedal->AudioSampleRate() / 2.0f / (val ? index - (diffs[index + 1] - diffs[index - 1]) / 2.0f / (2.0f * val) : index);
-        }
     };
 }

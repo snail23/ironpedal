@@ -66,13 +66,13 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOL\n", ALIGN_RIGHT);
 
             low = this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5] / 1000.0f;
-            
+
             sprintf(buf, "%lu", (uint32_t)this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
-            
+
             sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
-            
+
             sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 

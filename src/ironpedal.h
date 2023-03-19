@@ -34,6 +34,7 @@ namespace Snailsoft
     {
     public:
         bool display_enabled;
+        char notes[12][3] = {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
         daisy::PersistentStorage<StorageData> *storage;
         font_t font;
@@ -42,6 +43,82 @@ namespace Snailsoft
         Effect::Effect &GetEffect(uint8_t id)
         {
             return this->storage->GetSettings().effects[this->storage->GetSettings().profile][id];
+        }
+
+        float Autocorrelate(float *in, size_t size)
+        {
+            float rms = 0.0f;
+
+            for (size_t i = 0; i < size; ++i)
+                rms += in[i] * in[i];
+
+            rms = sqrt(rms / size);
+
+            if (rms < 0.01f)
+                return 0.0f;
+
+            bool found = false;
+
+            size_t index = 0;
+            size_t new_size = size - 1;
+
+            for (size_t i = 0; i < size / 2; ++i)
+            {
+                if (fabs(in[i]) < 0.2f)
+                {
+                    found = true;
+                    index = i;
+                }
+
+                if (i + 1 < size && fabs(in[size - i + 1]) < 0.2f)
+                {
+                    found = true;
+                    new_size = size - i;
+                }
+
+                if (found)
+                    break;
+            }
+
+            in = &in[index];
+            size = new_size;
+
+            float diffs[size] = {0.0f};
+
+            for (size_t i = 0; i < size; ++i)
+            {
+                for (size_t j = 0; j < size - i; ++j)
+                    diffs[i] = diffs[i] + in[j] * in[j + i];
+            }
+
+            index = 0;
+
+            while (index < size && diffs[index] > diffs[index + 1])
+                index++;
+
+            float max = -1.0f;
+
+            for (size_t i = index; i < size; ++i)
+            {
+                if (diffs[i] > max)
+                {
+                    max = diffs[i];
+                    index = i;
+                }
+            }
+
+            float val = (diffs[index - 1] + diffs[index + 1] - 2.0f * diffs[index]) / 2.0f;
+            return this->AudioSampleRate() / (val ? index - (diffs[index + 1] - diffs[index - 1]) / 2.0f / (2.0f * val) : index);
+        }
+
+        float Pitch(uint8_t note)
+        {
+            return 440.0f * pow(2.0f, (note - 'E') / 12.0f);
+        }
+
+        int16_t Cents(float frequency, uint8_t note)
+        {
+            return 1200.0f * log(frequency / this->Pitch(note)) / log(2.0f);
         }
 
         Ironpedal()
@@ -313,6 +390,16 @@ namespace Snailsoft
             this->storage->GetDefaultSettings() = this->storage->GetSettings();
         }
 
+        uint8_t Note(float frequency)
+        {
+            return round(12.0f * (log(frequency / 440.0f) / log(2.0f))) + 'E';
+        }
+
+        uint8_t Octave(float frequency)
+        {
+            return this->Note(frequency) / 12.0f - 1.0f;
+        }
+
         void PrintFooter(const char *effect_name)
         {
             char buf[16];
@@ -320,7 +407,7 @@ namespace Snailsoft
 
             uint8_t y = SSD1351_cursor.y - this->font.height / 2 - 1;
             SSD1351_draw_line(0, y, COLUMNS, y, COLOR_LIGHT);
-            
+
             sprintf(buf, "%c  %c  %c  %c\n", this->current_effect.switch1 ? '1' : '0', this->current_effect.switch2 ? '1' : '0', this->current_effect.switch3 ? '1' : '0', this->current_effect.switch4 ? '1' : '0');
             SSD1351_write_string(COLOR, this->font, buf, ALIGN_CENTER);
             SSD1351_write_string(COLOR_LIGHT, this->font, effect_name, ALIGN_CENTER);
@@ -367,7 +454,7 @@ namespace Snailsoft
                 if (input_received)
                     OnInput();
 
-                if(Update())
+                if (Update())
                     Draw();
             }
         }

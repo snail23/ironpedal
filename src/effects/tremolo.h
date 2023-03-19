@@ -27,10 +27,10 @@ namespace Effect
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DEPTH", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
-            
+
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1] * 100.0f));
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
-            
+
             sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 

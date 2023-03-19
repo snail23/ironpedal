@@ -31,8 +31,8 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 ## Effect chain order
 | 1                     | 2          | 3         | 4         | 5      | 6                        | 7      |
 | --------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
-| Master: Pre EQ & Gain | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
-|                       | Compressor |           | Chorus    |        | Master: Post EQ & Volume |        |
+| Misc: Tuner           | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
+| Master: Pre EQ & Gain | Compressor |           | Chorus    |        | Master: Post EQ & Volume |        |
 |                       |            |           | Tremolo   |        |                          |        |
 
 ## Usage

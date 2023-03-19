@@ -35,7 +35,7 @@ namespace Effect
 
             sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3]);
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
-            
+
             SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
 
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "STIFF", ALIGN_LEFT);
