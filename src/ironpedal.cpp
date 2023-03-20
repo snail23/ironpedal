@@ -151,10 +151,11 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
         Reverb->OnAudio(out[0], out[0], size);
 
     Misc->OnPostAudio(out[0], out[0], size);
-    Master->OnPostAudio(out[0], out[0], size);
 
     if (Ironpedal->GetEffect(Effect::EFFECT_LOOPER).enabled)
         Looper->OnAudio(out[0], out[0], size);
+        
+    Master->OnPostAudio(out[0], out[0], size);
 }
 
 void OnInput()

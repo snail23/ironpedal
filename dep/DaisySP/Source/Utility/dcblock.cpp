@@ -7,7 +7,7 @@ void DcBlock::Init(float sample_rate)
 {
     output_ = 0.0;
     input_  = 0.0;
-    gain_   = 0.99;
+    gain_   = 0.995;
 }
 
 float DcBlock::Process(float in)

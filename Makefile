@@ -52,6 +52,8 @@ dep/DaisySP/Source/Effects/tremolo.cpp \
 dep/DaisySP/Source/Filters/svf.cpp \
 dep/DaisySP/Source/PhysicalModeling/resonator.cpp \
 dep/DaisySP/Source/Synthesis/oscillator.cpp \
+\
+dep/DaisySP/Source/Utility/dcblock.cpp \
 dep/DaisySP/Source/Utility/metro.cpp \
 \
 dep/SSD1351-Driver-Library/src/ssd1351.cpp \

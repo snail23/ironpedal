@@ -18,6 +18,7 @@ namespace Effect
             this->pre_low.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 1280.0f, 10200.0f, daisy::Parameter::LINEAR);
 
             this->volume.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->dc_block.Init(this->ironpedal->AudioSampleRate());
 
             this->post_hpf.Init(this->ironpedal->AudioSampleRate());
             this->post_hpf.SetDrive(0.0f);
@@ -112,7 +113,12 @@ namespace Effect
         void OnPostAudio(float *in, float *out, size_t size)
         {
             for (size_t i = 0; i < size; ++i)
-                out[i] *= this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6];
+            {
+                this->post_hpf.Process(in[i]);
+                this->post_lpf.Process(this->post_hpf.High());
+
+                out[i] = this->dc_block.Process(this->post_lpf.Low() * this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6]);
+            }
         }
 
     private:
@@ -124,6 +130,7 @@ namespace Effect
         daisy::Parameter pre_low;
 
         daisy::Parameter volume;
+        daisysp::DcBlock dc_block;
 
         daisysp::Svf post_hpf;
         daisysp::Svf post_lpf;
