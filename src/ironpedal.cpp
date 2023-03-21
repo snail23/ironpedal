@@ -126,7 +126,9 @@ void Draw()
 
 void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffer out, size_t size)
 {
-    Misc->OnAudio((float *)in[0], out[0], size);
+    if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
+        Misc->OnAudio((float *)in[0], out[0], size);
+        
     Master->OnAudio((float *)in[0], out[0], size);
 
     if (Ironpedal->GetEffect(Effect::EFFECT_AUTOWAH).enabled)
