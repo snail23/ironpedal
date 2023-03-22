@@ -45,6 +45,7 @@ dep/DaisySP/Source/Dynamics/compressor.cpp \
 \
 dep/DaisySP/Source/Effects/autowah.cpp \
 dep/DaisySP/Source/Effects/chorus.cpp \
+dep/DaisySP/Source/Effects/decimator.cpp \
 dep/DaisySP/Source/Effects/overdrive.cpp \
 dep/DaisySP/Source/Effects/reverbsc.cpp \
 dep/DaisySP/Source/Effects/tremolo.cpp \

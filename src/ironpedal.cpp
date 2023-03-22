@@ -14,6 +14,7 @@
 #include "effects/autowah.h"
 #include "effects/chorus.h"
 #include "effects/compressor.h"
+#include "effects/decimator.h"
 #include "effects/looper.h"
 #include "effects/master.h"
 #include "effects/misc.h"
@@ -25,6 +26,7 @@
 Effect::Autowah *Autowah;
 Effect::Chorus *Chorus;
 Effect::Compressor *Compressor;
+Effect::Decimator *Decimator;
 Effect::Looper *Looper;
 Effect::Master *Master;
 Effect::Misc *Misc;
@@ -50,6 +52,7 @@ int main()
     Autowah = new Effect::Autowah(Ironpedal);
     Chorus = new Effect::Chorus(Ironpedal);
     Compressor = new Effect::Compressor(Ironpedal);
+    Decimator = new Effect::Decimator(Ironpedal);
     Looper = new Effect::Looper(Ironpedal);
     Master = new Effect::Master(Ironpedal);
     Misc = new Effect::Misc(Ironpedal);
@@ -72,6 +75,7 @@ void Draw()
         Autowah->Draw();
 
         break;
+
     case Effect::EFFECT_CHORUS:
         Chorus->Draw();
 
@@ -79,6 +83,11 @@ void Draw()
 
     case Effect::EFFECT_COMPRESSOR:
         Compressor->Draw();
+
+        break;
+
+    case Effect::EFFECT_DECIMATOR:
+        Decimator->Draw();
 
         break;
 
@@ -128,11 +137,14 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
 {
     if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
         Misc->OnAudio((float *)in[0], out[0], size);
-        
+
     Master->OnAudio((float *)in[0], out[0], size);
 
     if (Ironpedal->GetEffect(Effect::EFFECT_AUTOWAH).enabled)
         Autowah->OnAudio(out[0], out[0], size);
+
+    if (Ironpedal->GetEffect(Effect::EFFECT_DECIMATOR).enabled)
+        Decimator->OnAudio(out[0], out[0], size);
 
     if (Ironpedal->GetEffect(Effect::EFFECT_COMPRESSOR).enabled)
         Compressor->OnAudio(out[0], out[0], size);
@@ -153,11 +165,10 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
         Reverb->OnAudio(out[0], out[0], size);
 
     Misc->OnPostAudio(out[0], out[0], size);
+    Master->OnPostAudio(out[0], out[0], size);
 
     if (Ironpedal->GetEffect(Effect::EFFECT_LOOPER).enabled)
         Looper->OnAudio(out[0], out[0], size);
-        
-    Master->OnPostAudio(out[0], out[0], size);
 }
 
 void OnInput()
@@ -179,6 +190,11 @@ void OnInput()
 
     case Effect::EFFECT_COMPRESSOR:
         Compressor->OnInput();
+
+        break;
+
+    case Effect::EFFECT_DECIMATOR:
+        Decimator->OnInput();
 
         break;
 
@@ -233,6 +249,7 @@ void OnInputAll()
     Autowah->OnInput();
     Chorus->OnInput();
     Compressor->OnInput();
+    Decimator->OnInput();
     Looper->OnInput();
     Master->OnInput();
     Overdrive->OnInput();

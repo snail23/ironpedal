@@ -14,7 +14,7 @@ namespace Effect
         EFFECT_AUTOWAH,    // 0110
         EFFECT_TREMOLO,    // 0111
         EFFECT_LOOPER,     // 1000
-        EFFECT_NYI_2,      // 1001
+        EFFECT_DECIMATOR,  // 1001
         EFFECT_NYI_3,      // 1010
         EFFECT_NYI_4,      // 1011
         EFFECT_NYI_5,      // 1100

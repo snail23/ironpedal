@@ -15,7 +15,7 @@ namespace Effect
             this->mode.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 0.0f, 1.0f, daisy::Parameter::LINEAR);
 
             this->overdrive.SetDrive(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_5]);
-            this->overdrive.SetSoft(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_1] > 0.5f);
+            this->overdrive.SetSoft(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_3] > 0.5f);
         }
 
         void Draw()
@@ -53,7 +53,7 @@ namespace Effect
                 this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_5] = this->drive.Process();
             }
 
-            this->overdrive.SetSoft(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_1] > 0.5f);
+            this->overdrive.SetSoft(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_3] > 0.5f);
             this->overdrive.SetDrive(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_5]);
         }
 
