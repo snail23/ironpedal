@@ -18,7 +18,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
 | ---------- | --------------- | --------- | -------- | --------- | --------- | -------- | ---------- |
 | Master     | 0000            | Pre HPF   | Pre LPF  | Pre Gain  | Post HPF  | Post LPF | Volume     |
-| Overdrive  | 0001            |           | Blend    |           |           | Drive    |            |
+| Overdrive  | 0001            | Blend     |          | Mode      |           | Drive    |            |
 | Chorus     | 0010            | Delay     |          | Rate      | Feedback  |          | Depth      |
 | Compressor | 0011            | Threshold |          | Ratio     | Attack    |          | Release    |
 | Reverb     | 0100            |           | Feedback |           |           | LPF      |            |
@@ -49,7 +49,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6     |
 | ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ---------- |
 | Master     | 0000            | 60 Hz     | 10.1 kHz | 0            | 60 Hz     | 10.1 kHz      | 100        |
-| Overdrive  | 0001            |           | 45       |              |           | 45            |            |
+| Overdrive  | 0001            | 45        |          | Hard         |           | 45            |            |
 | Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90         |
 | Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118      |
 | Reverb     | 0100            |           | 50       |              |           | 10.1 kHz      |            |

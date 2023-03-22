@@ -36,7 +36,14 @@ class Overdrive
       */
     void SetDrive(float drive);
 
+    /** Set clipping mode
+          \param soft true for soft clipping, false for hard clipping
+      */
+    void SetSoft(bool soft);
+
   private:
+    bool soft_;
+    
     float drive_;
     float pre_gain_;
     float post_gain_;

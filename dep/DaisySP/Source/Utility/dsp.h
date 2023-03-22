@@ -233,6 +233,17 @@ inline float SoftClip(float x)
         return SoftLimit(x);
 }
 
+/** Hard Clipping function */
+inline float HardClip(float x)
+{
+    if(x < -1.0f)
+        return -1.0f;
+    else if(x > 1.0f)
+        return 1.0f;
+    else
+        return x;
+}
+
 /** Quick check for Invalid float values (NaN, Inf, out of range) 
  ** \param x value passed by reference, replaced by y if invalid. 
  ** \param y value to replace x if invalidity is found. 
