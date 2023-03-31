@@ -72,27 +72,69 @@ namespace Effect
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER", ALIGN_LEFT);
             SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "PROFILE\n", ALIGN_RIGHT);
 
-            int16_t cents = max(-5, min(5, this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency))));
+            int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
 
-            if (cents < 0)
+            if (cents < 0 && cents > -10)
             {
-                for (int16_t i = cents; i < 0; ++i)
-                {
-                    *buf2++ = '-';
-                    *buf2 = 0;
-                }
+                *buf2++ = '-';
+                *buf2 = 0;
+            }
+
+            if (cents <= -10 && cents > -20)
+            {
+                *buf2++ = '-';
+                *buf2 = 0;
+            }
+
+            if (cents <= -20 && cents > -30)
+            {
+                *buf2++ = '-';
+                *buf2 = 0;
+            }
+
+            if (cents <= -30 && cents > -40)
+            {
+                *buf2++ = '-';
+                *buf2 = 0;
+            }
+
+            if (cents <= -40 && cents > -50)
+            {
+                *buf2++ = '-';
+                *buf2 = 0;
             }
 
             sprintf(buf2, "%s%u", this->ironpedal->notes[this->ironpedal->Note(this->tuner_frequency) % 12], this->ironpedal->Octave(this->tuner_frequency));
             buf2 += strlen(buf2);
 
-            if (cents > 0)
+            if (cents > 0 && cents <= 10)
             {
-                for (int16_t i = 0; i < cents; ++i)
-                {
-                    *buf2++ = '+';
-                    *buf2 = 0;
-                }
+                *buf2++ = '+';
+                *buf2 = 0;
+            }
+
+            if (cents > 10 && cents <= 20)
+            {
+                *buf2++ = '+';
+                *buf2 = 0;
+            }
+
+            if (cents > 20 && cents <= 30)
+            {
+                *buf2++ = '+';
+                *buf2 = 0;
+            }
+
+            if (cents > 30 && cents <= 40)
+            {
+                *buf2++ = '+';
+                *buf2 = 0;
+            }
+
+            if (cents > 40 && cents <= 50)
+            {
+                *buf2++ = '+';
+                *buf2 = 0;
             }
 
             SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
