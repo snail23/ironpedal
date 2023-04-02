@@ -74,7 +74,7 @@ namespace Effect
 
             int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
 
-            if (cents < 0 && cents > -10)
+            if (cents <= -2 && cents > -10)
             {
                 *buf2++ = '-';
                 *buf2 = 0;
@@ -107,7 +107,7 @@ namespace Effect
             sprintf(buf2, "%s%u", this->ironpedal->notes[this->ironpedal->Note(this->tuner_frequency) % 12], this->ironpedal->Octave(this->tuner_frequency));
             buf2 += strlen(buf2);
 
-            if (cents > 0 && cents <= 10)
+            if (cents >= 2 && cents <= 10)
             {
                 *buf2++ = '+';
                 *buf2 = 0;
