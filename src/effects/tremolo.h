@@ -10,7 +10,7 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
-            this->depth.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->depth.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.01f, daisy::Parameter::LINEAR);
             this->frequency.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 1.0f, 2880.0f, daisy::Parameter::LINEAR);
             this->shape.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], daisysp::Oscillator::WAVE_SIN, daisysp::Oscillator::WAVE_SQUARE, daisy::Parameter::LINEAR);
 

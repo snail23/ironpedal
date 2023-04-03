@@ -11,7 +11,7 @@ namespace Effect
             this->ironpedal = ironpedal;
 
             this->blend.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 100.0f, daisy::Parameter::LINEAR);
-            this->wah.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->wah.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.01f, daisy::Parameter::LINEAR);
 
             this->autowah.Init(this->ironpedal->AudioSampleRate());
 

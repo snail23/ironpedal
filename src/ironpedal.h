@@ -448,7 +448,7 @@ namespace Snailsoft
                 if (this->IsSwitchPressed())
                     input_received = true;
 
-                if ((!this->GetEffect(this->current_effect.id).locked || this->current_effect.id == Effect::EFFECT_MISC) && this->HasKnobChanged())
+                if ((!this->GetEffect(this->current_effect.id).locked || this->current_effect.id == Effect::EFFECT_MASTER) && this->HasKnobChanged())
                     input_received = true;
 
                 if (input_received)

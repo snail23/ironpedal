@@ -10,7 +10,7 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
-            this->feedback.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->feedback.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 1.01f, daisy::Parameter::LINEAR);
             this->lpf.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 1280.0f, 10200.0f, daisy::Parameter::LINEAR);
 
             this->reverb.Init(this->ironpedal->AudioSampleRate());

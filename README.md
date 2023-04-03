@@ -8,6 +8,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Effects can be individually enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
 - 10 different profiles that you can use to save your settings
+- Moog Ladder input filter for tone control
 
 ## Building from source
 Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
@@ -15,26 +16,26 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 `make clean && make -j && make program`
 
 ## Supported effects
-| Effect     | Switch position | Knob 1     | Knob 2   | Knob 3    | Knob 4    | Knob 5   | Knob 6     |
-| ---------- | --------------- | ---------- | -------- | --------- | --------- | -------- | ---------- |
-| Master     | 0000            | Pre HPF    | Pre LPF  | Pre Gain  | Post HPF  | Post LPF | Volume     |
-| Overdrive  | 0001            | Blend      |          | Mode      |           | Drive    |            |
-| Chorus     | 0010            | Delay      |          | Rate      | Feedback  |          | Depth      |
-| Compressor | 0011            | Threshold  |          | Ratio     | Attack    |          | Release    |
-| Reverb     | 0100            |            | Feedback |           |           | LPF      |            |
-| Resonator  | 0101            | Decay      |          | Frequency | Stiffness |          | Brightness |
-| Autowah    | 0110            |            | Blend    |           | Wah       |          |            |
-| Tremolo    | 0111            | Depth      |          | Frequency |           | Shape    |            |
-| Looper     | 1000            |            | Mode     |           |           | Volume   |            |
-| Decimator  | 1001            | Downsample |          | Mode      |           | Crush    |            |
-| Misc       | 1111            |            |          | Metronome |           |          | Profile    |
+| Effect     | Switch position | Knob 1     | Knob 2   | Knob 3    | Knob 4    | Knob 5    | Knob 6     |
+| ---------- | --------------- | ---------- | -------- | --------- | --------- | --------- | ---------- |
+| Master     | 0000            |            |          | Profile   | LPF       | Resonance | Volume     |
+| Overdrive  | 0001            | Blend      |          | Mode      |           | Drive     |            |
+| Chorus     | 0010            | Delay      |          | Rate      | Feedback  |           | Depth      |
+| Compressor | 0011            | Threshold  |          | Ratio     | Attack    |           | Release    |
+| Reverb     | 0100            |            | Feedback |           |           | LPF       |            |
+| Resonator  | 0101            | Decay      |          | Frequency | Stiffness |           | Brightness |
+| Autowah    | 0110            |            | Blend    |           | Wah       |           |            |
+| Tremolo    | 0111            | Depth      |          | Frequency |           | Shape     |            |
+| Looper     | 1000            |            | Mode     |           |           | Volume    |            |
+| Decimator  | 1001            | Downsample |          | Mode      |           | Crush     |            |
+| Misc       | 1111            |            |          |           |           |           | Metronome  |
 
 ## Effect chain order
-| 1                     | 2          | 3         | 4         | 5      | 6                        | 7      |
-| --------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
-| Misc: Tuner           | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
-| Master: Pre EQ & Gain | Decimator  |           | Chorus    |        | Master: Post EQ & Volume |        |
-|                       | Compressor |           | Tremolo   |        |                          |        |
+| 1                   | 2          | 3         | 4         | 5      | 6                        | 7      |
+| ------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
+| Misc: Tuner         | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
+| Master: Moog Filter | Decimator  |           | Chorus    |        | Master: Volume           |        |
+|                     | Compressor |           | Tremolo   |        |                          |        |
 
 ## Usage
 | Operation                               | Instructions                                                       |
@@ -47,19 +48,19 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Save effect settings                    | Hold the right foot switch for 3 seconds                           |
 
 ## My settings, feel free to use these as a starting point
-| Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6     |
-| ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ---------- |
-| Master     | 0000            | 60 Hz     | 10.1 kHz | 0            | 60 Hz     | 10.1 kHz      | 100        |
-| Overdrive  | 0001            | 45        |          | Hard         |           | 45            |            |
-| Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90         |
-| Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118      |
-| Reverb     | 0100            |           | 50       |              |           | 10.1 kHz      |            |
-| Resonator  | 0101            | 20        |          | 78 Hz (Eb2)  | 25        |               | 35         |
-| Autowah    | 0110            |           | 50       |              | 10        |               |            |
-| Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |            |
-| Looper     | 1000            |           | Playback |              |           | 100           |            |
-| Decimator  | 1001            | 35        |          | Soft         |           | 50            |            |
-| Misc       | 1111            |           |          | Off          |           |               | 1          |
+| Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6 |
+| ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ------ |
+| Master     | 0000            |           |          | 1            | 10.1 kHz  | 40            | 100    |
+| Overdrive  | 0001            | 45        |          | Hard         |           | 45            |        |
+| Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90     |
+| Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118  |
+| Reverb     | 0100            |           | 50       |              |           | 10.1 kHz      |        |
+| Resonator  | 0101            | 20        |          | 78 Hz (Eb2)  | 25        |               | 35     |
+| Autowah    | 0110            |           | 50       |              | 10        |               |        |
+| Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |        |
+| Looper     | 1000            |           | Playback |              |           | 100           |        |
+| Decimator  | 1001            | 35        |          | Soft         |           | 50            |        |
+| Misc       | 1111            |           |          |              |           |               | Off    |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 

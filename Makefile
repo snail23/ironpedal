@@ -50,7 +50,9 @@ dep/DaisySP/Source/Effects/overdrive.cpp \
 dep/DaisySP/Source/Effects/reverbsc.cpp \
 dep/DaisySP/Source/Effects/tremolo.cpp \
 \
+dep/DaisySP/Source/Filters/moogladder.cpp \
 dep/DaisySP/Source/Filters/svf.cpp \
+\
 dep/DaisySP/Source/PhysicalModeling/resonator.cpp \
 dep/DaisySP/Source/Synthesis/oscillator.cpp \
 \

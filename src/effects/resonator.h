@@ -10,10 +10,10 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
-            this->brightness.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 1.0f, daisy::Parameter::LINEAR);
-            this->decay.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->brightness.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 1.01f, daisy::Parameter::LINEAR);
+            this->decay.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.01f, daisy::Parameter::LINEAR);
             this->frequency.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 65.0f, 880.0f, daisy::Parameter::LINEAR);
-            this->stiffness.Init(this->ironpedal->knobs[PedalPCB::KNOB_4], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->stiffness.Init(this->ironpedal->knobs[PedalPCB::KNOB_4], 0.0f, 1.01f, daisy::Parameter::LINEAR);
 
             this->resonator.Init(0.0f, 24, this->ironpedal->AudioSampleRate());
 

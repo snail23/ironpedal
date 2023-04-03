@@ -12,8 +12,8 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
-            this->mode.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 1.0f, daisy::Parameter::LINEAR);
-            this->volume.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->mode.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 1.01f, daisy::Parameter::LINEAR);
+            this->volume.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.01f, daisy::Parameter::LINEAR);
 
             this->buffer_index = 0;
             this->buffer_size = 0;

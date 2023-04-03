@@ -245,13 +245,13 @@ void OnInputAll()
     Ironpedal->leds[PedalPCB::LED_1].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).enabled || Ironpedal->current_effect.id == Effect::EFFECT_MASTER || Ironpedal->current_effect.id == Effect::EFFECT_MISC);
     Ironpedal->leds[PedalPCB::LED_2].Set(Ironpedal->GetEffect(Ironpedal->current_effect.id).locked);
 
-    Misc->OnInput(true);
+    Misc->OnInput();
     Autowah->OnInput();
     Chorus->OnInput();
     Compressor->OnInput();
     Decimator->OnInput();
     Looper->OnInput();
-    Master->OnInput();
+    Master->OnInput(true);
     Overdrive->OnInput();
     Resonator->OnInput();
     Reverb->OnInput();

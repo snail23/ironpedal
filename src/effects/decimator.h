@@ -10,9 +10,9 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
-            this->crush.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.0f, daisy::Parameter::LINEAR);
-            this->downsample.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.0f, daisy::Parameter::LINEAR);
-            this->mode.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 0.0f, 1.0f, daisy::Parameter::LINEAR);
+            this->crush.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.01f, daisy::Parameter::LINEAR);
+            this->downsample.Init(this->ironpedal->knobs[PedalPCB::KNOB_1], 0.0f, 1.01f, daisy::Parameter::LINEAR);
+            this->mode.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 0.0f, 1.01f, daisy::Parameter::LINEAR);
 
             this->decimator.SetBitcrushFactor(this->ironpedal->GetEffect(EFFECT_DECIMATOR).values[PedalPCB::KNOB_5]);
             this->decimator.SetDownsampleFactor(this->ironpedal->GetEffect(EFFECT_DECIMATOR).values[PedalPCB::KNOB_1]);
