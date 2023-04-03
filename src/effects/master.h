@@ -13,7 +13,7 @@ namespace Effect
             this->low.Init(this->ironpedal->knobs[PedalPCB::KNOB_4], 1280.0f, 10200.0f, daisy::Parameter::LINEAR);
             this->profile.Init(this->ironpedal->knobs[PedalPCB::KNOB_3], 0.0f, PROFILES, daisy::Parameter::LINEAR);
             this->resonance.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, 1.01f, daisy::Parameter::LINEAR);
-            this->volume.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 1.01f, daisy::Parameter::LINEAR);
+            this->volume.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 2.01f, daisy::Parameter::LINEAR);
 
             this->dc_block.Init(this->ironpedal->AudioSampleRate());
 
