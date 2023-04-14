@@ -42,6 +42,6 @@ namespace Effect
         bool enabled;
         bool locked;
 
-        float values[16]; // KNOB_LAST
+        float values[6]; // KNOB_LAST
     };
 }

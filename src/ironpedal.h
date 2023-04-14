@@ -410,6 +410,7 @@ namespace Snailsoft
 
             sprintf(buf, "%c  %c  %c  %c\n", this->current_effect.switch1 ? '1' : '0', this->current_effect.switch2 ? '1' : '0', this->current_effect.switch3 ? '1' : '0', this->current_effect.switch4 ? '1' : '0');
             SSD1351_write_string(COLOR, this->font, buf, ALIGN_CENTER);
+            
             SSD1351_write_string(COLOR_LIGHT, this->font, effect_name, ALIGN_CENTER);
 
             if (this->current_effect.id == Effect::EFFECT_MASTER || this->current_effect.id == Effect::EFFECT_MISC)

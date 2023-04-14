@@ -44,7 +44,29 @@ namespace Effect
             char buf[24];
             char *buf2 = buf;
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER\n", ALIGN_CENTER);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "ACTIVE EFFECTS\n", ALIGN_CENTER);
+
+            *buf = 0;
+            bool first = true;
+            
+            for (auto i = EFFECT_MASTER + 1; i < EFFECT_MISC; ++i)
+            {
+                if (this->ironpedal->GetEffect(i).enabled)
+                {
+                    sprintf(buf, "%s%s%u", buf, first ? "" : ", ", i);
+
+                    if (first)
+                        first = false;
+                }
+            }
+
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER", ALIGN_LEFT);
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_RIGHT);
+
             int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
 
             if (cents <= -2 && cents > -10)
@@ -110,12 +132,7 @@ namespace Effect
                 *buf2 = 0;
             }
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
-            
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", ALIGN_CENTER);
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", ALIGN_CENTER);
-
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
             uint32_t bpm = this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f;
 
             if (bpm)
@@ -124,7 +141,7 @@ namespace Effect
             else
                 sprintf(buf, "OFF\n");
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             this->ironpedal->PrintFooter("MISC\n");
         }
