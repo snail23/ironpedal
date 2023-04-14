@@ -50,7 +50,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 ## My settings, feel free to use these as a starting point
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6 |
 | ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ------ |
-| Master     | 0000            |           |          | 1            | 10.1 kHz  | 40            | 100    |
+| Master     | 0000            |           |          | 1            | 10.1 kHz  | 40            | 150    |
 | Overdrive  | 0001            | 45        |          | Hard         |           | 45            |        |
 | Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90     |
 | Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118  |

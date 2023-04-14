@@ -1,14 +1,6 @@
 // Part of Ironpedal
 // https://github.com/snail23/ironpedal
 
-#ifndef max
-#define max(a, b) ((a < b) ? b : a)
-#endif
-
-#ifndef min
-#define min(a, b) ((a < b) ? a : b)
-#endif
-
 namespace Effect
 {
     class Misc
@@ -52,13 +44,7 @@ namespace Effect
             char buf[24];
             char *buf2 = buf;
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_RIGHT);
-
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER\n", ALIGN_CENTER);
             int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
 
             if (cents <= -2 && cents > -10)
@@ -124,7 +110,12 @@ namespace Effect
                 *buf2 = 0;
             }
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", ALIGN_CENTER);
+            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", ALIGN_CENTER);
+
+            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_CENTER);
             uint32_t bpm = this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f;
 
             if (bpm)
@@ -133,7 +124,7 @@ namespace Effect
             else
                 sprintf(buf, "OFF\n");
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
 
             this->ironpedal->PrintFooter("MISC\n");
         }
