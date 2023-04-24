@@ -80,6 +80,8 @@ Digital noise is a part of digital pedals and Ironpedal is no different. In orde
 
 I also recommend using an isolation transformer on the output jack and running separate ground wires wherever you can back to the power supply. The Terrarium is not the most efficient PCB and there are ground loops so we want to try to minimize those effects where possible.
 
+Run the pedal from a dedicated power bank and not your computer as a lot of noise travels down the USB cable as well. If you opted to order a STLINK-V3MINI, I recommend adding another switch to be able to turn it off when not in use.
+
 ## Build tutorial
 
 ### Preparation
@@ -89,8 +91,8 @@ I also recommend using an isolation transformer on the output jack and running s
 4. Order a [600:600 / 1:1 isolation transformer](https://www.amazon.com/gp/product/B073PXK2RX). This gets rid of digital noise on the output at the cost of some minor loss (a few dB when measured) on the low end frequencies. Noise is very noticable without one of these.
 5. Order a [Terrarium](https://www.pedalpcb.com/product/pcb351) board from PedalPCB.
 6. Order a [Daisy Seed](https://www.electro-smith.com/daisy/daisy) module from Electro-Smith with the headers attached, this is the heart of the pedal.
-6. (Optional) If you want a screen, order a [1.5 inch 128x128 SSD1351 OLED display](https://www.amazon.com/1-5inch-Interface-Raspberry-Examples-Provided/dp/B07D9NVJPZ).
-7. (Optional) If you want a very easy way of updating the firmware without having to open up the pedal every time to push the Seed BOOT/RESET combo, consider ordering a [STLINK-V3MINI](https://www.electro-smith.com/daisy/stlink-v3mini). Definitely worth it in my opinion to save your sanity.
+7. (Optional) If you want a screen, order a [1.5 inch 128x128 SSD1351 OLED display](https://www.amazon.com/1-5inch-Interface-Raspberry-Examples-Provided/dp/B07D9NVJPZ).
+8. (Optional) If you want a very easy way of updating the firmware without having to open up the pedal every time to push the Seed BOOT/RESET combo, consider ordering a [STLINK-V3MINI](https://www.electro-smith.com/daisy/stlink-v3mini). Definitely worth it in my opinion to save your sanity.
 
 ### Drilling out the pedal case
 1. Cut out the pedal case template from the last page of the [schematic](datasheets/Terrarium.pdf) and tape it in place. I used painter's tape for this but masking tape is also a good choice.
@@ -104,10 +106,42 @@ I also recommend using an isolation transformer on the output jack and running s
 ![Pedal case](images/case1.jpg)
 ![Pedal case](images/case2.jpg)
 
+### Soldering the Terrarium board components
+1. Gather and organize all your parts.
+
+![Terrarium parts](images/parts.jpg)
+
+2. Prepare the Terrarium board by first cleaning the entire surface with alcohol and a soft lint-free cloth. A nice pair of helping hands will stabilize the board when soldering as well, I highly recommend using one.
+
+![Terrarium PCB](images/pcb.jpg)
+
+3. Solder each component of the board according to the [schematic](datasheets/Terrarium.pdf). Go slow and take your time, try and get a nice fit for each component.
+4. When you get to the knobs, switches, and LEDs, I recommend tightening everything down in the case and laying the Terrarium board on top of the leads before you solder everything so you get a nice, flush fit.
+
+![Terrarium fitting](images/fitting.jpg)
+![Terrarium fitting](images/assembled.jpg)
+
+5. You will need to splice together a single USB cable to power the STLINK-V3MINI and the Daisy Seed if you opted to order one. I also added another switch for the STLINK-V3MINI to further reduce noise when not in use.
+6. When done, the inside of your pedal should look similar to this. It's very crowded!
+
+![Internal view 1](images/internal1.jpg)
+![Internal view 2](images/internal2.jpg)
+![Finished](images/finished.jpg)
+
 ### (Optional) Paint the pedal case
 1. This step is optional but feel free to paint your pedal case, I went with a punk pink color. You will want to use primer as paint falls off aluminum pretty easily without something to stick to.
 
 ![Painting the pedal case](images/paint.jpg)
+
+### Flashing the firmware
+1. Erase the QSPI external flash block using [STM32Cube](https://www.st.com/en/ecosystems/stm32cube.html) or something similar, it's needed initially for saving/loading your settings.
+2. Download the latest Ironpedal firmware.
+3. On your PC, copy `ironpedal.bin` to the external drive provided by the Daisy Seed which will flash it and automatically reboot.
+4. Congratulations, you're done!
+
+![Master view](images/master.jpg)
+![Overdrive view](images/overdrive.jpg)
+![Misc view](images/misc.jpg)
 
 ## Reporting bugs
 If you encounter a bug and wish to report it or have feature suggestions and other topics, please [open an issue](https://github.com/snail23/ironpedal/issues).
