@@ -73,8 +73,8 @@ namespace Effect
         }
 
     private:
-        daisy::Parameter depth;
         daisy::Parameter delay;
+        daisy::Parameter depth;
         daisy::Parameter feedback;
         daisy::Parameter rate;
 

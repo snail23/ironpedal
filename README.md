@@ -28,14 +28,18 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Tremolo    | 0111            | Depth      |          | Frequency |           | Shape     |            |
 | Looper     | 1000            |            | Mode     |           |           | Volume    |            |
 | Decimator  | 1001            | Downsample |          | Mode      |           | Crush     |            |
+| Phaser     | 1010            | Frequency  |          | Rate      | Feedback  |           | Depth      |
+| Delay      | 1011            |            | Delay    |           |           |           |            |
+| Flanger    | 1100            | Delay      |          | Rate      | Feedback  |           | Depth      |
 | Misc       | 1111            |            |          |           |           |           | Metronome  |
 
 ## Effect chain order
 | 1                   | 2          | 3         | 4         | 5      | 6                        | 7      |
 | ------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
-| Misc: Tuner         | Autowah    | Overdrive | Resonator | Reverb | Misc: Metronome          | Looper |
-| Master: Moog Filter | Decimator  |           | Chorus    |        | Master: Volume           |        |
-|                     | Compressor |           | Tremolo   |        |                          |        |
+| Misc: Tuner         | Autowah    | Overdrive | Chorus    | Delay  | Misc: Metronome          | Looper |
+| Master: Moog Filter | Decimator  | Resonator | Tremolo   | Reverb | Master: Volume           |        |
+|                     | Compressor |           | Phaser    |        |                          |        |
+|                     |            |           | Flanger   |        |                          |        |
 
 ## Usage
 | Operation                               | Instructions                                                       |
@@ -60,6 +64,9 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |        |
 | Looper     | 1000            |           | Playback |              |           | 100           |        |
 | Decimator  | 1001            | 35        |          | Soft         |           | 50            |        |
+| Phaser     | 1010            | 1.2 kHz   |          | 0.30         | 20        |               | 90     |
+| Delay      | 1011            |           | 0 MS     |              |           |               |        |
+| Flanger    | 1100            | 75        |          | 0.30         | 20        |               | 90     |
 | Misc       | 1111            |           |          |              |           |               | Off    |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.

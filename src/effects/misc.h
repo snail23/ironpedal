@@ -48,7 +48,7 @@ namespace Effect
 
             *buf = 0;
             bool first = true;
-            
+
             for (auto i = EFFECT_MASTER + 1; i < EFFECT_MISC; ++i)
             {
                 if (this->ironpedal->GetEffect(i).enabled)

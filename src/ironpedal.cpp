@@ -15,10 +15,13 @@
 #include "effects/chorus.h"
 #include "effects/compressor.h"
 #include "effects/decimator.h"
+#include "effects/delay.h"
+#include "effects/flanger.h"
 #include "effects/looper.h"
 #include "effects/master.h"
 #include "effects/misc.h"
 #include "effects/overdrive.h"
+#include "effects/phaser.h"
 #include "effects/resonator.h"
 #include "effects/reverb.h"
 #include "effects/tremolo.h"
@@ -27,10 +30,13 @@ Effect::Autowah *Autowah;
 Effect::Chorus *Chorus;
 Effect::Compressor *Compressor;
 Effect::Decimator *Decimator;
+Effect::Delay *Delay;
+Effect::Flanger *Flanger;
 Effect::Looper *Looper;
 Effect::Master *Master;
 Effect::Misc *Misc;
 Effect::Overdrive *Overdrive;
+Effect::Phaser *Phaser;
 Effect::Resonator *Resonator;
 Effect::Reverb *Reverb;
 Effect::Tremolo *Tremolo;
@@ -53,10 +59,13 @@ int main()
     Chorus = new Effect::Chorus(Ironpedal);
     Compressor = new Effect::Compressor(Ironpedal);
     Decimator = new Effect::Decimator(Ironpedal);
+    Delay = new Effect::Delay(Ironpedal);
+    Flanger = new Effect::Flanger(Ironpedal);
     Looper = new Effect::Looper(Ironpedal);
     Master = new Effect::Master(Ironpedal);
     Misc = new Effect::Misc(Ironpedal);
     Overdrive = new Effect::Overdrive(Ironpedal);
+    Phaser = new Effect::Phaser(Ironpedal);
     Resonator = new Effect::Resonator(Ironpedal);
     Reverb = new Effect::Reverb(Ironpedal);
     Tremolo = new Effect::Tremolo(Ironpedal);
@@ -91,6 +100,16 @@ void Draw()
 
         break;
 
+    case Effect::EFFECT_DELAY:
+        Delay->Draw();
+
+        break;
+
+    case Effect::EFFECT_FLANGER:
+        Flanger->Draw();
+
+        break;
+
     case Effect::EFFECT_LOOPER:
         Looper->Draw();
 
@@ -103,6 +122,11 @@ void Draw()
 
     case Effect::EFFECT_MISC:
         Misc->Draw();
+
+        break;
+
+    case Effect::EFFECT_PHASER:
+        Phaser->Draw();
 
         break;
 
@@ -161,6 +185,15 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
     if (Ironpedal->GetEffect(Effect::EFFECT_TREMOLO).enabled)
         Tremolo->OnAudio(out[0], out[0], size);
 
+    if (Ironpedal->GetEffect(Effect::EFFECT_PHASER).enabled)
+        Phaser->OnAudio(out[0], out[0], size);
+
+    if (Ironpedal->GetEffect(Effect::EFFECT_FLANGER).enabled)
+        Flanger->OnAudio(out[0], out[0], size);
+
+    if (Ironpedal->GetEffect(Effect::EFFECT_DELAY).enabled)
+        Delay->OnAudio(out[0], out[0], size);
+
     if (Ironpedal->GetEffect(Effect::EFFECT_REVERB).enabled)
         Reverb->OnAudio(out[0], out[0], size);
 
@@ -198,6 +231,16 @@ void OnInput()
 
         break;
 
+    case Effect::EFFECT_DELAY:
+        Delay->OnInput();
+
+        break;
+
+    case Effect::EFFECT_FLANGER:
+        Flanger->OnInput();
+
+        break;
+
     case Effect::EFFECT_LOOPER:
         Looper->OnInput();
 
@@ -215,6 +258,11 @@ void OnInput()
 
     case Effect::EFFECT_OVERDRIVE:
         Overdrive->OnInput();
+
+        break;
+
+    case Effect::EFFECT_PHASER:
+        Phaser->OnInput();
 
         break;
 
@@ -250,9 +298,12 @@ void OnInputAll()
     Chorus->OnInput();
     Compressor->OnInput();
     Decimator->OnInput();
+    Delay->OnInput();
+    Flanger->OnInput();
     Looper->OnInput();
     Master->OnInput(true);
     Overdrive->OnInput();
+    Phaser->OnInput();
     Resonator->OnInput();
     Reverb->OnInput();
     Tremolo->OnInput();

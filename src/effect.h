@@ -15,11 +15,11 @@ namespace Effect
         EFFECT_TREMOLO,    // 0111
         EFFECT_LOOPER,     // 1000
         EFFECT_DECIMATOR,  // 1001
-        EFFECT_NYI_3,      // 1010
-        EFFECT_NYI_4,      // 1011
-        EFFECT_NYI_5,      // 1100
-        EFFECT_NYI_6,      // 1101
-        EFFECT_NYI_7,      // 1110
+        EFFECT_PHASER,     // 1010
+        EFFECT_DELAY,      // 1011
+        EFFECT_FLANGER,    // 1100
+        EFFECT_NYI_1,      // 1101
+        EFFECT_NYI_2,      // 1110
         EFFECT_MISC,       // 1111
         EFFECT_LAST
     };
