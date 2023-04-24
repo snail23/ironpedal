@@ -31,6 +31,8 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Phaser     | 1010            | Frequency  |          | Rate      | Feedback  |           | Depth      |
 | Delay      | 1011            |            | Delay    |           |           |           |            |
 | Flanger    | 1100            | Delay      |          | Rate      | Feedback  |           | Depth      |
+| Unused     | 1101            |           |          |              |           |               |        |
+| Unused     | 1110            |           |          |              |           |               |        |
 | Misc       | 1111            |            |          |           |           |           | Metronome  |
 
 ## Effect chain order
@@ -67,6 +69,8 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 | Phaser     | 1010            | 1.2 kHz   |          | 0.30         | 20        |               | 90     |
 | Delay      | 1011            |           | 0 MS     |              |           |               |        |
 | Flanger    | 1100            | 75        |          | 0.30         | 20        |               | 90     |
+| Unused     | 1101            |           |          |              |           |               |        |
+| Unused     | 1110            |           |          |              |           |               |        |
 | Misc       | 1111            |           |          |              |           |               | Off    |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
