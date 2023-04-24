@@ -122,11 +122,6 @@ Run the pedal from a dedicated power bank and not your computer as a lot of nois
 ![Terrarium fitting](images/assembled.jpg)
 
 5. You will need to splice together a single USB cable to power the STLINK-V3MINI and the Daisy Seed if you opted to order one. I also added another switch for the STLINK-V3MINI to further reduce noise when not in use.
-6. When done, the inside of your pedal should look similar to this. It's very crowded!
-
-![Internal view 1](images/internal1.jpg)
-![Internal view 2](images/internal2.jpg)
-![Finished](images/finished.jpg)
 
 ### (Optional) Paint the pedal case
 1. This step is optional but feel free to paint your pedal case, I went with a punk pink color. You will want to use primer as paint falls off aluminum pretty easily without something to stick to.
@@ -139,6 +134,11 @@ Run the pedal from a dedicated power bank and not your computer as a lot of nois
 3. On your PC, copy `ironpedal.bin` to the external drive provided by the Daisy Seed which will flash it and automatically reboot.
 4. Congratulations, you're done!
 
+The inside of your pedal should look similar to this. It's very crowded!
+
+![Internal view 1](images/internal1.jpg)
+![Internal view 2](images/internal2.jpg)
+![Finished](images/finished.jpg)
 ![Master view](images/master.jpg)
 ![Overdrive view](images/overdrive.jpg)
 ![Misc view](images/misc.jpg)
