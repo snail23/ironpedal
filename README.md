@@ -133,7 +133,7 @@ Run the pedal from a dedicated power bank and not your computer as a lot of nois
 
 ### Flashing the firmware
 1. Erase the QSPI external flash block using [STM32Cube](https://www.st.com/en/ecosystems/stm32cube.html) or something similar, it's needed initially for saving/loading your settings.
-2. Download the latest Ironpedal firmware.
+2. Download the latest [Ironpedal firmware](https://github.com/snail23/ironpedal/releases/latest).
 3. On your PC, copy `ironpedal.bin` to the external drive provided by the Daisy Seed which will flash it and automatically reboot.
 4. Congratulations, you're done!
 
