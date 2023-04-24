@@ -75,6 +75,11 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 
+## Keeping noise low
+Digital noise is a part of digital pedals and Ironpedal is no different. In order to keep noise levels low, I recommend keeping the screen off when not in use if you decided to add one. These Chinese displays have pulsing voltage converters in them that produce a lot of noise when running and when they are refreshed.
+
+I also recommend using an isolation transformer on the output jack and running separate ground wires wherever you can back to the power supply. The Terrarium is not the most efficient PCB and there are ground loops so we want to try to minimize those effects where possible.
+
 ## Build tutorial
 
 ### Preparation
