@@ -71,11 +71,34 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 
-## Pictures
-Todo.
+## Build tutorial
 
-## Physical build tutorial
-Todo.
+### Preparation
+1. Print off the [schematic](datasheets/Terrarium.pdf) with all scaling options turned off in your printer settings. This will make your life easier later and the last page is a physical template for drilling out the pedal case so this step is required.
+2. Order all of the parts listed on page 2 of the [schematic](datasheets/Terrarium.pdf), I used [Tayda Electronics](https://www.taydaelectronics.com) for this.
+3. Order a [pedal case](https://www.amazon.com/gp/product/B07VNCDSN7).
+4. Order a [600:600 / 1:1 isolation transformer](https://www.amazon.com/gp/product/B073PXK2RX). This gets rid of digital noise on the output at the cost of some minor loss (a few dB when measured) on the low end frequencies. Noise is very noticable without one of these.
+5. Order a [Terrarium](https://www.pedalpcb.com/product/pcb351) board from PedalPCB.
+6. Order a [Daisy Seed](https://www.electro-smith.com/daisy/daisy) module from Electro-Smith, this is the heart of the pedal.
+6. (Optional) If you want a screen, order a [1.5 inch 128x128 SSD1351 OLED display](https://www.amazon.com/1-5inch-Interface-Raspberry-Examples-Provided/dp/B07D9NVJPZ).
+7. (Optional) If you want a very easy way of updating the firmware without having to open up the pedal every time to push the Seed BOOT/RESET combo, consider ordering a [STLINK-V3MINI](https://www.electro-smith.com/daisy/stlink-v3mini). Definitely worth it in my opinion to save your sanity.
+
+### Drilling out the pedal case
+1. Cut out the pedal case template from the last page of the [schematic](datasheets/Terrarium.pdf) and tape it in place. I used painter's tape for this but masking tape is also a good choice.
+
+![Pedal case template](images/template.jpg)
+
+2. Use a drill press if you have one but if not, hold the pedal case in vise and try and keep your drill as straight as possible. Use a scrap piece of wood on the underside to keep your holes clean.
+3. A good tip to figure out the drill bit sizes to use is to use a digital caliper on each part that will be fitted through a hole. Going a little bigger is a good idea for fitting purposes later as things will not line up absolutely perfectly due to manufacturer defects and also just human error.
+4. (Optional) File out a rectangle on the front face of the case for the screen. You want to do this by hand and check your work a lot, it's very easy to remove too much material here.
+
+![Pedal case](images/case1.jpg)
+![Pedal case](images/case2.jpg)
+
+### (Optional) Paint the pedal case
+1. This step is optional but feel free to paint your pedal case, I went with a punk pink color. You will want to use primer as paint falls off aluminum pretty easily without something to stick to.
+
+![Painting the pedal case](images/paint.jpg)
 
 ## Reporting bugs
 If you encounter a bug and wish to report it or have feature suggestions and other topics, please [open an issue](https://github.com/snail23/ironpedal/issues).
