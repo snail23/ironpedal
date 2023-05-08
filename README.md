@@ -102,7 +102,7 @@ Run the pedal from a dedicated power bank and not your computer as a lot of nois
 
 ![Pedal case template](images/template.jpg)
 
-2. Use a drill press if you have one but if not, hold the pedal case in vise and try and keep your drill as straight as possible. Use a scrap piece of wood on the underside to keep your holes clean.
+2. Use a drill press if you have one but if not, hold the pedal case in a vise and try and keep your drill as straight as possible. Use a scrap piece of wood on the underside to keep your holes clean.
 3. You can use a digital caliper on each part that will be fitted through a hole to figure out the drill bit sizes to use. Going a little bigger is a good idea for fitting purposes later as things will not line up absolutely perfectly due to manufacturer defects and also just human error.
 4. (Optional) File out a rectangle on the front face of the case for the screen. You want to do this by hand and check your work a lot, it's very easy to remove too much material here.
 
