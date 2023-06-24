@@ -126,6 +126,18 @@ Run the pedal from a dedicated power bank and not your computer as a lot of nois
 
 5. You will need to splice together a single USB cable to power the STLINK-V3MINI and the Daisy Seed if you opted to order one. I also added another switch for the STLINK-V3MINI to further reduce noise when not in use.
 
+6. (Optional) If you opted to use the OLED display, you should solder each pin to the Daisy Seed according to the following table. Pin layout for the Daisy Seed can be found in the datasheet [here](datasheets/Daisy_Seed_datasheet_v1.0.4.pdf). (Credit: [sballano](https://github.com/sballano))
+
+| Screen pin   | Daisy signal | Pin number |
+|--------------|--------------|------------|
+| Vcc          | 3V3 dig      |         38 |
+| GND          | DGND         |         40 |
+| DIN          | MOSI/D6      |          7 |
+| CLK          | SCLK/D2      |          3 |
+| CS           | CS/D3        |          4 |
+| DC           | MISO/D1      |          2 |
+| RST          | D30          |         37 |
+
 ### (Optional) Paint the pedal case
 1. This step is optional but feel free to paint your pedal case, I went with a punk pink color. You will want to use primer as paint falls off aluminum pretty easily without something to stick to.
 
