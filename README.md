@@ -7,8 +7,9 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Save/load your effect settings to external flash via QSPI
 - Effects can be individually enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
-- 10 different profiles that you can use to save your settings (number can be increased)
+- 99 different profiles that you can use to save your settings (number can be increased)
 - Moog Ladder input filter for tone control
+- Customizable text colors to match the color of your pedal
 
 ## Building from source
 Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
@@ -16,7 +17,7 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 `make clean && make -j && make program`
 
 ## Customizing
-Text colors and the number of profiles supported can be changed in [src/config.h](src/config.h), this will require rebuilding from source.
+Text colors can be changed on the Misc effects screen and the number of profiles supported can be changed in [src/config.h](src/config.h), this will require rebuilding from source.
 
 ## Supported effects
 | Effect     | Switch position | Knob 1     | Knob 2   | Knob 3    | Knob 4    | Knob 5    | Knob 6     |
@@ -34,8 +35,8 @@ Text colors and the number of profiles supported can be changed in [src/config.h
 | Phaser     | 1010            | Frequency  |          | Rate      | Feedback  |           | Depth      |
 | Delay      | 1011            |            | Delay    |           |           |           |            |
 | Flanger    | 1100            | Delay      |          | Rate      | Feedback  |           | Depth      |
-| Unused     | 1101            |           |          |              |           |               |        |
-| Unused     | 1110            |           |          |              |           |               |        |
+| Unused     | 1101            |            |          |           |           |           |            |
+| Unused     | 1110            |            |          |           |           |           |            |
 | Misc       | 1111            |            |          |           |           |           | Metronome  |
 
 ## Effect chain order
