@@ -79,7 +79,7 @@ namespace Effect
         void OnPostAudio(float *in, float *out, size_t size)
         {
             for (size_t i = 0; i < size; ++i)
-                out[i] *= this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6];
+                out[i] = this->dc_block.Process(out[i]) * this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6];
         }
 
     private:
