@@ -5,5 +5,5 @@
 #define COLOR_DARK SSD1351_get_rgb(162, 0, 69)     // 30% darker: 0xA20045
 #define COLOR_LIGHT SSD1351_get_rgb(255, 112, 222) // 30% lighter: 0xFF70DE
 
-#define PROFILES 99 // 416 bytes per profile
+#define PROFILES 20 // 416 bytes per profile
 #define VERSION "1.1.1"

@@ -17,6 +17,8 @@ namespace Snailsoft
     struct StorageData
     {
         Effect::Effect effects[PROFILES][Effect::EFFECT_LAST];
+
+        uint8_t color;
         uint8_t profile;
 
         bool operator==(StorageData &rhs)
