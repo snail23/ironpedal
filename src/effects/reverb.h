@@ -23,16 +23,16 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FEEDBACK\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "FEEDBACK\n", ALIGN_CENTER);
             sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->GetEffect(EFFECT_REVERB).values[PedalPCB::KNOB_2] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW PASS\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "LOW PASS\n", ALIGN_CENTER);
             float low = this->ironpedal->GetEffect(EFFECT_REVERB).values[PedalPCB::KNOB_5] / 1000.0f;
             sprintf(buf, "%lu.%lu KHZ\n", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
             this->ironpedal->PrintFooter("REVERB\n");
         }

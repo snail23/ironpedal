@@ -28,6 +28,7 @@ namespace Effect
         {
             this->ironpedal = ironpedal;
 
+            this->color.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, COLORS, daisy::Parameter::LINEAR);
             this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.0f, daisy::Parameter::LINEAR);
             this->buffer_index = 0;
 
@@ -44,7 +45,7 @@ namespace Effect
             char buf[24];
             char *buf2 = buf;
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "ACTIVE EFFECTS\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "ACTIVE EFFECTS\n", ALIGN_CENTER);
 
             *buf = 0;
             bool first = true;
@@ -60,79 +61,53 @@ namespace Effect
                 }
             }
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "TUNER", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "METRO\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "TUNER", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "COL", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "METRO\n", ALIGN_RIGHT);
 
-            int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
-
-            if (cents <= -2 && cents > -10)
+            if (this->tuner_frequency > 40.0f)
             {
-                *buf2++ = '-';
-                *buf2 = 0;
+                int16_t cents = this->ironpedal->Cents(this->tuner_frequency, this->ironpedal->Note(this->tuner_frequency));
+
+                if (cents <= -2 && cents > -10)
+                {
+                    *buf2++ = '-';
+                    *buf2 = 0;
+                }
+
+                if (cents <= -10 && cents > -20)
+                {
+                    *buf2++ = '-';
+                    *buf2 = 0;
+                }
+
+                sprintf(buf2, "%s%u", this->ironpedal->notes[this->ironpedal->Note(this->tuner_frequency) % 12], this->ironpedal->Octave(this->tuner_frequency));
+                buf2 += strlen(buf2);
+
+                if (cents >= 2 && cents <= 10)
+                {
+                    *buf2++ = '+';
+                    *buf2 = 0;
+                }
+
+                if (cents > 10 && cents <= 20)
+                {
+                    *buf2++ = '+';
+                    *buf2 = 0;
+                }
             }
+            else
+                sprintf(buf, "INPUT");
 
-            if (cents <= -10 && cents > -20)
-            {
-                *buf2++ = '-';
-                *buf2 = 0;
-            }
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            if (cents <= -20 && cents > -30)
-            {
-                *buf2++ = '-';
-                *buf2 = 0;
-            }
+            sprintf(buf, "%u", this->ironpedal->storage->GetSettings().color + 1);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            if (cents <= -30 && cents > -40)
-            {
-                *buf2++ = '-';
-                *buf2 = 0;
-            }
-
-            if (cents <= -40 && cents > -50)
-            {
-                *buf2++ = '-';
-                *buf2 = 0;
-            }
-
-            sprintf(buf2, "%s%u", this->ironpedal->notes[this->ironpedal->Note(this->tuner_frequency) % 12], this->ironpedal->Octave(this->tuner_frequency));
-            buf2 += strlen(buf2);
-
-            if (cents >= 2 && cents <= 10)
-            {
-                *buf2++ = '+';
-                *buf2 = 0;
-            }
-
-            if (cents > 10 && cents <= 20)
-            {
-                *buf2++ = '+';
-                *buf2 = 0;
-            }
-
-            if (cents > 20 && cents <= 30)
-            {
-                *buf2++ = '+';
-                *buf2 = 0;
-            }
-
-            if (cents > 30 && cents <= 40)
-            {
-                *buf2++ = '+';
-                *buf2 = 0;
-            }
-
-            if (cents > 40 && cents <= 50)
-            {
-                *buf2++ = '+';
-                *buf2 = 0;
-            }
-
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
             uint32_t bpm = this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f;
 
             if (bpm)
@@ -141,7 +116,7 @@ namespace Effect
             else
                 sprintf(buf, "OFF\n");
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             this->ironpedal->PrintFooter("MISC\n");
         }
@@ -167,10 +142,15 @@ namespace Effect
             }
         }
 
-        void OnInput()
+        void OnInput(bool all = false)
         {
             if (!this->ironpedal->GetEffect(EFFECT_MISC).locked)
+            {
+                if (!all)
+                    this->ironpedal->storage->GetSettings().color = this->color.Process();
+
                 this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] = this->metronome_bpm.Process();
+            }
 
             this->metronome.SetFreq(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6]);
         }
@@ -189,6 +169,7 @@ namespace Effect
     private:
         bool tuner_updated;
 
+        daisy::Parameter color;
         daisy::Parameter metronome_bpm;
         daisy::Parameter profile;
 

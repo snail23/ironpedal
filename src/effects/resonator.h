@@ -27,25 +27,25 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DECAY", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "DECAY", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
 
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_1] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_3]);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "STIFF", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "BRIGHT\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "STIFF", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "BRIGHT\n", ALIGN_RIGHT);
 
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_4] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->GetEffect(EFFECT_RESONATOR).values[PedalPCB::KNOB_6] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             this->ironpedal->PrintFooter("RESONATOR\n");
         }

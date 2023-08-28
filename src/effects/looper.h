@@ -25,14 +25,14 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "MODE\n", ALIGN_CENTER);
-            SSD1351_write_string(COLOR, this->ironpedal->font, this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_2] > 0.5f ? "RECORD\n" : "PLAYBACK\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "MODE\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_2] > 0.5f ? "RECORD\n" : "PLAYBACK\n", ALIGN_CENTER);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOLUME\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "VOLUME\n", ALIGN_CENTER);
             sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_5] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
             this->ironpedal->PrintFooter("LOOPER\n");
         }

@@ -27,25 +27,25 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "THRESH", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RATIO\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "THRESH", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "RATIO\n", ALIGN_RIGHT);
 
             sprintf(buf, "%ld dB", (int32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_1]);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu:1\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_3]);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n", COLOR);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n", this->ironpedal->GetColor().base);
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "ATTACK", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RELEASE\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "ATTACK", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "RELEASE\n", ALIGN_RIGHT);
 
             sprintf(buf, "%lu.%03lu", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4], (uint32_t)((this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4] - floor(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_4])) * 1000.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu.%03lu\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6], (uint32_t)((this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6] - floor(this->ironpedal->GetEffect(EFFECT_COMPRESSOR).values[PedalPCB::KNOB_6])) * 1000.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             this->ironpedal->PrintFooter("COMPRESSOR\n");
         }

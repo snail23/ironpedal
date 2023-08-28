@@ -37,7 +37,7 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 | Flanger    | 1100            | Delay      |          | Rate      | Feedback  |           | Depth      |
 | Unused     | 1101            |            |          |           |           |           |            |
 | Unused     | 1110            |            |          |           |           |           |            |
-| Misc       | 1111            |            |          |           |           |           | Metronome  |
+| Misc       | 1111            |            |          |           |           | Color     | Metronome  |
 
 ## Effect chain order
 | 1                   | 2          | 3         | 4         | 5      | 6                        | 7      |
@@ -75,7 +75,7 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 | Flanger    | 1100            | 75        |          | 0.30         | 20        |               | 90     |
 | Unused     | 1101            |           |          |              |           |               |        |
 | Unused     | 1110            |           |          |              |           |               |        |
-| Misc       | 1111            |           |          |              |           |               | Off    |
+| Misc       | 1111            |           |          |              |           | 1             | Off    |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.
 

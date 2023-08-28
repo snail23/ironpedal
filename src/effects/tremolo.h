@@ -25,42 +25,42 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DEPTH", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "DEPTH", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "FREQ\n", ALIGN_RIGHT);
 
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_1] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu HZ\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_3]);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "SHAPE\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "SHAPE\n", ALIGN_CENTER);
 
             switch ((uint32_t)this->ironpedal->GetEffect(EFFECT_TREMOLO).values[PedalPCB::KNOB_5])
             {
             case daisysp::Oscillator::WAVE_RAMP:
-                SSD1351_write_string(COLOR, this->ironpedal->font, "RAMP WAVE\n", ALIGN_CENTER);
+                SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "RAMP WAVE\n", ALIGN_CENTER);
 
                 break;
 
             case daisysp::Oscillator::WAVE_SAW:
-                SSD1351_write_string(COLOR, this->ironpedal->font, "SAW WAVE\n", ALIGN_CENTER);
+                SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "SAW WAVE\n", ALIGN_CENTER);
 
                 break;
 
             case daisysp::Oscillator::WAVE_SIN:
-                SSD1351_write_string(COLOR, this->ironpedal->font, "SINE WAVE\n", ALIGN_CENTER);
+                SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "SINE WAVE\n", ALIGN_CENTER);
 
                 break;
 
             case daisysp::Oscillator::WAVE_SQUARE:
-                SSD1351_write_string(COLOR, this->ironpedal->font, "SQUARE WAVE\n", ALIGN_CENTER);
+                SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "SQUARE WAVE\n", ALIGN_CENTER);
 
                 break;
 
             case daisysp::Oscillator::WAVE_TRI:
-                SSD1351_write_string(COLOR, this->ironpedal->font, "TRIANGLE WAVE\n", ALIGN_CENTER);
+                SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "TRIANGLE WAVE\n", ALIGN_CENTER);
 
                 break;
             }

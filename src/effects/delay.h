@@ -20,13 +20,13 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DELAY\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "DELAY\n", ALIGN_CENTER);
             sprintf(buf, "%lu MS\n", (uint32_t)this->ironpedal->GetEffect(EFFECT_DELAY).values[PedalPCB::KNOB_2]);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
             this->ironpedal->PrintFooter("DELAY\n");
         }

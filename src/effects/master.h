@@ -26,30 +26,30 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "IRONPEDAL", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "PROF\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "IRONPEDAL", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "PROF\n", ALIGN_RIGHT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "VER " VERSION, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "VER " VERSION, ALIGN_LEFT);
 
             sprintf(buf, "%u\n", this->ironpedal->storage->GetSettings().profile + 1);
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "LOW", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "RES", ALIGN_CENTER);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "VOL\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "LOW", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "RES", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "VOL\n", ALIGN_RIGHT);
 
             float low = this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_4] / 1000.0f;
 
             sprintf(buf, "%lu.%luK", (uint32_t)low, (uint32_t)((low - floor(low)) * 10.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_5] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
             sprintf(buf, "%ld\n", (int32_t)(this->ironpedal->GetEffect(EFFECT_MASTER).values[PedalPCB::KNOB_6] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_RIGHT);
 
             this->ironpedal->PrintFooter("MASTER\n");
         }

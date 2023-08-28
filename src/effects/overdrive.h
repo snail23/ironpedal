@@ -22,18 +22,18 @@ namespace Effect
         {
             char buf[16];
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "BLEND", ALIGN_LEFT);
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "MODE\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "BLEND", ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "MODE\n", ALIGN_RIGHT);
 
             sprintf(buf, "%lu", (uint32_t)(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_1] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_LEFT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_LEFT);
 
-            SSD1351_write_string(COLOR, this->ironpedal->font, this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_3] > 0.5f ? "SOFT\n" : "HARD\n", ALIGN_RIGHT);
-            SSD1351_write_string(COLOR, this->ironpedal->font, "\n");
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_3] > 0.5f ? "SOFT\n" : "HARD\n", ALIGN_RIGHT);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n");
 
-            SSD1351_write_string(COLOR_LIGHT, this->ironpedal->font, "DRIVE\n", ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "DRIVE\n", ALIGN_CENTER);
             sprintf(buf, "%lu\n", (uint32_t)(this->ironpedal->GetEffect(EFFECT_OVERDRIVE).values[PedalPCB::KNOB_5] * 100.0f));
-            SSD1351_write_string(COLOR, this->ironpedal->font, buf, ALIGN_CENTER);
+            SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
             this->ironpedal->PrintFooter("OVERDRIVE\n");
         }
