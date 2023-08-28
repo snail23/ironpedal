@@ -9,7 +9,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 - Record and play back up to 5 minutes of audio via the Looper effect
 - 99 different profiles that you can use to save your settings (number can be increased)
 - Moog Ladder input filter for tone control
-- Customizable text colors to match the color of your pedal
+- 12 selectable screen colors to match the color of your pedal
 
 ## Building from source
 Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/downloads) and [OpenOCD](https://github.com/openocd-org/openocd/releases) installed, as well as `make`. To build, run the following command in the main directory.
