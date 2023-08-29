@@ -32,7 +32,7 @@ namespace Effect
             this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.01f, daisy::Parameter::LINEAR);
             this->buffer_index = 0;
 
-            this->metronome.Init(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6], this->ironpedal->AudioSampleRate());
+            this->metronome.Init(round(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f) / 60.0f, this->ironpedal->AudioSampleRate());
             this->metronome_bass.Init(this->ironpedal->AudioSampleRate());
 
             this->tuner_frequency = 0.0f;
@@ -104,7 +104,7 @@ namespace Effect
             sprintf(buf, "%u", this->ironpedal->storage->GetSettings().color + 1);
             SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
-            uint32_t bpm = this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f;
+            uint32_t bpm = round(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f);
 
             if (bpm)
                 sprintf(buf, "%lu\n", bpm);
@@ -148,7 +148,7 @@ namespace Effect
                 this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] = this->metronome_bpm.Process();
             }
 
-            this->metronome.SetFreq(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6]);
+            this->metronome.SetFreq(round(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6] * 60.0f) / 60.0f);
         }
 
         void OnPostAudio(float *in, float *out, size_t size)
