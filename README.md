@@ -1,4 +1,4 @@
-# Ironpedal <img align="right" src="images/pcbway.png">
+# Ironpedal <a href="https://www.pcbway.com/"><img align="right" src="images/pcbway.png"></a>
 Guitar pedal firmware for Daisy Seed+Terrarrium boards.
 
 ## Features
