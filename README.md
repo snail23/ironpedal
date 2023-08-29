@@ -20,31 +20,31 @@ Make sure you have the [Arm GNU Toolchain](https://developer.arm.com/tools-and-s
 Text colors can be changed on the Misc effects screen and the number of profiles supported can be changed in [src/config.h](src/config.h), this will require rebuilding from source.
 
 ## Supported effects
-| Effect     | Switch position | Knob 1     | Knob 2   | Knob 3    | Knob 4    | Knob 5    | Knob 6     |
-| ---------- | --------------- | ---------- | -------- | --------- | --------- | --------- | ---------- |
-| Master     | 0000            |            |          | Profile   | LPF       | Resonance | Volume     |
-| Overdrive  | 0001            | Blend      |          | Mode      |           | Drive     |            |
-| Chorus     | 0010            | Delay      |          | Rate      | Feedback  |           | Depth      |
-| Compressor | 0011            | Threshold  |          | Ratio     | Attack    |           | Release    |
-| Reverb     | 0100            |            | Feedback |           |           | LPF       |            |
-| Resonator  | 0101            | Decay      |          | Frequency | Stiffness |           | Brightness |
-| Autowah    | 0110            |            | Blend    |           | Wah       |           |            |
-| Tremolo    | 0111            | Depth      |          | Frequency |           | Shape     |            |
-| Looper     | 1000            |            | Mode     |           |           | Volume    |            |
-| Decimator  | 1001            | Downsample |          | Mode      |           | Crush     |            |
-| Phaser     | 1010            | Frequency  |          | Rate      | Feedback  |           | Depth      |
-| Delay      | 1011            |            | Delay    |           |           |           |            |
-| Flanger    | 1100            | Delay      |          | Rate      | Feedback  |           | Depth      |
-| Unused     | 1101            |            |          |           |           |           |            |
-| Unused     | 1110            |            |          |           |           |           |            |
-| Misc       | 1111            |            |          |           |           | Color     | Metronome  |
+| Effect     | Switch position | Knob 1     | Knob 2    | Knob 3    | Knob 4    | Knob 5    | Knob 6     |
+| ---------- | --------------- | ---------- | --------- | --------- | --------- | --------- | ---------- |
+| Master     | 0000            |            |           | Profile   | LPF       | Resonance | Volume     |
+| Overdrive  | 0001            | Blend      |           | Mode      |           | Drive     |            |
+| Chorus     | 0010            | Delay      |           | Rate      | Feedback  |           | Depth      |
+| Compressor | 0011            | Threshold  |           | Ratio     | Attack    |           | Release    |
+| Reverb     | 0100            |            | Feedback  |           |           | LPF       |            |
+| Resonator  | 0101            | Decay      |           | Frequency | Stiffness |           | Brightness |
+| Autowah    | 0110            |            | Blend     |           | Wah       |           |            |
+| Tremolo    | 0111            | Depth      |           | Frequency |           | Shape     |            |
+| Looper     | 1000            |            | Mode      |           |           | Volume    |            |
+| Decimator  | 1001            | Downsample |           | Mode      |           | Crush     |            |
+| Phaser     | 1010            | Frequency  |           | Rate      | Feedback  |           | Depth      |
+| Delay      | 1011            |            | Delay     |           |           |           |            |
+| Flanger    | 1100            | Delay      |           | Rate      | Feedback  |           | Depth      |
+| Pitch      | 1101            |            | Semitones |           | Delay     |           | Flutter    |
+| Unused     | 1110            |            |           |           |           |           |            |
+| Misc       | 1111            |            |           |           |           | Color     | Metronome  |
 
 ## Effect chain order
 | 1                   | 2          | 3         | 4         | 5      | 6                        | 7      |
 | ------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
 | Misc: Tuner         | Autowah    | Overdrive | Chorus    | Delay  | Misc: Metronome          | Looper |
 | Master: Moog Filter | Decimator  | Resonator | Tremolo   | Reverb | Master: Volume           |        |
-|                     | Compressor |           | Phaser    |        |                          |        |
+| Pitch               | Compressor |           | Phaser    |        |                          |        |
 |                     |            |           | Flanger   |        |                          |        |
 
 ## Usage
@@ -73,7 +73,7 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 | Phaser     | 1010            | 1.2 kHz   |          | 0.30         | 20        |               | 90     |
 | Delay      | 1011            |           | 0 MS     |              |           |               |        |
 | Flanger    | 1100            | 75        |          | 0.30         | 20        |               | 90     |
-| Unused     | 1101            |           |          |              |           |               |        |
+| Pitch      | 1101            |           | 0        |              | 10 or 50  |               | 10     |
 | Unused     | 1110            |           |          |              |           |               |        |
 | Misc       | 1111            |           |          |              |           | 1             | Off    |
 

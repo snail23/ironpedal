@@ -22,6 +22,7 @@
 #include "effects/misc.h"
 #include "effects/overdrive.h"
 #include "effects/phaser.h"
+#include "effects/pitch.h"
 #include "effects/resonator.h"
 #include "effects/reverb.h"
 #include "effects/tremolo.h"
@@ -37,6 +38,7 @@ Effect::Master *Master;
 Effect::Misc *Misc;
 Effect::Overdrive *Overdrive;
 Effect::Phaser *Phaser;
+Effect::Pitch *Pitch;
 Effect::Resonator *Resonator;
 Effect::Reverb *Reverb;
 Effect::Tremolo *Tremolo;
@@ -66,6 +68,7 @@ int main()
     Misc = new Effect::Misc(Ironpedal);
     Overdrive = new Effect::Overdrive(Ironpedal);
     Phaser = new Effect::Phaser(Ironpedal);
+    Pitch = new Effect::Pitch(Ironpedal);
     Resonator = new Effect::Resonator(Ironpedal);
     Reverb = new Effect::Reverb(Ironpedal);
     Tremolo = new Effect::Tremolo(Ironpedal);
@@ -130,6 +133,11 @@ void Draw()
 
         break;
 
+    case Effect::EFFECT_PITCH:
+        Pitch->Draw();
+
+        break;
+
     case Effect::EFFECT_OVERDRIVE:
         Overdrive->Draw();
 
@@ -159,6 +167,9 @@ void Draw()
 
 void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffer out, size_t size)
 {
+    if (Ironpedal->GetEffect(Effect::EFFECT_PITCH).enabled)
+        Pitch->OnAudio((float *)in[0], (float *)in[0], size);
+
     if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
         Misc->OnAudio((float *)in[0], out[0], size);
 
@@ -266,6 +277,11 @@ void OnInput()
 
         break;
 
+    case Effect::EFFECT_PITCH:
+        Pitch->OnInput();
+
+        break;
+
     case Effect::EFFECT_RESONATOR:
         Resonator->OnInput();
 
@@ -304,6 +320,7 @@ void OnInputAll()
     Master->OnInput(true);
     Overdrive->OnInput();
     Phaser->OnInput();
+    Pitch->OnInput();
     Resonator->OnInput();
     Reverb->OnInput();
     Tremolo->OnInput();

@@ -13,7 +13,7 @@
 /** Shift can be 30-100 ms lets just start with 50 for now.
 0.050 * SR = 2400 samples (at 48kHz)
 */
-#define SHIFT_BUFFER_SIZE 16384
+#define SHIFT_BUFFER_SIZE 4800
 //#define SHIFT_BUFFER_SIZE 4800
 //#define SHIFT_BUFFER_SIZE 8192
 //#define SHIFT_BUFFER_SIZE 1024
@@ -66,12 +66,9 @@ class PitchShifter
         sr_           = sr;
         mod_freq_     = 5.0f;
         SetSemitones();
-        for(uint8_t i = 0; i < 2; i++)
-        {
-            gain_[i] = 0.0f;
-            d_[i].Init();
-            phs_[i].Init(sr, 50, i == 0 ? 0 : PI_F);
-        }
+            gain_ = 0.0f;
+            d_.Init();
+            phs_.Init(sr, 50, 0);
         shift_up_ = true;
         del_size_ = SHIFT_BUFFER_SIZE;
         SetDelSize(del_size_);
@@ -82,55 +79,37 @@ class PitchShifter
     */
     float Process(float &in)
     {
-        float val, fade1, fade2;
+        float val, fade;
         // First Process delay mod/crossfade
-        fade1 = phs_[0].Process();
-        fade2 = phs_[1].Process();
-        if(prev_phs_a_ > fade1)
+        fade = phs_.Process();
+        if(prev_phs > fade)
         {
-            mod_a_amt_ = fun_ * ((float)(myrand() % 255) / 255.0f)
+            mod_amt_ = fun_ * ((float)(myrand() % 255) / 255.0f)
                          * (del_size_ * 0.5f);
-            mod_coeff_[0]
+            mod_coeff_
                 = 0.0002f + (((float)(myrand() % 255) / 255.0f) * 0.001f);
         }
-        if(prev_phs_b_ > fade2)
-        {
-            mod_b_amt_ = fun_ * ((float)(myrand() % 255) / 255.0f)
-                         * (del_size_ * 0.5f);
-            mod_coeff_[1]
-                = 0.0002f + (((float)(myrand() % 255) / 255.0f) * 0.001f);
-        }
-        slewed_mod_[0] += mod_coeff_[0] * (mod_a_amt_ - slewed_mod_[0]);
-        slewed_mod_[1] += mod_coeff_[1] * (mod_b_amt_ - slewed_mod_[1]);
-        prev_phs_a_ = fade1;
-        prev_phs_b_ = fade2;
+        slewed_mod_ += mod_coeff_ * (mod_amt_ - slewed_mod_);
+        prev_phs = fade;
         if(shift_up_)
         {
-            fade1 = 1.0f - fade1;
-            fade2 = 1.0f - fade2;
+            fade = 1.0f - fade;
         }
-        mod_[0] = fade1 * (del_size_ - 1);
-        mod_[1] = fade2 * (del_size_ - 1);
+        mod_ = fade * (del_size_ - 1);
 #ifdef USE_ARM_DSP
-        gain_[0] = arm_sin_f32(fade1 * (float)M_PI);
-        gain_[1] = arm_sin_f32(fade2 * (float)M_PI);
+        gain_ = arm_sin_f32(fade * (float)M_PI);
 #else
-        gain_[0] = sinf(fade1 * PI_F);
-        gain_[1] = sinf(fade2 * PI_F);
+        gain_ = sinf(fade * PI_F);
 #endif
 
         // Handle Delay Writing
-        d_[0].Write(in);
-        d_[1].Write(in);
+        d_.Write(in);
         // Modulate Delay Lines
         //mod_a_amt = mod_b_amt = 0.0f;
-        d_[0].SetDelay(mod_[0] + mod_a_amt_);
-        d_[1].SetDelay(mod_[1] + mod_b_amt_);
-        d_[0].SetDelay(mod_[0] + slewed_mod_[0]);
-        d_[1].SetDelay(mod_[1] + slewed_mod_[1]);
+        d_.SetDelay(mod_ + mod_amt_);
+        d_.SetDelay(mod_ + slewed_mod_);
         val = 0.0f;
-        val += (d_[0].Read() * gain_[0]);
-        val += (d_[1].Read() * gain_[1]);
+        val += (d_.Read() * gain_);
         return val;
     }
 
@@ -159,8 +138,7 @@ class PitchShifter
             {
                 mod_freq_ = 0.0f;
             }
-            phs_[0].SetFreq(mod_freq_);
-            phs_[1].SetFreq(mod_freq_);
+            phs_.SetFreq(mod_freq_);
             if(force_recalc_)
             {
                 force_recalc_ = false;
@@ -190,7 +168,7 @@ class PitchShifter
         }
     }
     typedef DelayLine<float, SHIFT_BUFFER_SIZE> ShiftDelay;
-    ShiftDelay                                  d_[2];
+    ShiftDelay                                  d_;
     float                                       pitch_shift_, mod_freq_;
     uint32_t                                    del_size_;
     /** lfo stuff
@@ -198,10 +176,10 @@ class PitchShifter
     bool   force_recalc_;
     float  sr_;
     bool   shift_up_;
-    Phasor phs_[2];
-    float  gain_[2], mod_[2], transpose_;
-    float  fun_, mod_a_amt_, mod_b_amt_, prev_phs_a_, prev_phs_b_;
-    float  slewed_mod_[2], mod_coeff_[2];
+    Phasor phs_;
+    float  gain_, mod_, transpose_;
+    float  fun_, mod_amt_, prev_phs;
+    float  slewed_mod_, mod_coeff_;
     /** pitch stuff
 */
     float semitone_ratios_[12];

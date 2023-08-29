@@ -40,6 +40,8 @@ $(LIBDAISY_DIR)/src/per/uart.cpp \
 $(LIBDAISY_DIR)/src/sys/dma.cpp \
 $(LIBDAISY_DIR)/src/sys/system.cpp \
 \
+dep/DaisySP/Source/Control/phasor.cpp \
+\
 dep/DaisySP/Source/Drums/analogbassdrum.cpp \
 dep/DaisySP/Source/Dynamics/compressor.cpp \
 \
