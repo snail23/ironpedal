@@ -19,7 +19,7 @@ namespace Effect
         EFFECT_DELAY,      // 1011
         EFFECT_FLANGER,    // 1100
         EFFECT_PITCH,      // 1101
-        EFFECT_NYI,        // 1110
+        EFFECT_HARMONIZER, // 1110
         EFFECT_MISC,       // 1111
         EFFECT_LAST
     };

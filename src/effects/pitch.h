@@ -26,7 +26,7 @@ namespace Effect
             char buf[16];
 
             SSD1351_write_string(this->ironpedal->GetColor().light, this->ironpedal->font, "SEMITONES\n", ALIGN_CENTER);
-            sprintf(buf, "%ld\n", (int32_t)round(this->ironpedal->GetEffect(EFFECT_PITCH).values[PedalPCB::KNOB_2]));
+            sprintf(buf, "%+ld\n", (int32_t)round(this->ironpedal->GetEffect(EFFECT_PITCH).values[PedalPCB::KNOB_2]));
             SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, buf, ALIGN_CENTER);
 
             SSD1351_write_string(this->ironpedal->GetColor().base, this->ironpedal->font, "\n", this->ironpedal->GetColor().base);

@@ -21,6 +21,10 @@
 
 using namespace daisysp;
 
+#define DSY_SDRAM_BSS __attribute__((section(".sdram_bss")))
+#define DSY_REVERBSC_MAX_SIZE 98936
+float      DSY_SDRAM_BSS aux_[DSY_REVERBSC_MAX_SIZE];
+
 /* kReverbParams[n][0] = delay time (in seconds)                     */
 /* kReverbParams[n][1] = random variation in delay time (in seconds) */
 /* kReverbParams[n][2] = random variation frequency (in 1/sec)       */

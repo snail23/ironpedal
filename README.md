@@ -35,17 +35,17 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 | Phaser     | 1010            | Frequency  |           | Rate      | Feedback  |           | Depth      |
 | Delay      | 1011            |            | Delay     |           |           |           |            |
 | Flanger    | 1100            | Delay      |           | Rate      | Feedback  |           | Depth      |
-| Pitch      | 1101            |            | Semitones |           | Delay     |           | Flutter    |
-| Unused     | 1110            |            |           |           |           |           |            |
+| Pitch      | 1101            |            | Semitones |           | Rate      |           | Flutter    |
+| Harmonizer | 1110            | Semitones  | Rate      | Flutter   | Semitones | Rate      | Flutter    |
 | Misc       | 1111            |            |           |           |           | Color     | Metronome  |
 
 ## Effect chain order
 | 1                   | 2          | 3         | 4         | 5      | 6                        | 7      |
 | ------------------- | ---------- | --------- | --------- | ------ | ------------------------ | ------ |
-| Misc: Tuner         | Autowah    | Overdrive | Chorus    | Delay  | Misc: Metronome          | Looper |
-| Master: Moog Filter | Decimator  | Resonator | Tremolo   | Reverb | Master: Volume           |        |
-| Pitch               | Compressor |           | Phaser    |        |                          |        |
-|                     |            |           | Flanger   |        |                          |        |
+| Pitch               | Autowah    | Overdrive | Chorus    | Delay  | Misc: Metronome          | Looper |
+| Misc: Tuner         | Decimator  | Resonator | Tremolo   | Reverb | Master: Volume           |        |
+| Harmonizer          | Compressor |           | Phaser    |        |                          |        |
+| Master: Moog Filter |            |           | Flanger   |        |                          |        |
 
 ## Usage
 | Operation                               | Instructions                                                       |
@@ -60,11 +60,11 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 ## My settings, feel free to use these as a starting point
 | Effect     | Switch position | Knob 1    | Knob 2   | Knob 3       | Knob 4    | Knob 5        | Knob 6 |
 | ---------- | --------------- | --------- | -------- | ------------ | --------- | ------------- | ------ |
-| Master     | 0000            |           |          | 1            | 10.1 kHz  | 40            | 150    |
+| Master     | 0000            |           |          | 1            | 4.5 kHz   | 45            | 150    |
 | Overdrive  | 0001            | 45        |          | Hard         |           | 45            |        |
 | Chorus     | 0010            | 75        |          | 0.30         | 20        |               | 90     |
 | Compressor | 0011            | -12 dB    |          | 2:1          | 0.118     |               | 0.118  |
-| Reverb     | 0100            |           | 50       |              |           | 10.1 kHz      |        |
+| Reverb     | 0100            |           | 25       |              |           | 4.5 kHz       |        |
 | Resonator  | 0101            | 20        |          | 78 Hz (Eb2)  | 25        |               | 35     |
 | Autowah    | 0110            |           | 50       |              | 10        |               |        |
 | Tremolo    | 0111            | 50        |          | 622 Hz (Eb5) |           | Triangle Wave |        |
@@ -74,7 +74,7 @@ Text colors can be changed on the Misc effects screen and the number of profiles
 | Delay      | 1011            |           | 0 MS     |              |           |               |        |
 | Flanger    | 1100            | 75        |          | 0.30         | 20        |               | 90     |
 | Pitch      | 1101            |           | 0        |              | 10 or 50  |               | 10     |
-| Unused     | 1110            |           |          |              |           |               |        |
+| Harmonizer | 1110            | +12       | 10       | 10           | -12       | 95            | 10     |
 | Misc       | 1111            |           |          |              |           | 1             | Off    |
 
 You may find this [chart](http://www.simonpaul.com/wp-content/uploads/downloads/2010/04/Notes-To-Frequencies.pdf) useful when setting certain effect frequencies.

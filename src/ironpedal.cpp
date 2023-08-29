@@ -17,6 +17,7 @@
 #include "effects/decimator.h"
 #include "effects/delay.h"
 #include "effects/flanger.h"
+#include "effects/harmonizer.h"
 #include "effects/looper.h"
 #include "effects/master.h"
 #include "effects/misc.h"
@@ -33,6 +34,7 @@ Effect::Compressor *Compressor;
 Effect::Decimator *Decimator;
 Effect::Delay *Delay;
 Effect::Flanger *Flanger;
+Effect::Harmonizer *Harmonizer;
 Effect::Looper *Looper;
 Effect::Master *Master;
 Effect::Misc *Misc;
@@ -63,6 +65,7 @@ int main()
     Decimator = new Effect::Decimator(Ironpedal);
     Delay = new Effect::Delay(Ironpedal);
     Flanger = new Effect::Flanger(Ironpedal);
+    Harmonizer = new Effect::Harmonizer(Ironpedal);
     Looper = new Effect::Looper(Ironpedal);
     Master = new Effect::Master(Ironpedal);
     Misc = new Effect::Misc(Ironpedal);
@@ -110,6 +113,11 @@ void Draw()
 
     case Effect::EFFECT_FLANGER:
         Flanger->Draw();
+
+        break;
+
+    case Effect::EFFECT_HARMONIZER:
+        Harmonizer->Draw();
 
         break;
 
@@ -172,6 +180,9 @@ void OnAudio(daisy::AudioHandle::InputBuffer in, daisy::AudioHandle::OutputBuffe
 
     if (Ironpedal->current_effect.id == Effect::EFFECT_MISC && Ironpedal->display_enabled)
         Misc->OnAudio((float *)in[0], out[0], size);
+
+    if (Ironpedal->GetEffect(Effect::EFFECT_HARMONIZER).enabled)
+        Harmonizer->OnAudio((float *)in[0], (float *)in[0], size);
 
     Master->OnAudio((float *)in[0], out[0], size);
 
@@ -252,6 +263,11 @@ void OnInput()
 
         break;
 
+    case Effect::EFFECT_HARMONIZER:
+        Harmonizer->OnInput();
+
+        break;
+
     case Effect::EFFECT_LOOPER:
         Looper->OnInput();
 
@@ -316,6 +332,7 @@ void OnInputAll()
     Decimator->OnInput();
     Delay->OnInput();
     Flanger->OnInput();
+    Harmonizer->OnInput();
     Looper->OnInput();
     Master->OnInput(true);
     Overdrive->OnInput();

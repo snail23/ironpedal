@@ -2,8 +2,6 @@
 #ifndef DSYSP_REVERBSC_H
 #define DSYSP_REVERBSC_H
 
-#define DSY_REVERBSC_MAX_SIZE 98936
-
 namespace daisysp
 {
 /**Delay line for internal reverb use
@@ -71,7 +69,6 @@ class ReverbSc
     float      prv_lpfreq_;
     int        init_done_;
     ReverbScDl delay_lines_[8];
-    float      aux_[DSY_REVERBSC_MAX_SIZE];
 };
 
 
