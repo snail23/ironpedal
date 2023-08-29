@@ -29,7 +29,7 @@ namespace Effect
             this->ironpedal = ironpedal;
 
             this->color.Init(this->ironpedal->knobs[PedalPCB::KNOB_5], 0.0f, COLORS, daisy::Parameter::LINEAR);
-            this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.0f, daisy::Parameter::LINEAR);
+            this->metronome_bpm.Init(this->ironpedal->knobs[PedalPCB::KNOB_6], 0.0f, 3.01f, daisy::Parameter::LINEAR);
             this->buffer_index = 0;
 
             this->metronome.Init(this->ironpedal->GetEffect(EFFECT_MISC).values[PedalPCB::KNOB_6], this->ironpedal->AudioSampleRate());
