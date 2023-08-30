@@ -1,5 +1,5 @@
 # Ironpedal <a href="https://www.pcbway.com/"><img align="right" src="images/pcbway.png"></a>
-Guitar pedal firmware for Daisy Seed+Terrarrium boards.
+Guitar pedal firmware for Daisy Seed+Terrarrium boards. This project is sponsored by <a href="https://www.pcbway.com/">PCBWay</a> which is a great place to create custom circuit boards or you can choose from one of the many featured designs that people create and share. They make it very easy to bring your ideas into reality, highly recommended!
 
 ## Features
 - Small hardware accelerated OLED display that can be toggled off to reduce EMI when not in use
