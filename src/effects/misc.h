@@ -54,7 +54,7 @@ namespace Effect
             {
                 if (this->ironpedal->GetEffect(i).enabled)
                 {
-                    sprintf(buf, "%s%s%u", buf, first ? "" : ", ", i);
+                    sprintf(buf, first ? "%s%u" : "%s, %u", buf, i);
 
                     if (first)
                         first = false;

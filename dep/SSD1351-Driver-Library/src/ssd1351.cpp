@@ -1,7 +1,7 @@
 #include "ssd1351.h"
 #include <string.h>
 
-DisplayRAM DRAM;
+DisplayRAM __attribute__((section(".sdram_bss"))) DRAM;
 #define DRAM_16 DRAM.halfw
 #define DRAM_8 DRAM.byte
 

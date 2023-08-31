@@ -55,7 +55,6 @@ class Flanger
 
   private:
     float                    sample_rate_;
-    static constexpr int32_t kDelayLength = 960; // 20 ms at 48kHz = .02 * 48000
 
     float feedback_;
 
@@ -66,7 +65,7 @@ class Flanger
 
     float delay_;
 
-    DelayLine<float, kDelayLength> del_;
+    DelayLine del_;
 
     float ProcessLfo();
 };

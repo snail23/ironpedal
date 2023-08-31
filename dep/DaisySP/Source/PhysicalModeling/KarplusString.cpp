@@ -5,6 +5,12 @@
 
 using namespace daisysp;
 
+#define DSY_SDRAM_BSS __attribute__((section(".sdram_bss")))
+#define DSY_BUFFER_MAX_SIZE 1024
+
+float DSY_SDRAM_BSS KarplusBuffer[DSY_BUFFER_MAX_SIZE];
+float DSY_SDRAM_BSS KarplusBuffer2[DSY_BUFFER_MAX_SIZE / 4];
+
 void String::Init(float sample_rate)
 {
     sample_rate_ = sample_rate;
@@ -14,8 +20,8 @@ void String::Init(float sample_rate)
     brightness_           = .5f;
     damping_              = .5f;
 
-    string_.Init();
-    stretch_.Init();
+    string_.Init(KarplusBuffer, DSY_BUFFER_MAX_SIZE);
+    stretch_.Init(KarplusBuffer2, DSY_BUFFER_MAX_SIZE / 4);
     Reset();
 
     SetFreq(440.f);

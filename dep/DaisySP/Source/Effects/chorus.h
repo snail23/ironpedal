@@ -57,8 +57,6 @@ class ChorusEngine
 
   private:
     float                    sample_rate_;
-    static constexpr int32_t kDelayLength
-        = 2400; // 50 ms at 48kHz = .05 * 48000
 
     //triangle lfos
     float lfo_phase_;
@@ -69,7 +67,7 @@ class ChorusEngine
 
     float delay_;
 
-    DelayLine<float, kDelayLength> del_;
+    DelayLine del_;
 
     float ProcessLfo();
 };

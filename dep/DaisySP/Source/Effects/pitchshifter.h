@@ -18,6 +18,9 @@
 //#define SHIFT_BUFFER_SIZE 8192
 //#define SHIFT_BUFFER_SIZE 1024
 
+#define DSY_SDRAM_BSS __attribute__((section(".sdram_bss")))
+float DSY_SDRAM_BSS ShiftBuffer[SHIFT_BUFFER_SIZE];
+
 namespace daisysp
 {
 static inline uint32_t hash_xs32(uint32_t x)
@@ -67,7 +70,7 @@ class PitchShifter
         mod_freq_     = 5.0f;
         SetSemitones();
             gain_ = 0.0f;
-            d_.Init();
+            d_.Init(ShiftBuffer, SHIFT_BUFFER_SIZE);
             phs_.Init(sr, 50, 0);
         shift_up_ = true;
         del_size_ = SHIFT_BUFFER_SIZE;
@@ -167,7 +170,7 @@ class PitchShifter
             semitone_ratios_[i] = powf(2.0f, (float)i / 12);
         }
     }
-    typedef DelayLine<float, SHIFT_BUFFER_SIZE> ShiftDelay;
+    typedef DelayLine ShiftDelay;
     ShiftDelay                                  d_;
     float                                       pitch_shift_, mod_freq_;
     uint32_t                                    del_size_;

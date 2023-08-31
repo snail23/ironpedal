@@ -4,13 +4,19 @@
 
 using namespace daisysp;
 
+
+#define DSY_SDRAM_BSS __attribute__((section(".sdram_bss")))
+#define DSY_BUFFER_MAX_SIZE 960
+
+float DSY_SDRAM_BSS FlangerBuffer[DSY_BUFFER_MAX_SIZE];
+
 void Flanger::Init(float sample_rate)
 {
     sample_rate_ = sample_rate;
 
     SetFeedback(.2f);
 
-    del_.Init();
+    del_.Init(FlangerBuffer, DSY_BUFFER_MAX_SIZE);
     lfo_amp_ = 0.f;
     SetDelay(.75);
 

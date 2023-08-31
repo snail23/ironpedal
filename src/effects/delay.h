@@ -3,6 +3,8 @@
 
 namespace Effect
 {
+    float DSY_SDRAM_BSS DelayBuffer[2400];
+
     class Delay
     {
     public:
@@ -12,7 +14,7 @@ namespace Effect
 
             this->delay.Init(this->ironpedal->knobs[PedalPCB::KNOB_2], 0.0f, 50.01f, daisy::Parameter::LINEAR);
 
-            this->delay_line.Init();
+            this->delay_line.Init(DelayBuffer, sizeof(DelayBuffer) / sizeof(float));
             this->delay_line.SetDelay((size_t)(this->ironpedal->AudioSampleRate() / this->ironpedal->GetEffect(EFFECT_DELAY).values[PedalPCB::KNOB_2]));
         }
 
@@ -50,7 +52,7 @@ namespace Effect
 
     private:
         daisy::Parameter delay;
-        daisysp::DelayLine<float, 48000 / 50> delay_line;
+        daisysp::DelayLine delay_line;
 
         Snailsoft::Ironpedal *ironpedal;
     };

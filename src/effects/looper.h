@@ -3,7 +3,7 @@
 
 namespace Effect
 {
-    float DSY_SDRAM_BSS Buffer[48000 * 60 * 5];
+    float DSY_SDRAM_BSS LooperBuffer[48000 * 60 * 5];
 
     class Looper
     {
@@ -42,10 +42,10 @@ namespace Effect
             for (size_t i = 0; i < size; ++i)
             {
                 if (this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_2] > 0.5f)
-                    Buffer[this->buffer_size = this->buffer_size < sizeof(Buffer) / sizeof(float) ? this->buffer_size + 1 : 0] = in[i];
+                    LooperBuffer[this->buffer_size = this->buffer_size < sizeof(LooperBuffer) / sizeof(float) ? this->buffer_size + 1 : 0] = in[i];
 
                 else
-                    out[i] = in[i] + Buffer[this->buffer_index = this->buffer_index < this->buffer_size ? this->buffer_index + 1 : 0] * this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_5];
+                    out[i] = in[i] + LooperBuffer[this->buffer_index = this->buffer_index < this->buffer_size ? this->buffer_index + 1 : 0] * this->ironpedal->GetEffect(EFFECT_LOOPER).values[PedalPCB::KNOB_5];
             }
         }
 

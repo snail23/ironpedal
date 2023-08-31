@@ -52,8 +52,6 @@ class PhaserEngine
 
   private:
     float                    sample_rate_;
-    static constexpr int32_t kDelayLength
-        = 2400; // 50 ms at 48kHz = .05 * 48000
 
     //triangle lfo
     float lfo_phase_;
@@ -68,7 +66,7 @@ class PhaserEngine
     float deltime_;
     float last_sample_;
 
-    DelayLine<float, kDelayLength> del_;
+    DelayLine del_;
 
     float ProcessLfo();
 };

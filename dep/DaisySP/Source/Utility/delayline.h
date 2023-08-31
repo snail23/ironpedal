@@ -16,7 +16,7 @@ DelayLine<float, SAMPLE_RATE> del;
 
 By: shensley
 */
-template <typename T, size_t max_size>
+
 class DelayLine
 {
   public:
@@ -24,14 +24,20 @@ class DelayLine
     ~DelayLine() {}
     /** initializes the delay line by clearing the values within, and setting delay to 1 sample.
     */
-    void Init() { Reset(); }
+    void Init(float *buffer, size_t buffer_size)
+    {
+        max_size = buffer_size;
+        line_ = buffer;
+
+        Reset();
+    }
     /** clears buffer, sets write ptr to 0, and delay to 1 sample.
     */
     void Reset()
     {
         for(size_t i = 0; i < max_size; i++)
         {
-            line_[i] = T(0);
+            line_[i] = 0.0f;
         }
         write_ptr_ = 0;
         delay_     = 1;
@@ -57,43 +63,43 @@ class DelayLine
                                                            : max_size - 1;
     }
 
-    /** writes the sample of type T to the delay line, and advances the write ptr
+    /** writes the sample of type float to the delay line, and advances the write ptr
     */
-    inline void Write(const T sample)
+    inline void Write(const float sample)
     {
         line_[write_ptr_] = sample;
         write_ptr_        = (write_ptr_ - 1 + max_size) % max_size;
     }
 
-    /** returns the next sample of type T in the delay line, interpolated if necessary.
+    /** returns the next sample of type float in the delay line, interpolated if necessary.
     */
-    inline const T Read() const
+    inline const float Read() const
     {
-        T a = line_[(write_ptr_ + delay_) % max_size];
-        T b = line_[(write_ptr_ + delay_ + 1) % max_size];
+        float a = line_[(write_ptr_ + delay_) % max_size];
+        float b = line_[(write_ptr_ + delay_ + 1) % max_size];
         return a + (b - a) * frac_;
     }
 
     /** Read from a set location */
-    inline const T Read(float delay) const
+    inline const float Read(float delay) const
     {
         int32_t delay_integral   = static_cast<int32_t>(delay);
         float   delay_fractional = delay - static_cast<float>(delay_integral);
-        const T a = line_[(write_ptr_ + delay_integral) % max_size];
-        const T b = line_[(write_ptr_ + delay_integral + 1) % max_size];
+        const float a = line_[(write_ptr_ + delay_integral) % max_size];
+        const float b = line_[(write_ptr_ + delay_integral + 1) % max_size];
         return a + (b - a) * delay_fractional;
     }
 
-    inline const T ReadHermite(float delay) const
+    inline const float ReadHermite(float delay) const
     {
         int32_t delay_integral   = static_cast<int32_t>(delay);
         float   delay_fractional = delay - static_cast<float>(delay_integral);
 
         int32_t     t     = (write_ptr_ + delay_integral + max_size);
-        const T     xm1   = line_[(t - 1) % max_size];
-        const T     x0    = line_[(t) % max_size];
-        const T     x1    = line_[(t + 1) % max_size];
-        const T     x2    = line_[(t + 2) % max_size];
+        const float     xm1   = line_[(t - 1) % max_size];
+        const float     x0    = line_[(t) % max_size];
+        const float     x1    = line_[(t + 1) % max_size];
+        const float     x2    = line_[(t + 2) % max_size];
         const float c     = (x1 - xm1) * 0.5f;
         const float v     = x0 - x1;
         const float w     = c + v;
@@ -103,10 +109,10 @@ class DelayLine
         return (((a * f) - b_neg) * f + c) * f + x0;
     }
 
-    inline const T Allpass(const T sample, size_t delay, const T coefficient)
+    inline const float Allpass(const float sample, size_t delay, const float coefficient)
     {
-        T read  = line_[(write_ptr_ + delay) % max_size];
-        T write = sample + coefficient * read;
+        float read  = line_[(write_ptr_ + delay) % max_size];
+        float write = sample + coefficient * read;
         Write(write);
         return -write * coefficient + read;
     }
@@ -115,7 +121,8 @@ class DelayLine
     float  frac_;
     size_t write_ptr_;
     size_t delay_;
-    T      line_[max_size];
+    size_t max_size;
+    float      *line_;
 };
 } // namespace daisysp
 #endif

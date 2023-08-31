@@ -4,12 +4,17 @@
 
 using namespace daisysp;
 
+#define DSY_SDRAM_BSS __attribute__((section(".sdram_bss")))
+#define DSY_BUFFER_MAX_SIZE 2400
+
+float DSY_SDRAM_BSS ChorusBuffer[DSY_BUFFER_MAX_SIZE];
+
 //ChorusEngine stuff
 void ChorusEngine::Init(float sample_rate)
 {
     sample_rate_ = sample_rate;
 
-    del_.Init();
+    del_.Init(ChorusBuffer, DSY_BUFFER_MAX_SIZE);
     lfo_amp_  = 0.f;
     feedback_ = .2f;
     SetDelay(.75);
