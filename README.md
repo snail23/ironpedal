@@ -7,7 +7,7 @@ Guitar pedal firmware for Daisy Seed+Terrarrium boards. This project is sponsore
 - Save/load your effect settings to external flash via QSPI
 - Effects can be individually enabled/locked
 - Record and play back up to 5 minutes of audio via the Looper effect
-- 99 different profiles that you can use to save your settings (number can be increased)
+- 20 different profiles that you can use to save your settings (number can be increased)
 - Moog Ladder input filter for tone control
 - 12 selectable screen colors to match the color of your pedal
 
